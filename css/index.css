@@ -1,0 +1,288 @@
+/* css 初始化 */
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100vh;
+    transform-style: preserve-3d;
+    perspective: 600px;
+    overflow: hidden;
+}
+
+:root {
+    --color: #d22e7e
+}
+
+/* 布局 */
+.layout {
+    height: 100vh;
+     background-color: var(--color);
+}
+
+/* button  */
+.button {
+    line-height: 1.2;
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+    text-align: center;
+    background-image: none;
+    border: 1px solid transparent;
+    box-shadow: 0 2px #00000004;
+    cursor: pointer;
+    transition: all .3s cubic-bezier(.645, .045, .355, 1);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+    height: 24px;
+    padding: 1px 3px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 2px;
+    color: #fff;
+    border-color: #fff;
+    text-transform: uppercase;
+    background-color: transparent;
+}
+
+/* button  menu */
+#menu {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+
+/* button  search */
+#search {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+/* button  back */
+#back {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+
+/* 光碟 */
+.cds {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.showCds {
+    animation: show 1s ease-in-out 0s forwards;
+}
+
+@keyframes show {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.cds.hideCds {
+    animation: hide 1s forwards;
+}
+
+@keyframes hide {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    50% {
+        opacity: .5;
+        transform: translateY(-50%);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+}
+
+.cd {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    transition: transform 1s;
+    transform: translate(-50%, -50%);
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+
+.active {
+    animation: cd_in 1s ease-in-out 0s forwards;
+}
+/* 进入 */
+@keyframes cd_in {
+    0% {
+        transform: translate(-50%, -50%) rotateY(0deg);
+    }
+
+    100% {
+        width: 300px;
+        height: 300px;
+        border-radius: 0;
+        transform: translate(-50%, -50%) rotateY(180deg);
+    }
+}
+
+/* 退出 */
+@keyframes cd_out {
+    0% {
+        width: 300px;
+        height: 300px;
+        border-radius: 0;
+        transform: translate(-50%, -50%) rotateY(180deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotateY(0deg);
+    }
+}
+
+.cd-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    backface-visibility: hidden;
+}
+
+.cd-front {
+    border-radius: 50%;
+    background-color: #ffffff;
+}
+
+.cd-back {
+    background-size: cover;
+    background-position: center;
+    transform: rotateY(180deg);
+}
+
+/* 输入控件 */
+#control {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+}
+#control_header__input {
+    width: 100px;
+    height: 32px;
+    border: 1px solid #ffffff;
+    border-radius: 3px;
+    padding: 3px 8px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    cursor: pointer;
+}
+#control_header__input:after {
+    content: '|';
+    color: #ffffff;
+    opacity: 0;
+}
+#control_header__input.focus:after {
+    animation: twinkle 1s infinite;
+}
+@keyframes twinkle {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+#control-content__menu {
+    margin-top:40px;
+    opacity: 0;
+}
+
+#control-content__menu {
+    display: flex;
+    flex-flow: row wrap;
+    width: 420px;
+    border: 1px solid #ffffff;
+    padding: 5px 15px;
+    box-sizing: border-box;
+}
+.menu__option {
+    position: relative;
+    display: block;
+    flex: 0 0 16.666666666666668%;
+    max-width: 16.666666666666668%;
+}
+.menu__option:after {
+    content: '';
+    display: block;
+    width: 100%;
+    padding-top: 100%
+}
+
+.menu__option_inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background: #ffffff;
+    border-radius: 50%;
+}
+
+/* 进入 - 显示输入框 步骤一 */
+.control_stop_one {
+    animation: control_step_one_in 0.5s ease-in 1s forwards;
+}
+@keyframes control_step_one_in {
+    0% {
+        transform: translateX(-50%) translateY(100%);
+    }
+
+    100% {
+        transform: translateX(-50%) translateY(calc(100% - 100px));
+    }
+}
+
+.control_stop_two {
+    animation: control_step_two_in 0.5s ease-in 1s forwards;
+}
+@keyframes control_step_two_in {
+    0% {
+        transform: translateX(-50%) translateY(calc(100% - 100px));
+    }
+
+    100% {
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+.control_stop_two #control-content__menu {
+    animation: control_content_in 0.5s ease-in 1s forwards;
+}
+@keyframes control_content_in {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
