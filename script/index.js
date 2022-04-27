@@ -2,6 +2,8 @@ var imgs = ["./image/1.jpg"];
 
 var cNode;
 
+// ui 容器
+var ui = document.getElementById('ui');
 // 图片容器
 var cds = document.querySelectorAll(".cds")[0];
 
@@ -62,11 +64,23 @@ function step2() {
     cds.classList.add('hideCds')
 }
 // step 全部展示
-function step3() { }
+function step3() {
+    ui.classList.add('hide');
+}
 
 renderCds();
 
 // 控制器输入框
 input.addEventListener('click', function () {
     step2();
+    setTimeout(function() {
+        $transform($targets.sphere, 2000);
+        setTimeout(function() {
+            $transform($targets.table, 2000);
+        }, 2000);
+    }, 3000);
+}, false);
+// 输入确认
+document.querySelectorAll('.menu__option_enter')[0].addEventListener('click', function() {
+    step3();
 });

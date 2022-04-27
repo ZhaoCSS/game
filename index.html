@@ -7,6 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>音乐</title>
   <link rel="stylesheet" href="./css/index.css" />
+  <style>
+    .element {
+      width: 120px;
+      height: 160px;
+      box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.5);
+      border: 1px solid rgba(127, 255, 255, 0.25);
+      font-family: Helvetica, sans-serif;
+      text-align: center;
+      line-height: normal;
+      background-position: center;
+      background-size: cover;
+      cursor: default;
+    }
+
+  </style>
 </head>
 
 <body>
@@ -14,71 +29,275 @@
     <button id="menu" class="button">menu</button>
     <button id="search" class="button">search</button>
     <button id="back" class="button">back</button>
+    <div id="container"></div>
+    <div id="ui">
+      <div class="cds"></div>
+      <!-- 输入控件 -->
+      <div id="control">
+        <div id="control_header__input"></div>
+        <div id="control-content__menu">
+          <div class="menu__option">
+            <div class="menu__option_inner">✨</div>
+          </div>
+          <div class="menu__option">
 
-    <div class="cds"></div>
-    <!-- 输入控件 -->
-    <div id="control">
-      <div id="control_header__input"></div>
-      <div id="control-content__menu">
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
+            <div class="menu__option_inner">⚽</div>
+          </div>
+          <div class="menu__option">
 
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option">
-          <div class="menu__option_inner"></div>
-        </div>
-        <div class="menu__option menu__option_enter">
-          <div class="menu__option_inner"></div>
+            <div class="menu__option_inner">⚾</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner"> ⛳</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner">✊</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner">✌</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner">✋</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner">☝</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner">⏳</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner">⏰</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner">⌚</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner">♿</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner">⛔</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner">❎</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner">✅</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner">♻</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner">⛪</div>
+          </div>
+          <div class="menu__option">
+            <div class="menu__option_inner menu__option_enter">↲</div>
+          </div>
         </div>
       </div>
     </div>
-    <script src="./script/index.js"></script>
+  </div>
+  <!-- Import maps polyfill -->
+  <!-- Remove this when import maps will be widely supported -->
+  <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+
+  <script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js"
+				}
+			}
+		</script>
+
+  <script type="module">
+
+    import * as THREE from 'three';
+
+    import { TWEEN } from './jsm/libs/tween.module.min.js';
+    import { TrackballControls } from './jsm/controls/TrackballControls.js';
+    import { CSS3DRenderer, CSS3DObject } from './jsm/renderers/CSS3DRenderer.js';
+
+    const table = [
+      './image/1.jpg',
+      './image/2.jpg',
+      './image/3.jpg',
+      './image/4.jpg',
+      './image/5.jpg',
+      './image/6.jpg',
+      './image/7.jpg',
+      './image/8.jpg',
+      './image/9.jpg',
+      './image/10.jpg',
+      './image/11.jpg',
+      './image/12.jpg',
+      './image/13.jpg',
+      './image/14.jpg',
+      './image/15.jpg',
+      './image/16.jpg',
+      './image/17.jpg',
+      './image/18.jpg',
+      './image/19.jpg',
+    ];
+
+    let camera, scene, renderer;
+    let controls;
+
+    const objects = [];
+    const targets = { table: [], sphere: [], helix: [], grid: [] };
+
+    init();
+    animate();
+
+    function init() {
+
+      camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
+      camera.position.z = 3000;
+
+      scene = new THREE.Scene();
+
+      // table
+
+      for (let i = 0; i < table.length; i++) {
+
+        const element = document.createElement('div');
+        element.className = 'element';
+        element.style.backgroundImage = 'url(' + table[i] + ')';
+        element.style.backgroundColor = 'rgba(0,127,127,' + (Math.random() * 0.5 + 0.25) + ')';
+
+        const objectCSS = new CSS3DObject(element);
+        objectCSS.position.x = Math.random() * 4000 - 2000;
+        objectCSS.position.y = Math.random() * 4000 - 2000;
+        objectCSS.position.z = Math.random() * 4000 - 2000;
+        scene.add(objectCSS);
+
+        objects.push(objectCSS);
+
+        //
+
+        const object = new THREE.Object3D();
+        object.position.x = (table[i + 3] * 140) - 1330;
+        object.position.y = - (table[i + 4] * 180) + 990;
+
+        targets.table.push(object);
+
+      }
+
+      // sphere
+
+      const vector = new THREE.Vector3();
+
+      for (let i = 0, l = objects.length; i < l; i++) {
+
+        const phi = Math.acos(- 1 + (2 * i) / l);
+        const theta = Math.sqrt(l * Math.PI) * phi;
+
+        const object = new THREE.Object3D();
+
+        object.position.setFromSphericalCoords(800, phi, theta);
+
+        vector.copy(object.position).multiplyScalar(2);
+
+        object.lookAt(vector);
+
+        targets.sphere.push(object);
+
+      }
+
+
+      // grid
+
+      for (let i = 0; i < objects.length; i++) {
+
+        const object = new THREE.Object3D();
+
+        object.position.x = ((i % 5) * 400) - 800;
+        object.position.y = (- (Math.floor(i / 5) % 5) * 400) + 800;
+        object.position.z = (Math.floor(i / 25)) * 1000 - 2000;
+
+        targets.grid.push(object);
+
+      }
+
+      renderer = new CSS3DRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.getElementById('container').appendChild(renderer.domElement);
+
+      //
+
+      controls = new TrackballControls(camera, renderer.domElement);
+      controls.minDistance = 500;
+      controls.maxDistance = 6000;
+      controls.addEventListener('change', render);
+
+      // 圆 transform(targets.table, 2000);
+      // 平面 transform(targets.sphere, 2000);
+      transform(targets.grid, 0);
+
+      //
+
+      window.addEventListener('resize', onWindowResize);
+
+    }
+
+    function transform(targets, duration) {
+
+      TWEEN.removeAll();
+
+      for (let i = 0; i < objects.length; i++) {
+
+        const object = objects[i];
+        const target = targets[i];
+
+        new TWEEN.Tween(object.position)
+          .to({ x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration)
+          .easing(TWEEN.Easing.Exponential.InOut)
+          .start();
+
+        new TWEEN.Tween(object.rotation)
+          .to({ x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration)
+          .easing(TWEEN.Easing.Exponential.InOut)
+          .start();
+
+      }
+
+      new TWEEN.Tween(this)
+        .to({}, duration * 2)
+        .onUpdate(render)
+        .start();
+
+    }
+
+    function onWindowResize() {
+
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      render();
+
+    }
+
+    function animate() {
+
+      requestAnimationFrame(animate);
+
+      TWEEN.update();
+
+      controls.update();
+
+    }
+
+    function render() {
+
+      renderer.render(scene, camera);
+
+    }
+    window.$objects = objects;
+    window.$targets = targets;
+    window.$transform = transform;
+  </script>
+</body>
+<script src="./script/index.js"></script>
 </body>
 
 </html>
