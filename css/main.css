@@ -1,0 +1,599 @@
+/* css 初始化 */
+html,
+body,
+p,
+ul, li {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+html,
+body {
+  height: 100vh;
+  transform-style: preserve-3d;
+  perspective: 600px;
+  overflow: hidden;
+}
+
+:root {
+  --bg-color: rgb(255, 255, 255);
+  --color: rgb(234, 67, 165);
+}
+
+/* 布局 */
+.layout {
+  height: 100vh;
+  background-color: var(--color);
+}
+
+#container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#ui {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color);
+  overflow: visible;
+}
+
+#ui.hide {
+  animation: hide 0.5s forwards;
+}
+
+/* 输入控件 */
+#control {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: calc(50% - 292px);
+  z-index: 300;
+  text-align: center;
+}
+
+#control_header__input {
+  display: inline-block;
+  min-width: 100px;
+  min-height: 32px;
+  border: 2px solid rgb(0, 0, 0);
+  border-radius: 3px;
+  padding: 3px 8px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  cursor: pointer;
+  text-align: left;
+}
+
+#control_header__input:after {
+  content: "";
+  display: inline-block;
+  height: 42px;
+  width: 2px;
+  background-color: rgb(117, 249, 76);
+  opacity: 0;
+}
+
+#control_header__input.focus:after {
+  animation: twinkle 1s infinite;
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+#control-content__menu {
+  margin-top: 40px;
+}
+
+#control-content__menu {
+  border: 2px solid var(--color);
+  padding: 30px 50px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.menu__wrapper {
+  width: 480px;
+  display: flex;
+  flex-flow: row wrap;
+  box-sizing: border-box;
+}
+
+#control-content__menu .menu__option {
+  position: relative;
+  display: block;
+  flex: 0 0 14.285714285714286%;
+  max-width: 14.285714285714286%;
+}
+
+.menu__option:after {
+  content: "";
+  display: block;
+  width: 100%;
+  padding-top: 100%;
+}
+
+.menu__option_inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.menu__option_enter {
+  background: transparent;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* 进入 - 显示输入框 步骤一 */
+.animate__stepOne {
+  animation-name: stepOne;
+}
+
+@keyframes stepOne {
+  0% {
+    top: calc(100% + 3px);
+  }
+
+  100% {
+    top: calc(100% - 90px);
+  }
+}
+
+.animate__stepTwo {
+  animation-name: stepTwo;
+}
+
+@keyframes stepTwo {
+  0% {
+    top: calc(100% - 90px);
+  }
+
+  100% {
+    top: calc(50% - 217px);
+  }
+}
+
+/* .control_stop_two #control-content__menu {
+  animation: control_content_in 0.5s ease-in 1s forwards;
+}
+
+@keyframes control_content_in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+} */
+
+.step {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(255, 255, 255);
+}
+
+/*  步骤一 */
+
+#start {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 360px;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  border: 2px solid transparent;
+  border-radius: 3px;
+  overflow: hidden;
+  padding: 50px 0 0 0;
+  cursor: pointer;
+  text-align: center;
+}
+
+#start:hover {
+  border-color: var(--color);
+}
+
+#start:active {
+  border-color: var(--color);
+}
+
+.start-action {
+  margin-top: 10px;
+  display: inline-block;
+  font-weight: bold;
+  padding: 5px 3px;
+  font-size: 18px;
+}
+
+/* 光碟样式 2 */
+.card {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  background: var(--color);
+  border-radius: 50%;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.card-lg {
+  width: 300px;
+  height: 300px;
+}
+
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.card .circle1 {
+  position: absolute;
+  background: rgb(0, 0, 0);
+  border-radius: 50%;
+  width: 8%;
+  height: 8%;
+  z-index: 4;
+}
+
+.card .circle2 {
+  position: absolute;
+  background: var(--color);
+  border-radius: 50%;
+  width: 13%;
+  height: 13%;
+  z-index: 3;
+}
+
+.card .circle3 {
+  position: absolute;
+  background: rgb(255, 255, 255);
+  border-radius: 50%;
+  width: 42%;
+  height: 42%;
+  z-index: 2;
+}
+
+.card .circle4 {
+  position: absolute;
+  background: var(--color);
+  border-radius: 50%;
+  width: 45%;
+  height: 45%;
+  z-index: 1;
+}
+
+.card .circle4 {
+  position: absolute;
+  background: rgb(117, 249, 76);
+  border-radius: 50%;
+}
+
+.card .description {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.card .description p {
+  position: absolute;
+  height: calc(100% + 40px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+}
+
+.card .description p:nth-child(2) {
+  transform: translate(-50%, -50%) rotate(3deg);
+}
+
+.card .description p:nth-child(3) {
+  transform: translate(-50%, -50%) rotate(6deg);
+}
+
+.card .description p:nth-child(4) {
+  transform: translate(-50%, -50%) rotate(9deg);
+}
+
+.card .description p:nth-child(5) {
+  transform: translate(-50%, -50%) rotate(12deg);
+}
+
+.card .description p:nth-child(6) {
+  transform: translate(-50%, -50%) rotate(15deg);
+}
+
+.card .description p:nth-child(7) {
+  transform: translate(-50%, -50%) rotate(18deg);
+}
+
+.card .description p:nth-child(8) {
+  transform: translate(-50%, -50%) rotate(21deg);
+}
+
+.card .description p:nth-child(9) {
+  transform: translate(-50%, -50%) rotate(25deg);
+}
+
+.card .description p:nth-child(10) {
+  transform: translate(-50%, -50%) rotate(28deg);
+}
+
+.card .description p:nth-child(11) {
+  transform: translate(-50%, -50%) rotate(32deg);
+}
+
+.card .description p:nth-child(12) {
+  transform: translate(-50%, -50%) rotate(36deg);
+}
+
+.card .description p:nth-child(13) {
+  transform: translate(-50%, -50%) rotate(39.5deg);
+}
+
+.card .description p:nth-child(14) {
+  transform: translate(-50%, -50%) rotate(43deg);
+}
+
+.card .description p:nth-child(15) {
+  transform: translate(-50%, -50%) rotate(47deg);
+}
+
+.card .description p:nth-child(16) {
+  transform: translate(-50%, -50%) rotate(50.5deg);
+}
+
+.card .description p:nth-child(17) {
+  transform: translate(-50%, -50%) rotate(54.5deg);
+}
+
+.card .description p:nth-child(18) {
+  transform: translate(-50%, -50%) rotate(58deg);
+}
+
+.card .description p:nth-child(19) {
+  transform: translate(-50%, -50%) rotate(61deg);
+}
+
+.card .description p:nth-child(20) {
+  transform: translate(-50%, -50%) rotate(64.5deg);
+}
+
+.card .description p:nth-child(21) {
+  transform: translate(-50%, -50%) rotate(68deg);
+}
+
+.card .description p:nth-child(22) {
+  transform: translate(-50%, -50%) rotate(71.5deg);
+}
+
+.card .description p:nth-child(23) {
+  transform: translate(-50%, -50%) rotate(74.6deg);
+}
+
+.card .description p:nth-child(24) {
+  transform: translate(-50%, -50%) rotate(77.5deg);
+}
+
+
+/* 步骤二 */
+
+.step_two .header {
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    color:rgb(0, 0, 0);
+}
+
+.step_two .header .description {
+    font-size: 14px;
+    text-align: center;
+    color: rgb(102, 102, 102);
+    padding: 10px 0;
+}
+
+.step_two .content {
+    margin-top: 50px;
+}
+
+.step_two ul {
+    display: flex;
+    flex-flow: row wrap;
+    width: 500px;
+}
+.step_two ul li {
+    display: block;
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+    padding: 25px 0;
+    animation: 1s;
+}
+
+.step_two .card {
+    width: 100px;
+    height: 100px;
+}
+
+.step_two .card .description p:nth-child(1) {
+    transform: translate(-50%, -50%) rotate(-14deg);
+}
+
+.step_two .card .description p:nth-child(2) {
+    transform: translate(-50%, -50%) rotate(-7deg);
+}
+
+.step_two .card .description p:nth-child(3) {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.step_two .card .description p:nth-child(4) {
+    transform: translate(-50%, -50%) rotate(7deg);
+}
+
+.step_two .card .description p:nth-child(5) {
+    transform: translate(-50%, -50%) rotate(14deg);
+}
+
+.step_two .card .description p:nth-child(6) {
+    transform: translate(-50%, -50%) rotate(24deg);
+}
+
+/* 步骤二 */
+/* 步骤三 */
+.step_three {
+  background-color: rgb(229, 229, 229);
+}
+
+/* 光碟 */
+.cds {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.showCds {
+  animation: show 1s ease-in-out 0s forwards;
+}
+
+@keyframes show {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.cds.hideCds {
+  animation: hide 1s forwards;
+}
+
+@keyframes hide {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: translateY(-50%);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+.cd {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  transition: 1s;
+  transform-style: preserve-3d;
+  transform: rotateY(0deg);
+}
+
+.active {
+  position: relative;
+  z-index: 10;
+  animation: cd_in 1s ease-in-out 0s forwards;
+}
+
+/* 进入 */
+@keyframes cd_in {
+  0% {
+    transform: rotateY(0deg);
+  }
+
+  100% {
+    width: 300px;
+    height: 300px;
+    border-radius: 0;
+    transform: rotateY(180deg);
+  }
+}
+
+/* 退出 */
+@keyframes cd_out {
+  0% {
+    width: 300px;
+    height: 300px;
+    border-radius: 0;
+    transform: rotateY(180deg);
+  }
+
+  100% {
+    transform:rotateY(0deg);
+  }
+}
+
+.cd-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.cd-front {
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cd-back {
+  background-size: cover;
+  background-position: center;
+  transform: rotateY(180deg);
+  border: 2px solid var(--color);
+  border-radius: 6px;
+}
+
+.cd-back:before {
+  content: 'BLURRY';
+  position: absolute;
+  color: var(--color);
+  left: 50%;
+  top: -25px;
+  transform: translateX(-50%);
+  font-size: 14px;
+  font-weight: bold;
+}

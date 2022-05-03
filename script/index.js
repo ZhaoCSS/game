@@ -1,86 +1,373 @@
-var imgs = ["./image/1.jpg"];
+var zIndex = 1;
 
+var imgs = [
+  "./image/1.jpg",
+  "./image/2.jpg",
+  "./image/3.jpg",
+  "./image/4.jpg",
+  "./image/5.jpg",
+  "./image/6.jpg",
+  "./image/7.jpg",
+  "./image/8.jpg",
+  "./image/9.jpg",
+  "./image/10.jpg",
+  "./image/11.jpg",
+  "./image/12.jpg",
+  "./image/13.jpg",
+];
+
+// 步骤三 选中节点
 var cNode;
 
-// ui 容器
-var ui = document.getElementById('ui');
-// 图片容器
-var cds = document.querySelectorAll(".cds")[0];
-
-// 输入控制器
-var control = document.getElementById('control');
-
-// 输入框
-var input = document.getElementById('control_header__input');
-
 function center() {
-    return [window.innerWidth / 2, window.innerHeight / 2];
+  return [window.innerWidth / 2, window.innerHeight / 2];
 }
-function randomPosition() {
-    return [window.innerWidth / 2, window.innerHeight / 2];
+
+// 随机定位集合
+var positions = [];
+
+// 随机显示
+function getRandomIntInclusive(min, max) {
+  return Math.random() * max + min; //含最大值，含最小值
 }
+
+// 定位已存在
+function positionAlreadyExists(position) {
+  // 间隔10px
+  var spacing = 10;
+  var xs = [];
+  for (var i = 0; i < positions.length; i++) {
+    // console.log(positions[i][0] - position[0]);
+    if (
+      Math.abs(positions[i][0] - position[0]) >= 100 ||
+      Math.abs(positions[i][1] - position[1]) >= 100
+    ) {
+      xs.push(1);
+    } else {
+      xs.push(2);
+    }
+  }
+  return xs.includes(2);
+}
+
+function randomPosition(spacing) {
+  // 上间距
+  var pd = 50;
+  var pl = 50;
+  // 最大值
+  var left_max = window.innerWidth - pl * 2 - spacing;
+  var top_max = window.innerHeight - pd * 2 - spacing;
+
+  var left = getRandomIntInclusive(pl, left_max);
+  var top = getRandomIntInclusive(pd, top_max);
+  var position = [left, top];
+  if (!positionAlreadyExists(position)) {
+    positions.push(position);
+    return position;
+  } else {
+    return randomPosition(spacing);
+  }
+}
+
 function renderCd(url) {
-    var cd = document.createElement("div");
-    cd.className = "cd";
-    // 定位
-    var position = randomPosition();
-    cd.style.left = position[0] + "px";
-    cd.style.top = position[1] + "px";
-    var cdFront = document.createElement("div");
-    cdFront.className = "cd-face cd-front";
-    var cdBack = document.createElement("div");
-    cdBack.className = "cd-face cd-back";
-    cdBack.style.backgroundImage = "url(" + url + ")";
-    cd.appendChild(cdFront);
-    cd.appendChild(cdBack);
-    // 旋转
-    cd.addEventListener("click", function (e) {
-        cNode = cd;
-        step1();
-    });
-    return cd;
+  var cd = document.createElement("div");
+  cd.className = "cd";
+  // 定位
+  var position = randomPosition(100);
+  cd.style.left = position[0] + "px";
+  cd.style.top = position[1] + "px";
+  var cdFront = document.createElement("div");
+  cdFront.className = "cd-face cd-front card";
+  cdFront.innerHTML = `
+    <div class="circle1 center"></div>
+    <div class="circle2 center"></div>
+    <div class="circle3 center"></div>
+    <div class="circle4 center"></div>
+  `;
+  var cdBack = document.createElement("div");
+  cdBack.className = "cd-face cd-back";
+  cdBack.style.backgroundImage = "url(" + url + ")";
+  cd.appendChild(cdFront);
+  cd.appendChild(cdBack);
+  return cd;
 }
 function renderCds() {
-    for (var i = 0; i < imgs.length; i++) {
-        cds.appendChild(renderCd(imgs[i]));
-        cds.classList.add("showCds");
+  var cds = document.createElement("div");
+  cds.className = "cds";
+  for (var i = 0; i < imgs.length; i++) {
+    var cd = renderCd(imgs[i]);
+    cd.setAttribute("data-index", i);
+    cds.appendChild(cd);
+  }
+  return cds;
+}
+
+(function () {
+  var step1 = document.getElementsByClassName("step_one")[0];
+  var step2 = document.getElementsByClassName("step_two")[0];
+  var step3 = document.getElementsByClassName("step_three")[0];
+  var start = document.getElementById("start");
+
+  // 启动 游戏
+  start.addEventListener(
+    "click",
+    function () {
+      step1.classList.add("animate__animated", "animate__fadeOut");
+      var card = start.getElementsByClassName("card")[0];
+      card.classList.add("animate__animated", "animate__rotateOut");
+      function startAnimationEnd() {
+        step1.style.display = "none";
+        step1.classList.remove("animate__animated", "animate__fadeOut");
+        step1.classList.remove();
+        card.classList.remove("animate__animated", "animate__rotateOut");
+        start.removeEventListener("webkitAnimationEnd", startAnimationEnd);
+        // 开启 关卡选择
+        step2Fn();
+      }
+      start.addEventListener("webkitAnimationEnd", startAnimationEnd);
+    },
+    false
+  );
+
+  // 点击关卡
+  var levels = document.querySelectorAll(".step_two .levels li .card");
+  for (var i = 0; i < levels.length; i++) {
+    levels[i].addEventListener(
+      "click",
+      function (e) {
+        if (e.target.nodeName.toLocaleUpperCase() === "P") {
+          step2AnimationEnd(e.target.parentNode.parentNode);
+        }
+        if (
+          e.target.className === "description" ||
+          e.target.className === "circle4 center" ||
+          e.target.className === "circle3 center" ||
+          e.target.className === "circle2 center" ||
+          e.target.className === "circle1 center"
+        ) {
+          step2AnimationEnd(e.target.parentNode);
+        }
+      },
+      false
+    );
+  }
+  // 步骤二
+  function step2Fn() {
+    step2.style.display = "block";
+    // step1.classList.add("animate__animated");
+    // step1.classList.add("animate__fadeIn");
+  }
+
+  // 步骤二结束
+  function step2AnimationEnd(itemNode) {
+    itemNode.classList.add("magictime", "vanishOut");
+    step2.classList.add("animate__animated", "animate__fadeOut");
+    step2.addEventListener("webkitAnimationEnd", liAnimationEnd);
+    function liAnimationEnd() {
+      step2.removeEventListener("webkitAnimationEnd", liAnimationEnd);
+      step2.style.display = "none";
+      step2.classList.remove("animate__animated", "animate__fadeOut");
+      step3Fn();
     }
-}
 
-// step 展示
-function step1() {
-    // 光碟
-    cNode.classList.add("active");
-    var cPosition = center();
-    cNode.style.left = cPosition[0] + "px";
-    cNode.style.top = cPosition[1] + "px";
-    control.classList.add('control_stop_one');
-}
-// step 输入
-function step2() {
-    input.classList.add('focus');
-    control.classList.add('control_stop_two');
-    cds.classList.remove('showCds');
-    cds.classList.add('hideCds')
-}
-// step 全部展示
-function step3() {
-    ui.classList.add('hide');
-}
+    // header fadeOut
+    // var header = step2.querySelectorAll(".header")[0];
+    // header.classList.add("animate__animated", "animate__fadeOut");
+  }
 
-renderCds();
+  // 获取cd节点
+  function getCdNode(node) {
+    if (node.className === "cd-face cd-front card") {
+      return node.parentNode;
+    }
+    if (
+      node.className === "circle4 center" ||
+      node.className === "circle3 center" ||
+      node.className === "circle2 center" ||
+      node.className === "circle1 center"
+    ) {
+      return node.parentNode.parentNode;
+    }
+  }
+  // 步骤三
+  function step3Fn() {
+    step3.style.display = "block";
+    var cds = renderCds();
+    cds.classList.add("animate__animated", "animate__fadeIn");
+    step3.appendChild(cds);
+    var cdNodes = cds.querySelectorAll(".cd");
+    for (var i = 0; i < cdNodes.length; i++) {
+      // 旋转
+      cdNodes[i].addEventListener("click", function (e) {
+        var cd = getCdNode(e.target);
+        if (!cd) return;
+        var ind = Number(cd.getAttribute("data-index"));
+        cNode = cd;
+        cNode.classList.add("active");
+        var cPosition = center();
+        cNode.style.left = cPosition[0] - 150 + "px";
+        cNode.style.top = cPosition[1] - 150 + "px";
+        cNode.style.transform = `rotateY(180deg)`;
+        cNode.style.zIndex = zIndex;
+        zIndex++;
+        for (var j = 0; j < cdNodes.length; j++) {
+          if (ind !== j) {
+            cdNodes[j].classList.add("animate__animated", "animate__fadeOut");
+          }
+        }
+        function cdNodesAnimationEnd() {
+          for (var j = 0; j < cdNodes.length; j++) {
+            if (ind !== j) {
+              cdNodes[j].classList.remove(
+                "animate__animated",
+                "animate__fadeOut"
+              );
+              cdNodes[j].style.display = "none";
+            }
+          }
+          if (ind === 0) {
+            cdNodes[1].removeEventListener(
+              "webkitAnimationEnd",
+              cdNodesAnimationEnd
+            );
+          }
+          cdNodes[0].removeEventListener(
+            "webkitAnimationEnd",
+            cdNodesAnimationEnd
+          );
+          // 露出输入框
+          control.classList.add("animate__animated", "animate__stepOne");
+        }
+        if (ind === 0) {
+          cdNodes[1].addEventListener(
+            "webkitAnimationEnd",
+            cdNodesAnimationEnd
+          );
+        }
+        cdNodes[0].addEventListener("webkitAnimationEnd", cdNodesAnimationEnd);
+      });
+    }
+  }
 
-// 控制器输入框
-input.addEventListener('click', function () {
-    step2();
-    setTimeout(function() {
-        $transform($targets.sphere, 2000);
-        setTimeout(function() {
-            $transform($targets.table, 2000);
-        }, 2000);
-    }, 3000);
-}, false);
-// 输入确认
-document.querySelectorAll('.menu__option_enter')[0].addEventListener('click', function() {
-    step3();
-});
+  // 输入控制器
+  var control = document.getElementById("control");
+  // 输入框
+  var input = document.getElementById("control_header__input");
+  // 输入框是否激活
+  var isActiveInput = false;
+  // 输入key
+  var inputKeys = [];
+  // 添加emoji
+  function addEmoJi(keys) {
+    var items = "";
+    console.log(keys);
+    for (var i = 0; i < keys.length; i++) {
+      items += '<span class="input_item emoji_' + keys[i] + '"></span>';
+    }
+    input.innerHTML = items;
+  }
+  // 输入key 更新
+  function inputKesUpdate(keys) {
+    addEmoJi(keys);
+  }
+  // 添加inputKey
+  function addInputkey(key) {
+    inputKeys.push(key);
+    inputKesUpdate(inputKeys);
+  }
+  // 删除inputkey
+  function removeInputKey() {
+    inputKeys.pop();
+    inputKesUpdate(inputKeys);
+  }
+  // 控制器输入框
+  input.addEventListener(
+    "click",
+    function () {
+      // 是否动画中
+      if (control.getAnimations().length !== 0) return;
+      // 激活输入框
+      if (isActiveInput) return;
+      isActiveInput = true;
+      // 弹出输入框
+      input.classList.add("focus");
+      step3.classList.add("animate__animated", "animate__fadeOutUp");
+      // cNode.classList.add("animate__animated", "animate__fadeOutUp");
+      control.classList.add("animate__animated", "animate__stepTwo");
+      function fadeIn() {
+        cNode.style.display = "none";
+      }
+      if (cNode) {
+        cNode.addEventListener("webkitAnimationEnd", fadeIn);
+      }
+
+      var menuOptions = document.getElementById("control-content__menu");
+      menuOptions.addEventListener(
+        "click",
+        function (e) {
+          if (!isActiveInput) return;
+          var selectedNode;
+          if (e.target.className === "menu_option") {
+            selectedNode = e.target;
+          }
+          if (e.target.className === "menu__option_inner") {
+            selectedNode = e.target.parentNode;
+          }
+          if (selectedNode) {
+            addInputkey(selectedNode.getAttribute("data-index"));
+          }
+        },
+        false
+      );
+      var enter = document.querySelector(".menu__option_enter");
+      function enterFn() {
+        if (!isActiveInput) return;
+        if (inputKeys.length > 0) {
+          inputSuccess();
+        } else {
+          inputError();
+        }
+      }
+      enter.addEventListener("click", enterFn);
+      // 键盘监听
+      function keydown(e) {
+        if (Number(e.keyCode) === 13) {
+          enterFn();
+        }
+        if (Number(e.keyCode) === 8) {
+          removeInputKey();
+        }
+      }
+      document.addEventListener("keydown", keydown);
+    },
+    false
+  );
+  // 输入正确
+  function inputSuccess() {
+    // 展示图片
+    control.classList.add("animate__animated", "animate__backOutDown");
+  }
+  // 输入错误
+  function inputError() {
+    input.classList.add("animate__animated", "animate__shakeX");
+  }
+  input.addEventListener("webkitAnimationEnd", function (e) {
+    input.classList.remove("animate__animated", "animate__" + e.animationName);
+  });
+  control.addEventListener("webkitAnimationEnd", function (e) {
+    if (e.animationName === 'stepOne') {
+      control.style.top = 'calc(100% - 90px)';
+    }
+    if (e.animationName === 'stepTwo') {
+      control.style.top = 'calc(50% - 217px)';
+    }
+    if (e.animationName == 'backOutDown') {
+      control.style.top = 'calc(100% + 3px)';
+      // 关闭
+      isActiveInput = false;
+      // 展示 images;
+      window.img3d.init(document.getElementById('img'), imgs);
+    }
+    control.classList.remove("animate__animated", "animate__" + e.animationName);
+  });
+})();
