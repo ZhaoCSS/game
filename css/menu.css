@@ -28,7 +28,7 @@
 .menu__option .menu__option_inner {
   /* width: 30px;
   height: 30px; */
-  background: url(/image/menu.png) no-repeat;
+  background: url(./image/menu.png) no-repeat;
   background-size: 486px 270px;
 }
 
