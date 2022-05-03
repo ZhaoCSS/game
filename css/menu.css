@@ -28,7 +28,7 @@
 .menu__option .menu__option_inner {
   /* width: 30px;
   height: 30px; */
-  background: url(./image/menu.png) no-repeat;
+  background: url(../image/menu.png) no-repeat;
   background-size: 486px 270px;
 }
 
@@ -148,7 +148,7 @@
   display: inline-block;
   width: 42px;
   height: 42px;
-  background: url(./image/menu.png) no-repeat;
+  background: url(../image/menu.png) no-repeat;
   background-size: 413.09999999999997px 229.5px;
 }
 
