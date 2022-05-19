@@ -84,104 +84,7 @@
         <div class="description">FOOD</div>
       </div>
       <div class="content">
-        <ul class="levels">
-          <li data-step="1">
-            <div class="card">
-              <div class="circle1 center"></div>
-              <div class="circle2 center"></div>
-              <div class="circle3 center"></div>
-              <div class="circle4 center"></div>
-              <div class="description">
-                <p>L</p>
-                <p>E</p>
-                <p>V</p>
-                <p>E</p>
-                <p>L</p>
-                <p>1</p>
-              </div>
-            </div>
-          </li>
-          <li data-step="2">
-            <div class="card">
-              <div class="circle1 center"></div>
-              <div class="circle2 center"></div>
-              <div class="circle3 center"></div>
-              <div class="circle4 center"></div>
-              <div class="description">
-                <p>L</p>
-                <p>E</p>
-                <p>V</p>
-                <p>E</p>
-                <p>L</p>
-                <p>2</p>
-              </div>
-            </div>
-          </li>
-          <li data-step="3">
-            <div class="card">
-              <div class="circle1 center"></div>
-              <div class="circle2 center"></div>
-              <div class="circle3 center"></div>
-              <div class="circle4 center"></div>
-              <div class="description">
-                <p>L</p>
-                <p>E</p>
-                <p>V</p>
-                <p>E</p>
-                <p>L</p>
-                <p>3</p>
-              </div>
-            </div>
-          </li>
-          <li data-step="4">
-            <div class="card">
-              <div class="circle1 center"></div>
-              <div class="circle2 center"></div>
-              <div class="circle3 center"></div>
-              <div class="circle4 center"></div>
-              <div class="description">
-                <p>L</p>
-                <p>E</p>
-                <p>V</p>
-                <p>E</p>
-                <p>L</p>
-                <p>4</p>
-              </div>
-            </div>
-          </li>
-          <li data-step="5">
-            <div class="card">
-              <div class="circle1 center"></div>
-              <div class="circle2 center"></div>
-              <div class="circle3 center"></div>
-              <div class="circle4 center"></div>
-              <div class="description">
-                <p>L</p>
-                <p>E</p>
-                <p>V</p>
-                <p>E</p>
-                <p>L</p>
-                <p>5</p>
-              </div>
-            </div>
-          </li>
-          <li data-step="6">
-            <div class="card">
-              <div class="circle1 center"></div>
-              <div class="circle2 center"></div>
-              <div class="circle3 center"></div>
-              <div class="circle4 center"></div>
-              <div class="description">
-                <p>L</p>
-                <p>E</p>
-                <p>V</p>
-                <p>E</p>
-                <p>L</p>
-                <p>6</p>
-              </div>
-            </div>
-          </li>
-        </ul>
+        <ul class="levels"></ul>
       </div>
     </div>
   </div>
@@ -196,7 +99,7 @@
     <div id="control_header__input"></div>
     <div id="control-content__menu">
       <div class="menu__wrapper">
-        <div class="menu__option" data-index="1">
+        <div class="menu__option" data-index="1" data-type="1_MB">
           <div class="menu__option_inner"></div>
         </div>
         <div class="menu__option" data-index="2">
@@ -217,13 +120,13 @@
         <div class="menu__option" data-index="7">
           <div class="menu__option_inner"></div>
         </div>
-        <div class="menu__option" data-index="8">
+        <div class="menu__option" data-index="8" data-type="3_TZ">
           <div class="menu__option_inner"></div>
         </div>
         <div class="menu__option" data-index="9">
           <div class="menu__option_inner"></div>
         </div>
-        <div class="menu__option" data-index="10">
+        <div class="menu__option" data-index="10" data-type="1_HS">
           <div class="menu__option_inner"></div>
         </div>
         <div class="menu__option" data-index="11">
@@ -235,7 +138,7 @@
         <div class="menu__option" data-index="13">
           <div class="menu__option_inner"></div>
         </div>
-        <div class="menu__option" data-index="14">
+        <div class="menu__option" data-index="14" data-type="4_BQL">
           <div class="menu__option_inner"></div>
         </div>
         <div class="menu__option" data-index="15">
@@ -244,7 +147,7 @@
         <div class="menu__option" data-index="16">
           <div class="menu__option_inner"></div>
         </div>
-        <div class="menu__option" data-index="17">
+        <div class="menu__option" data-index="17" data-type="5_JT">
           <div class="menu__option_inner"></div>
         </div>
         <div class="menu__option" data-index="18">
@@ -253,7 +156,7 @@
         <div class="menu__option" data-index="19">
           <div class="menu__option_inner"></div>
         </div>
-        <div class="menu__option" data-index="20">
+        <div class="menu__option" data-index="20" data-type="2_PJ">
           <div class="menu__option_inner"></div>
         </div>
         <div class="menu__option" data-index="21">
@@ -284,217 +187,30 @@
     </div>
   </div>
 </body>
+<script async="" src="//www.google-analytics.com/analytics.js"></script>
 <script src="./script/menu.js"></script>
-<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
-
-<script type="importmap">
-			{
-				"imports": {
-					"three": "./script/three.module.js"
-				}
-			}
-		</script>
-
-<script type="module">
-
-  import * as THREE from 'three';
-
-  import { TWEEN } from './script/libs/tween.module.min.js';
-  import { TrackballControls } from './script/controls/TrackballControls.js';
-  import { CSS3DRenderer, CSS3DObject } from './script/renderers/CSS3DRenderer.js';
-
-  (function () {
-    let camera, scene, renderer;
-    let controls;
-
-    const objects = [];
-    const targets = { sphere: [], grid: [], center: [], clear: [] };
-
-    // init(table);
-    // animate();
-
-    function getImages(images) {
-      for (let i = 0; i < images.length; i++) {
-
-        const element = document.createElement('img');
-        element.className = 'element';
-        element.src = images[i];
-
-        const objectCSS = new CSS3DObject(element);
-        objectCSS.position.x = Math.random() * 4000 - 2000;
-        objectCSS.position.y = Math.random() * 4000 - 2000;
-        objectCSS.position.z = Math.random() * 4000 - 2000;
-        scene.add(objectCSS);
-
-        objects.push(objectCSS);
-
-      }
-    }
-
-    function init(container, images) {
-
-      camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
-      camera.position.z = 2000;
-
-      scene = new THREE.Scene();
-
-      getImages(images);
-
-      // sphere
-
-      const vector = new THREE.Vector3();
-
-      for (let i = 0, l = objects.length; i < l; i++) {
-
-        const phi = Math.acos(- 1 + (2 * i) / l);
-        const theta = Math.sqrt(l * Math.PI) * phi;
-
-        const object = new THREE.Object3D();
-
-        object.position.setFromSphericalCoords(800, phi, theta);
-
-        vector.copy(object.position).multiplyScalar(2);
-
-        object.lookAt(vector);
-
-        targets.sphere.push(object);
-
-      }
-
-      // grid
-
-      for (let i = 0; i < objects.length; i++) {
-
-        const object = new THREE.Object3D();
-
-        object.position.x = ((i % 5) * 400) - 800;
-        object.position.y = (- (Math.floor(i / 5) % 5) * 400) + 800;
-        object.position.z = (Math.floor(i / 25)) * 1000 - 2000;
-
-        targets.grid.push(object);
-
-      }
-
-      // clear
-
-      for (let i = 0; i < objects.length; i++) {
-
-        const object = new THREE.Object3D();
-
-        object.position.x = ((i % 5) * 400) - 800;
-        object.position.y = (- (Math.floor(i / 5) % 5) * 400) + 800;
-        object.position.z = (Math.floor(i / 25)) * 1000 + 2000;
-
-        targets.clear.push(object);
-
-      }
-
-      // 居中
-      targets.center.push({
-        position: {
-          x: window.innerWidth / 2 - 120,
-          y: window.innerHeight / 2 - 160,
-          z: 1000,
-        }
-      });
-
-      //
-
-      renderer = new CSS3DRenderer();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      container.appendChild(renderer.domElement);
-
-      //
-
-      controls = new TrackballControls(camera, renderer.domElement);
-      controls.minDistance = 500;
-      controls.maxDistance = 6000;
-      controls.addEventListener('change', render);
-
-      transform(targets.grid, 2000);
-      //
-
-      window.addEventListener('resize', onWindowResize);
-
-      animate();
-
-    }
-
-    function center(targets) {
-      console.log(123123);
-      transform(targets.center, 2000);
-    }
-
-    function transform(targets, duration) {
-
-      TWEEN.removeAll();
-
-      for (let i = 0; i < objects.length; i++) {
-
-        const object = objects[i];
-        const target = targets[i];
-
-        new TWEEN.Tween(object.position)
-          .to({ x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration)
-          .easing(TWEEN.Easing.Exponential.InOut)
-          .start();
-
-        new TWEEN.Tween(object.rotation)
-          .to({ x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration)
-          .easing(TWEEN.Easing.Exponential.InOut)
-          .start();
-
-      }
-
-      new TWEEN.Tween(this)
-        .to({}, duration * 2)
-        .onUpdate(render)
-        .start();
-
-    }
-
-    function onWindowResize() {
-
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-
-      renderer.setSize(window.innerWidth, window.innerHeight);
-
-      render();
-
-    }
-
-    let img3d = {};
-
-    function animate() {
-
-      img3d.id = requestAnimationFrame(animate);
-
-      TWEEN.update();
-
-      controls.update();
-
-    }
-
-    function clear() {
-      transform(targets.clear, 2000);
-      cancelAnimationFrame(img3d.id);
-      container.innerHTML = '';
-    }
-
-    function render() {
-
-      renderer.render(scene, camera);
-
-    }
-
-
-    window.img3d = {
-      init,
-      clear
-    };
-  })()
+<script src="./script/jquery.min.js"></script>
+<script src="./script/js/api.js"></script>
+<script src="./script/js/thumSheetData.js"></script>
+<script>
+  function shuffle(t) {
+    for (
+      var e, i, n = t.length;
+      n;
+      e = Math.floor(Math.random() * n), i = t[--n], t[n] = t[e], t[e] = i
+    );
+    return t;
+  }
+  Array.prototype.containsObject = function (t) {
+    var e;
+    for (e = 0; e < this.length; e++) if (this[e] === t) return !0;
+    return !1;
+  }
+  function getImageUrl(id) {
+    return '../image/' + id + '.jpg';
+  }
 </script>
+<script src="./script/js/ua.js"></script>
 <script src="./script/index.js"></script>
 </body>
 

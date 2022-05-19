@@ -1,20 +1,31 @@
 var zIndex = 1;
 
-var imgs = [
-  "./image/1.jpg",
-  "./image/2.jpg",
-  "./image/3.jpg",
-  "./image/4.jpg",
-  "./image/5.jpg",
-  "./image/6.jpg",
-  "./image/7.jpg",
-  "./image/8.jpg",
-  "./image/9.jpg",
-  "./image/10.jpg",
-  "./image/11.jpg",
-  "./image/12.jpg",
-  "./image/13.jpg",
+var levels = [
+  '1_HS',
+  '2_PJ',
+  '3_TZ',
+  '4_BQL',
+  '5_JT',
+  '6_MB'
 ];
+
+var standalone = {
+  1: '6_MB',
+  8: '3_TZ',
+  10: '1_HS',
+  14: '4_BQL',
+  17: '5_JT',
+  20: '2_PJ'
+};
+
+// 获取图片集
+function getImageUrls(id) {
+  var imageUrls = [];
+  for (var i = 0; i < 16; i++) {
+    imageUrls.push('./image/' + id + '_' + (i+1) + '.jpg');
+  }
+  return imageUrls;
+}
 
 // 步骤三 选中节点
 var cNode;
@@ -91,9 +102,10 @@ function renderCd(url) {
   cd.appendChild(cdBack);
   return cd;
 }
-function renderCds() {
+function renderCds(id) {
   var cds = document.createElement("div");
   cds.className = "cds";
+  var imgs = getImageUrls(id);
   for (var i = 0; i < imgs.length; i++) {
     var cd = renderCd(imgs[i]);
     cd.setAttribute("data-index", i);
@@ -107,6 +119,40 @@ function renderCds() {
   var step2 = document.getElementsByClassName("step_two")[0];
   var step3 = document.getElementsByClassName("step_three")[0];
   var start = document.getElementById("start");
+
+  // 选中关卡id
+  var selectedId;
+  // 创建关卡
+  function createLevels() {
+      var levelsDom = step2.querySelector('.levels');
+        // 点击关卡
+      for (var i = 0; i < levels.length; i++) {
+        var levelItem = document.createElement('li');
+        levelItem.setAttribute("data-step", 1);
+        levelItem.setAttribute("id", levels[i]);
+        levelItem.innerHTML = '<div class="card"><div class="circle1 center"></div><div class="circle2 center"></div><div class="circle3 center"></div><div class="circle4 center"></div><div class="description"><p>L</p><p>E</p><p>V</p><p>E</p><p>L</p><p>'+ (i + 1) +'</p></div></div>';
+        levelItem.addEventListener(
+          "click",
+          function (e) {
+            console.log(1223123);
+            if (e.target.nodeName.toLocaleUpperCase() === "P") {
+              step2AnimationEnd(e.target.parentNode.parentNode);
+            }
+            if (
+              e.target.className === "description" ||
+              e.target.className === "circle4 center" ||
+              e.target.className === "circle3 center" ||
+              e.target.className === "circle2 center" ||
+              e.target.className === "circle1 center"
+            ) {
+              step2AnimationEnd(e.target.parentNode);
+            }
+          },
+          false
+        );
+        levelsDom.appendChild(levelItem);
+      }
+  }
 
   // 启动 游戏
   start.addEventListener(
@@ -129,30 +175,9 @@ function renderCds() {
     false
   );
 
-  // 点击关卡
-  var levels = document.querySelectorAll(".step_two .levels li .card");
-  for (var i = 0; i < levels.length; i++) {
-    levels[i].addEventListener(
-      "click",
-      function (e) {
-        if (e.target.nodeName.toLocaleUpperCase() === "P") {
-          step2AnimationEnd(e.target.parentNode.parentNode);
-        }
-        if (
-          e.target.className === "description" ||
-          e.target.className === "circle4 center" ||
-          e.target.className === "circle3 center" ||
-          e.target.className === "circle2 center" ||
-          e.target.className === "circle1 center"
-        ) {
-          step2AnimationEnd(e.target.parentNode);
-        }
-      },
-      false
-    );
-  }
   // 步骤二
   function step2Fn() {
+    createLevels();
     step2.style.display = "block";
     // step1.classList.add("animate__animated");
     // step1.classList.add("animate__fadeIn");
@@ -167,7 +192,8 @@ function renderCds() {
       step2.removeEventListener("webkitAnimationEnd", liAnimationEnd);
       step2.style.display = "none";
       step2.classList.remove("animate__animated", "animate__fadeOut");
-      step3Fn();
+      var id = itemNode.parentNode.getAttribute('id');
+      step3Fn(id);
     }
 
     // header fadeOut
@@ -190,9 +216,10 @@ function renderCds() {
     }
   }
   // 步骤三
-  function step3Fn() {
+  function step3Fn(id) {
+    selectedId = id;
     step3.style.display = "block";
-    var cds = renderCds();
+    var cds = renderCds(id);
     cds.classList.add("animate__animated", "animate__fadeIn");
     step3.appendChild(cds);
     var cdNodes = cds.querySelectorAll(".cd");
@@ -320,9 +347,9 @@ function renderCds() {
         false
       );
       var enter = document.querySelector(".menu__option_enter");
-      function enterFn() {
+      function enterFn () {
         if (!isActiveInput) return;
-        if (inputKeys.length > 0) {
+        if (inputKeys.length > 0 && selectedId === standalone[inputKeys[0]]) {
           inputSuccess();
         } else {
           inputError();
@@ -366,7 +393,7 @@ function renderCds() {
       // 关闭
       isActiveInput = false;
       // 展示 images;
-      window.img3d.init(document.getElementById('img'), imgs);
+      window.img3d.init(document.getElementById('img'), getImageUrls(selectedId));
     }
     control.classList.remove("animate__animated", "animate__" + e.animationName);
   });
