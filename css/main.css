@@ -99,11 +99,11 @@ body {
   }
 }
 
-#control-content__menu {
+#control_content__menu {
   margin-top: 40px;
 }
 
-#control-content__menu {
+#control_content__menu {
   border: 2px solid var(--color);
   padding: 30px 50px;
   box-sizing: border-box;
@@ -117,7 +117,7 @@ body {
   box-sizing: border-box;
 }
 
-#control-content__menu .menu__option {
+#control_content__menu .menu__option {
   position: relative;
   display: block;
   flex: 0 0 14.285714285714286%;
@@ -180,7 +180,7 @@ body {
   }
 }
 
-/* .control_stop_two #control-content__menu {
+/* .control_stop_two #control_content__menu {
   animation: control_content_in 0.5s ease-in 1s forwards;
 }
 
@@ -531,14 +531,12 @@ body {
   transform: rotateY(0deg);
 }
 
-.active {
-  position: relative;
-  z-index: 10;
-  animation: cd_in 1s ease-in-out 0s forwards;
+.animate__cdIn {
+  animation-name: cdIn;
 }
 
 /* 进入 */
-@keyframes cd_in {
+@keyframes cdIn {
   0% {
     transform: rotateY(0deg);
   }
@@ -551,8 +549,12 @@ body {
   }
 }
 
+.animate__cdOut {
+  animation-name: cdOut;
+}
+
 /* 退出 */
-@keyframes cd_out {
+@keyframes cdOut {
   0% {
     width: 300px;
     height: 300px;

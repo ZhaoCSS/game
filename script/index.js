@@ -1,28 +1,202 @@
+var selectedId;
+
+function createItem(e, tags) {
+  var i = e + 1;
+  var type = tags[i] ? "data-type='" + tags[i] + "'" : "";
+  return (
+    "<div class='menu__option' data-index='" +
+    i +
+    "' " +
+    type +
+    ">" +
+    "<div class='menu__option_inner'></div></div>"
+  );
+}
+
+function createEnterItem() {
+  return (
+    '<div class="menu__option"> ' +
+    '<div class="menu__option_inner menu__option_enter"></div>' +
+    "</div>"
+  );
+}
+
+function createItems() {
+  var tags = {
+    1: "1_MB",
+    8: "3_TZ",
+    10: "1_HS",
+    14: "4_BQL",
+    17: "5_JT",
+    20: "2_PJ",
+  };
+  var tagNum = 27;
+  var itemStr = "";
+  for (var i = 0; i < tagNum; i++) {
+    itemStr += createItem(i, tags);
+  }
+  $("#control .menu__wrapper").html(itemStr);
+  $("#control .menu__wrapper .menu__option").bind("click", function () {
+    control.update($(this).attr("data-index"));
+  });
+  var enter = $(createEnterItem()).bind("click", function () {
+    control.enter();
+  });
+  $("#control .menu__wrapper").append(enter);
+  return itemStr;
+}
+
+function Control() {
+  var control = $(
+    "<div id='control'>" +
+      "<div id='control_header__input'></div>" +
+      "<div id='control_content__menu'>" +
+      "<div class='menu__wrapper'></div>" +
+      "</div>" +
+      "</div>"
+  );
+  $("body").append(control);
+  createItems();
+  this.status = 1;
+  this.selectedKey;
+}
+
+Control.prototype.show = function (options) {
+  options && (this.options = options);
+  var t = this;
+  $("#control").animate(
+    { top: $(window).height() - 90 + "px" },
+    300,
+    function () {
+      $("#control_header__input").bind("click", function () {
+        t.onClickCallback();
+        t.open();
+      });
+    }
+  );
+};
+
+Control.prototype.hide = function (e) {
+  var t = this;
+  $("#control").animate(
+    { top: $(window).height() + 3 + "px" },
+    1000,
+    function () {
+      e && e();
+      t.unbindClickCallback();
+    }
+  );
+};
+
+Control.prototype.open = function (e) {
+  this.options && this.options.onOpen && this.options.onOpen();
+  $("#control").animate({ top: $(window).height() / 2 - 217 + "px" }, 300);
+};
+
+Control.prototype.close = function (callback) {
+  var t = this;
+  t.hide(function () {
+    callback && callback();
+    t.clear();
+  });
+};
+
+Control.prototype.onClickCallback = function () {
+  var t = this;
+  t.onKeydown();
+};
+
+Control.prototype.unbindClickCallback = function () {
+  var t = this;
+  t.unbindKeydown();
+};
+
+Control.prototype.update = function (e) {
+  this.selectedKey = e;
+  this.addEmoJi(e);
+};
+
+Control.prototype.clear = function () {
+  this.update();
+};
+
+Control.prototype.addEmoJi = function (e) {
+  if (e) {
+    $("#control_header__input").html(
+      '<span class="input_item emoji_' + e + '"></span>'
+    );
+  } else {
+    $("#control_header__input").html("");
+  }
+};
+
+Control.prototype.onKeydown = function (e) {
+  var t = this;
+  $("document").bind("keydown", function (e) {
+    t.keydown(e);
+  });
+};
+
+Control.prototype.unbindKeydown = function (e) {
+  $("document").unbind("keydown");
+};
+
+Control.prototype.keydown = function (e) {
+  var t = this;
+  if (Number(e.keyCode) === 13) {
+    t.enter();
+  }
+  if (Number(e.keyCode) === 8) {
+    t.removeKey();
+  }
+};
+
+Control.prototype.removeKey = function (e) {
+  this.update();
+};
+
+Control.prototype.enter = function (e) {
+  var t = this;
+  if (this.selectedKey && selectedId === standalone[this.selectedKey]) {
+    t.inputSuccess();
+  } else {
+    t.inputError();
+  }
+};
+
+Control.prototype.inputSuccess = function (e) {
+  var t = this;
+  this.close(function () {
+    t.options && t.options.onSuccess && t.options.onSuccess();
+  });
+};
+
+Control.prototype.inputError = function (e) {
+  $("#control_header__input")
+    .addClass("animate__animated animate__shakeX")
+    .bind("webkitAnimationEnd", function () {
+      $(this).removeClass("animate__animated animate__shakeX");
+    });
+};
+
 var zIndex = 1;
 
-var levels = [
-  '1_HS',
-  '2_PJ',
-  '3_TZ',
-  '4_BQL',
-  '5_JT',
-  '6_MB'
-];
+var levels = ["1_HS", "2_PJ", "3_TZ", "4_BQL", "5_JT", "6_MB"];
 
 var standalone = {
-  1: '6_MB',
-  8: '3_TZ',
-  10: '1_HS',
-  14: '4_BQL',
-  17: '5_JT',
-  20: '2_PJ'
+  1: "6_MB",
+  8: "3_TZ",
+  10: "1_HS",
+  14: "4_BQL",
+  17: "5_JT",
+  20: "2_PJ",
 };
 
 // 获取图片集
 function getImageUrls(id) {
   var imageUrls = [];
   for (var i = 0; i < 16; i++) {
-    imageUrls.push('./image/' + id + '_' + (i+1) + '.jpg');
+    imageUrls.push("./image/" + id + "_" + (i + 1) + ".jpg");
   }
   return imageUrls;
 }
@@ -34,6 +208,21 @@ function center() {
   return [window.innerWidth / 2, window.innerHeight / 2];
 }
 
+// 获取cd节点
+function getCdNode(node) {
+  if (node.className === "cd-face cd-front card") {
+    return node.parentNode;
+  }
+  if (
+    node.className === "circle4 center" ||
+    node.className === "circle3 center" ||
+    node.className === "circle2 center" ||
+    node.className === "circle1 center"
+  ) {
+    return node.parentNode.parentNode;
+  }
+}
+
 // 随机定位集合
 var positions = [];
 
@@ -41,7 +230,6 @@ var positions = [];
 function getRandomIntInclusive(min, max) {
   return Math.random() * max + min; //含最大值，含最小值
 }
-
 // 定位已存在
 function positionAlreadyExists(position) {
   // 间隔10px
@@ -60,7 +248,7 @@ function positionAlreadyExists(position) {
   }
   return xs.includes(2);
 }
-
+// 随机定位
 function randomPosition(spacing) {
   // 上间距
   var pd = 50;
@@ -79,7 +267,7 @@ function randomPosition(spacing) {
     return randomPosition(spacing);
   }
 }
-
+// 渲染单张开片
 function renderCd(url) {
   var cd = document.createElement("div");
   cd.className = "cd";
@@ -102,7 +290,9 @@ function renderCd(url) {
   cd.appendChild(cdBack);
   return cd;
 }
+// 渲染多张卡片
 function renderCds(id) {
+  positions = [];
   var cds = document.createElement("div");
   cds.className = "cds";
   var imgs = getImageUrls(id);
@@ -114,287 +304,228 @@ function renderCds(id) {
   return cds;
 }
 
-(function () {
-  var step1 = document.getElementsByClassName("step_one")[0];
-  var step2 = document.getElementsByClassName("step_two")[0];
-  var step3 = document.getElementsByClassName("step_three")[0];
-  var start = document.getElementById("start");
+var control;
 
-  // 选中关卡id
-  var selectedId;
-  // 创建关卡
-  function createLevels() {
-      var levelsDom = step2.querySelector('.levels');
-        // 点击关卡
-      for (var i = 0; i < levels.length; i++) {
-        var levelItem = document.createElement('li');
-        levelItem.setAttribute("data-step", 1);
-        levelItem.setAttribute("id", levels[i]);
-        levelItem.innerHTML = '<div class="card"><div class="circle1 center"></div><div class="circle2 center"></div><div class="circle3 center"></div><div class="circle4 center"></div><div class="description"><p>L</p><p>E</p><p>V</p><p>E</p><p>L</p><p>'+ (i + 1) +'</p></div></div>';
-        levelItem.addEventListener(
-          "click",
-          function (e) {
-            console.log(1223123);
-            if (e.target.nodeName.toLocaleUpperCase() === "P") {
-              step2AnimationEnd(e.target.parentNode.parentNode);
-            }
-            if (
-              e.target.className === "description" ||
-              e.target.className === "circle4 center" ||
-              e.target.className === "circle3 center" ||
-              e.target.className === "circle2 center" ||
-              e.target.className === "circle1 center"
-            ) {
-              step2AnimationEnd(e.target.parentNode);
-            }
-          },
-          false
-        );
-        levelsDom.appendChild(levelItem);
+// 返回
+var Back = (function () {
+  var backs = [];
+  var ui;
+
+  function back() {
+    var t = this;
+    ui = $(
+      '<div id="back" class="action" style="display: none"><span>back</span></div'
+    ).bind("click", function () {
+      if (backs.length > 0) {
+        t.carry();
+      } else {
+        $(this).hide();
       }
+    });
+    $(".actions").append(ui);
   }
 
-  // 启动 游戏
-  start.addEventListener(
-    "click",
-    function () {
-      step1.classList.add("animate__animated", "animate__fadeOut");
-      var card = start.getElementsByClassName("card")[0];
-      card.classList.add("animate__animated", "animate__rotateOut");
-      function startAnimationEnd() {
-        step1.style.display = "none";
-        step1.classList.remove("animate__animated", "animate__fadeOut");
-        step1.classList.remove();
-        card.classList.remove("animate__animated", "animate__rotateOut");
-        start.removeEventListener("webkitAnimationEnd", startAnimationEnd);
-        // 开启 关卡选择
-        step2Fn();
+  return (
+    (back.prototype = {
+      constructor: back,
+      add: function (e) {
+        backs.push(e);
+        ui.show();
+      },
+      carry: function (e) {
+        if (backs[backs.length - 1]) {
+          backs[backs.length - 1]();
+          backs = backs.slice(0, backs.length - 1);
+        }
+        if (backs.length === 0) {
+          ui.hide();
+        } else {
+          ui.show();
+        }
+      },
+      hide: function () {
+        ui.hide();
+      },
+      clear: function () {
+        backs = [];
       }
-      start.addEventListener("webkitAnimationEnd", startAnimationEnd);
-    },
-    false
+    }),
+    back
   );
+})();
+(function () {
+  var step1 = $(".step_one"),
+    step2 = $(".step_two"),
+    step3 = $(".step_three");
+
+  control = new Control();
+  back = new Back();
+  // 返回
+  var backFns = [];
+  // 选中关卡id
+  // 记录选择卡片选择位置
+  var save_position_x, save_position_y;
+  // 创建关卡
+  function createLevels() {
+    // 点击关卡
+    for (var i = 0; i < levels.length; i++) {
+      var levelItem = $("<li data-step=1 id='" + levels[i] + "'></li>");
+      levelItem
+        .html(
+          '<div class="card"><div class="circle1 center"></div><div class="circle2 center"></div><div class="circle3 center"></div><div class="circle4 center"></div><div class="description"><p>L</p><p>E</p><p>V</p><p>E</p><p>L</p><p>' +
+            (i + 1) +
+            "</p></div></div>"
+        )
+        .click(function (e) {
+          if (e.target.nodeName.toLocaleUpperCase() === "P") {
+            step2AnimationEnd(e.target.parentNode.parentNode);
+          }
+          if (
+            e.target.className === "description" ||
+            e.target.className === "circle4 center" ||
+            e.target.className === "circle3 center" ||
+            e.target.className === "circle2 center" ||
+            e.target.className === "circle1 center"
+          ) {
+            step2AnimationEnd(e.target.parentNode);
+          }
+        });
+      step2.find(".levels").append(levelItem);
+    }
+  }
+  // 启动 游戏
+  $("#start").click(function () {
+    $("#start .card")
+      .addClass("animate__animated animate__rotateOut")
+      .on("webkitAnimationEnd", function () {
+        $(this).removeClass("animate__animated animate__rotateOut");
+        step1.hide(0, function () {
+          step2Fn();
+        });
+      });
+  });
 
   // 步骤二
   function step2Fn() {
     createLevels();
-    step2.style.display = "block";
-    // step1.classList.add("animate__animated");
-    // step1.classList.add("animate__fadeIn");
+    step2.stop().fadeIn("slow");
   }
 
   // 步骤二结束
   function step2AnimationEnd(itemNode) {
-    itemNode.classList.add("magictime", "vanishOut");
-    step2.classList.add("animate__animated", "animate__fadeOut");
-    step2.addEventListener("webkitAnimationEnd", liAnimationEnd);
-    function liAnimationEnd() {
-      step2.removeEventListener("webkitAnimationEnd", liAnimationEnd);
-      step2.style.display = "none";
-      step2.classList.remove("animate__animated", "animate__fadeOut");
-      var id = itemNode.parentNode.getAttribute('id');
-      step3Fn(id);
-    }
-
-    // header fadeOut
-    // var header = step2.querySelectorAll(".header")[0];
-    // header.classList.add("animate__animated", "animate__fadeOut");
-  }
-
-  // 获取cd节点
-  function getCdNode(node) {
-    if (node.className === "cd-face cd-front card") {
-      return node.parentNode;
-    }
-    if (
-      node.className === "circle4 center" ||
-      node.className === "circle3 center" ||
-      node.className === "circle2 center" ||
-      node.className === "circle1 center"
-    ) {
-      return node.parentNode.parentNode;
-    }
+    var n = $(itemNode).addClass("magictime vanishOut");
+    step2
+      .addClass("animate__animated animate__fadeOut")
+      .bind("webkitAnimationEnd", function () {
+        n.removeClass("magictime vanishOut");
+        $(this).removeClass("animate__animated animate__fadeOut")
+          .unbind("webkitAnimationEnd")
+          .hide(0, function () {
+            var id = n.parent().attr("id");
+            step3Fn(id);
+            back.add(function () {
+              step3
+                .addClass("animate__animated animate__fadeOut")
+                .bind("webkitAnimationEnd", function () {
+                  var t = $(this)
+                  t.hide(0, function () {
+                    // 清空已存在定位
+                    positions = [];
+                    t.html("").removeClass("animate__animated animate__fadeOut").unbind("webkitAnimationEnd");
+                    step2.show();
+                  });
+                });
+            });
+          });
+      });
   }
   // 步骤三
   function step3Fn(id) {
     selectedId = id;
-    step3.style.display = "block";
+    step3.show();
+    $(".step_three .cds").remove();
     var cds = renderCds(id);
-    cds.classList.add("animate__animated", "animate__fadeIn");
-    step3.appendChild(cds);
-    var cdNodes = cds.querySelectorAll(".cd");
-    for (var i = 0; i < cdNodes.length; i++) {
-      // 旋转
-      cdNodes[i].addEventListener("click", function (e) {
+    step3.append(cds);
+    $(cds)
+      .addClass("animate__animated animate__fadeIn")
+      .bind("webkitAnimationEnd", function () {
+        $(this)
+          .removeClass("animate__animated animate__fadeIn")
+          .unbind("webkitAnimationEnd");
+      })
+      .find(".cd")
+      .click(function (e) {
         var cd = getCdNode(e.target);
         if (!cd) return;
-        var ind = Number(cd.getAttribute("data-index"));
-        cNode = cd;
-        cNode.classList.add("active");
+        save_position_x = $(cd).position().left;
+        save_position_y = $(cd).position().top;
         var cPosition = center();
-        cNode.style.left = cPosition[0] - 150 + "px";
-        cNode.style.top = cPosition[1] - 150 + "px";
-        cNode.style.transform = `rotateY(180deg)`;
-        cNode.style.zIndex = zIndex;
+        $(cd)
+          .css({
+            width: "300px",
+            height: "300px",
+            borderRadius: 0,
+            left: cPosition[0] - 150 + "px",
+            top: cPosition[1] - 150 + "px",
+            transform: `rotateY(180deg)`,
+            zIndex: zIndex,
+          })
+          .siblings()
+          .addClass("animate__animated animate__fadeOut")
+          .bind("webkitAnimationEnd", function () {
+            $(this)
+              .hide()
+              .removeClass("animate__animated animate__fadeOut")
+              .unbind("webkitAnimationEnd");
+          });
         zIndex++;
-        for (var j = 0; j < cdNodes.length; j++) {
-          if (ind !== j) {
-            cdNodes[j].classList.add("animate__animated", "animate__fadeOut");
-          }
-        }
-        function cdNodesAnimationEnd() {
-          for (var j = 0; j < cdNodes.length; j++) {
-            if (ind !== j) {
-              cdNodes[j].classList.remove(
-                "animate__animated",
-                "animate__fadeOut"
-              );
-              cdNodes[j].style.display = "none";
-            }
-          }
-          if (ind === 0) {
-            cdNodes[1].removeEventListener(
-              "webkitAnimationEnd",
-              cdNodesAnimationEnd
-            );
-          }
-          cdNodes[0].removeEventListener(
-            "webkitAnimationEnd",
-            cdNodesAnimationEnd
-          );
-          // 露出输入框
-          control.classList.add("animate__animated", "animate__stepOne");
-        }
-        if (ind === 0) {
-          cdNodes[1].addEventListener(
-            "webkitAnimationEnd",
-            cdNodesAnimationEnd
-          );
-        }
-        cdNodes[0].addEventListener("webkitAnimationEnd", cdNodesAnimationEnd);
+        cNode = cd;
+        // 输入框弹出1
+        control.show({
+          onOpen: function () {
+            step3.hide();
+            back.add(function () {
+              control.show();
+              setTimeout(function () {
+                step3.stop().fadeIn('slow');
+              }, 500);
+            });
+          },
+          onSuccess: function () {
+            step3.hide(0, function () {
+              window.img3d.setTo(selectedId);
+            });
+            back.add(function () {
+              back.clear();
+              $("#img").stop().fadeOut("slow", function () {
+                step2.show();
+              });
+            });
+          },
+        });
+        // 添加返回
+        back.add(function () {
+          control.close();
+          $(cd)
+          .css({
+            width: "100px",
+            height: "100px",
+            borderRadius: "50%",
+            left: save_position_x + "px",
+            top: save_position_y + "px",
+            transform: `rotateY(0deg)`,
+            zIndex: undefined,
+          })
+          .siblings()
+          .addClass("animate__animated animate__fadeIn")
+          .show()
+          .bind("webkitAnimationEnd", function () {
+            $(this)
+              .removeClass("animate__animated animate__fadeIn")
+              .unbind("webkitAnimationEnd");
+          });
+        });
       });
-    }
   }
-
-  // 输入控制器
-  var control = document.getElementById("control");
-  // 输入框
-  var input = document.getElementById("control_header__input");
-  // 输入框是否激活
-  var isActiveInput = false;
-  // 输入key
-  var inputKeys = [];
-  // 添加emoji
-  function addEmoJi(keys) {
-    var items = "";
-    console.log(keys);
-    for (var i = 0; i < keys.length; i++) {
-      items += '<span class="input_item emoji_' + keys[i] + '"></span>';
-    }
-    input.innerHTML = items;
-  }
-  // 输入key 更新
-  function inputKesUpdate(keys) {
-    addEmoJi(keys);
-  }
-  // 添加inputKey
-  function addInputkey(key) {
-    inputKeys.push(key);
-    inputKesUpdate(inputKeys);
-  }
-  // 删除inputkey
-  function removeInputKey() {
-    inputKeys.pop();
-    inputKesUpdate(inputKeys);
-  }
-  // 控制器输入框
-  input.addEventListener(
-    "click",
-    function () {
-      // 是否动画中
-      if (control.getAnimations().length !== 0) return;
-      // 激活输入框
-      if (isActiveInput) return;
-      isActiveInput = true;
-      // 弹出输入框
-      input.classList.add("focus");
-      step3.classList.add("animate__animated", "animate__fadeOutUp");
-      // cNode.classList.add("animate__animated", "animate__fadeOutUp");
-      control.classList.add("animate__animated", "animate__stepTwo");
-      function fadeIn() {
-        cNode.style.display = "none";
-      }
-      if (cNode) {
-        cNode.addEventListener("webkitAnimationEnd", fadeIn);
-      }
-
-      var menuOptions = document.getElementById("control-content__menu");
-      menuOptions.addEventListener(
-        "click",
-        function (e) {
-          if (!isActiveInput) return;
-          var selectedNode;
-          if (e.target.className === "menu_option") {
-            selectedNode = e.target;
-          }
-          if (e.target.className === "menu__option_inner") {
-            selectedNode = e.target.parentNode;
-          }
-          if (selectedNode) {
-            addInputkey(selectedNode.getAttribute("data-index"));
-          }
-        },
-        false
-      );
-      var enter = document.querySelector(".menu__option_enter");
-      function enterFn () {
-        if (!isActiveInput) return;
-        if (inputKeys.length > 0 && selectedId === standalone[inputKeys[0]]) {
-          inputSuccess();
-        } else {
-          inputError();
-        }
-      }
-      enter.addEventListener("click", enterFn);
-      // 键盘监听
-      function keydown(e) {
-        if (Number(e.keyCode) === 13) {
-          enterFn();
-        }
-        if (Number(e.keyCode) === 8) {
-          removeInputKey();
-        }
-      }
-      document.addEventListener("keydown", keydown);
-    },
-    false
-  );
-  // 输入正确
-  function inputSuccess() {
-    // 展示图片
-    control.classList.add("animate__animated", "animate__backOutDown");
-  }
-  // 输入错误
-  function inputError() {
-    input.classList.add("animate__animated", "animate__shakeX");
-  }
-  input.addEventListener("webkitAnimationEnd", function (e) {
-    input.classList.remove("animate__animated", "animate__" + e.animationName);
-  });
-  control.addEventListener("webkitAnimationEnd", function (e) {
-    if (e.animationName === 'stepOne') {
-      control.style.top = 'calc(100% - 90px)';
-    }
-    if (e.animationName === 'stepTwo') {
-      control.style.top = 'calc(50% - 217px)';
-    }
-    if (e.animationName == 'backOutDown') {
-      control.style.top = 'calc(100% + 3px)';
-      // 关闭
-      isActiveInput = false;
-      // 展示 images;
-      window.img3d.init(document.getElementById('img'), getImageUrls(selectedId));
-    }
-    control.classList.remove("animate__animated", "animate__" + e.animationName);
-  });
+  window.img3d.init();
 })();

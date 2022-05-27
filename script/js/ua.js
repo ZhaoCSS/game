@@ -1,3 +1,10 @@
+function propertyCount(t) {
+    var e = 0;
+    for (var i in t)
+        t.hasOwnProperty(i) && ++e;
+    return e
+}
+
 var TWEEN =
   TWEEN ||
   (function () {
@@ -432,15 +439,25 @@ function ParticleSystem() {
   this.integrator = new RungeKuttaIntegrator(this),
   this.hasDeadParticles = !1;
   var e = arguments.length;
-  2 === e ? (this.gravity = new Vector(0,arguments[0],0),
-  this.drag = arguments[1]) : 4 === e ? (this.gravity = new Vector(arguments[0],arguments[1],arguments[2]),
-  this.drag = arguments[3]) : (this.gravity = new Vector(0,ParticleSystem.DEFAULT_GRAVITY,0),
-  this.drag = ParticleSystem.DEFAULT_DRAG)
+
+  if (2 === e) {
+    (this.gravity = new Vector(0,arguments[0],0),
+    this.drag = arguments[1])
+  } else {
+    if (4 === e) {
+      this.gravity = new Vector(arguments[0],arguments[1],arguments[2]);
+      this.drag = arguments[3];
+    } else {
+      this.gravity = new Vector(0,ParticleSystem.DEFAULT_GRAVITY,0),
+      this.drag = ParticleSystem.DEFAULT_DRAG
+    }
+  }
 }
 function PoissonDiskSampler3D(e, t, i, r, n, o, a, s, l) {
   this.width = e,
   this.height = t,
   this.depth = i,
+  console.log('PoissonDiskSampler3D', r),
   this.minDistance = r,
   this.sampleFrequency = n,
   this.oldOffset = {
@@ -16629,6 +16646,7 @@ THREE.LensFlare.prototype.add = function(e, t, i, r, n, o) {
 }
 ,
 THREE.LensFlare.prototype.updateLensFlares = function() {
+  console.log('updateLensFlares');
   var e, t, i = this.lensFlares.length, r = 2 * -this.positionScreen.x, n = 2 * -this.positionScreen.y;
   for (e = 0; e < i; e++)
       (t = this.lensFlares[e]).x = this.positionScreen.x + r * t.distance,
@@ -17242,7 +17260,6 @@ THREE.WebGLRenderer = function(e) {
       je.clearColor(e, t, i, r)
   }
   function r() {
-      console.log(111111),
       je.init(),
       je.scissor(He.copy(Ae).multiplyScalar(Le)),
       je.viewport(we.copy(De).multiplyScalar(Le)),
@@ -24413,6 +24430,7 @@ THREE.Projector = function() {
               m.renderOrder = b.renderOrder,
               m.object = b,
               m.rotation = b.rotation,
+              console.log('m.scale.x'),
               m.scale.x = b.scale.x * Math.abs(m.x - (C.x + v.projectionMatrix.elements[0]) / (C.w + v.projectionMatrix.elements[12])),
               m.scale.y = b.scale.y * Math.abs(m.y - (C.y + v.projectionMatrix.elements[5]) / (C.w + v.projectionMatrix.elements[13])),
               m.material = b.material,
@@ -25456,62 +25474,6 @@ var Stats = function() {
       }
   }
 }
-, Easing = {
-  easeOutInExpo: function(e) {
-      return e < .5 ? this.easeOutExpo(2 * e) / 2 : this.easeInExpo(2 * e - 1) / 2 + .5
-  },
-  easeOutExpo: function(e) {
-      return 1 == e ? 1 : 1 - Math.pow(2, -10 * e)
-  },
-  easeInExpo: function(e) {
-      return 0 == e ? 0 : Math.pow(2, 10 * (e - 1))
-  },
-  easeOutInQuad: function(e) {
-      return e < .5 ? .5 * this.easeOutQuad(2 * e) : .5 * this.easeInQuad(2 * e - 1) + .5
-  },
-  easeOutQuad: function(e) {
-      return -e * (e - 2)
-  },
-  easeInQuad: function(e) {
-      return e * e
-  },
-  easeOutInSine: function(e) {
-      return e < .5 ? this.easeOutSine(2 * e) / 2 : this.easeInSine(2 * e - 1) / 2 + .5
-  },
-  easeInSine: function(e) {
-      return 1 - Math.cos(e * Math.PI / 2)
-  },
-  easeOutSine: function(e) {
-      return Math.sin(e * Math.PI / 2)
-  }
-}
-, ShaderLoader = function() {
-  this.load = function(e, t, i) {
-      var r = {
-          vertex: "",
-          fragment: ""
-      }
-        , n = 2
-        , o = e + "/" + t + ".vert"
-        , a = e + "/" + t + ".frag";
-      $.ajax({
-          url: o,
-          dataType: "text",
-          complete: function(e) {
-              r.vertex = e.responseText,
-              0 == --n && void 0 !== typeof i && i(r.vertex, r.fragment)
-          }
-      }),
-      $.ajax({
-          url: a,
-          dataType: "text",
-          complete: function(e) {
-              r.fragment = e.responseText,
-              0 == --n && void 0 !== typeof i && i(r.vertex, r.fragment)
-          }
-      })
-  }
-}
 , SceneManager = function() {
   function e() {
       R = requestAnimationFrame(e),
@@ -25530,7 +25492,8 @@ var Stats = function() {
   function i() {}
   var r, n, o, a, s, l, h, c, u, p, d, f, m, E, g, v, y, T, R = null, x = !0, H = !1, b = !1, w = function(e) {
       r = this;
-      var i = 6072307
+      // var i = 6072307
+      var i = 15352741
         , v = 15524824;
       this.SKYDOME_VIEW_COLORS = {
           intro: {
@@ -25562,7 +25525,6 @@ var Stats = function() {
       this.physics = new ParticleSystem(0,.01),
       this.usePhysics = !1,
       n = e,
-      T = $("#wrapper .inner-wrap"),
       o = new THREE.Scene,
       this.fogColor = new THREE.Color(14540253),
       this.fogDensity = .001,
@@ -25611,7 +25573,6 @@ var Stats = function() {
       var L = function() {
           var e = $(window).width()
             , i = $(window).height();
-          T.css("height", i),
           s.setSize(e, i),
           a.aspect = e / i,
           a.updateProjectionMatrix(),
@@ -25827,7 +25788,6 @@ var Stats = function() {
           tag: {}
       };
       var s = n.itemList;
-      console.log('s', s);
       for (var l in s) {
           var h = a.getIndex(l);
           this.objects.item[l] = new ItemNode(s[l],h),
@@ -25855,7 +25815,6 @@ var Stats = function() {
           o || e.touchEnd(t)
       }
       )).on("mousewheel", (function(t, i, r, n) {
-        console.log(t, i, r, n);
           o || e.mouseWheel(t, i, r, n)
       }
       )).on("mouseleave", (function() {
@@ -25864,13 +25823,6 @@ var Stats = function() {
       )),
       $(window).on("resize", (function() {
           o || e.resize()
-      }
-      )),
-      $("body").on("keydown", (function(t) {
-          o || e.keyDown(t)
-      }
-      )).on("keyup", (function(t) {
-          o || e.keyUp(t)
       }
       ))
   };
@@ -25885,12 +25837,20 @@ var Stats = function() {
           n[i].update()
       },
       setTo: function(t, o) {
-          console.log('t', t),
-          console.log('o', o),
-          console.log('i', i),
-          console.log('n', n);
+          console.log(111111);
+          if (i === 'drift') {
+            back.add(function () {
+                vis.setTo("drift");
+                setTimeout(function() {
+                    console.log('关闭');
+                    $("#back").trigger("click");
+                }, 2000);
+            });
+          }
+
           null !== i ? (
             // ui.hideItemLabel(),
+          console.log(n, i, n[i], '----------------'),
           n[i].release((function() {
               r = i,
               i = t,
@@ -25932,18 +25892,17 @@ var Stats = function() {
           n[i].mouseUp(e)
       },
       mouseWheel: function(e, t, r, o) {
-        console.log('1 e t r o');
           n[i].mouseWheel(e, t, r, o)
       },
       mouseLeave: function() {
           n[i].mouseLeave()
       },
-      keyDown: function(e) {
-          n[i].keyDown(e)
-      },
-      keyUp: function(e) {
-          n[i].keyUp(e)
-      },
+    //   keyDown: function(e) {
+    //       n[i].keyDown(e)
+    //   },
+    //   keyUp: function(e) {
+    //       n[i].keyUp(e)
+    //   },
       resize: function(e) {
           n[i].resize(e)
       }
@@ -26003,20 +25962,19 @@ var Stats = function() {
       init: function(e) {
           this.uiEnabled = !1,
         //   ui.setInfoWidgetContent(this.name),
-          this.localUI = $("#ui #local"),
-          this.globalUI = $("#ui #global"),
-          this.localUI.append('<span id="nav-back"></span>'),
-          $("#nav-back").hide(),
-          console.log('p onInit'),
+        //   this.localUI = $("#ui #local"),
+        //   this.globalUI = $("#ui #global"),
+        //   this.localUI.append('<span id="back"></span>'),
+        //   $("#back").hide(),
           this.onInit(e),
           this.sm.add(this.sceneObject)
       },
       onInit: function() {},
       release: function(e) {
-          ui.disableNav(),
-          this.onRelease(),
-          this.localUI.empty(),
-          $("#item-label-wrapper").addClass("hidden"),
+          // ui.disableNav(),
+        //   this.onRelease(),
+        //   this.localUI.empty(),
+          // $("#item-label-wrapper").addClass("hidden"),
           this.sceneObject.traverse((function(e) {
               e.material && (e.material.transparent = !0)
           }
@@ -26263,7 +26221,7 @@ var Stats = function() {
       },
       onMouseDown: function() {},
       mouseUp: function(e) {
-        console.log(e);
+        console.log('点击');
           if (this.mousePressed = !1,
           this.uiEnabled) {
               if (null !== r.id) {
@@ -26337,26 +26295,25 @@ var Stats = function() {
       },
       onNothingClicked: function() {},
       mouseWheel: function(e, t, i, r) {
-        console.log('e mouseWheel');
           this.uiEnabled && (this.onMouseWheel(e, t, i, r),
           this.checkForMouseHover())
       },
       onMouseWheel: function() {},
-      keyUp: function(e) {
-          this.uiEnabled && this.onKeyUp(e)
-      },
-      onKeyUp: function() {},
-      keyDown: function(e) {
-          if (this.uiEnabled) {
-              if (c && !ui.searchBoxIsOpen()) {
-                  var t = String.fromCharCode(e.keyCode);
-                  /[a-zA-Z0-9]/.test(t) && (ui.openSearchInput(),
-                  this.uiEnabled = !1)
-              }
-              this.onKeyDown(e)
-          }
-      },
-      onKeyDown: function() {},
+      // keyUp: function(e) {
+      //     this.uiEnabled && this.onKeyUp(e)
+      // },
+      // onKeyUp: function() {},
+      // keyDown: function(e) {
+      //     if (this.uiEnabled) {
+      //         if (c && !ui.searchBoxIsOpen()) {
+      //             var t = String.fromCharCode(e.keyCode);
+      //             /[a-zA-Z0-9]/.test(t) && (ui.openSearchInput(),
+      //             this.uiEnabled = !1)
+      //         }
+      //         this.onKeyDown(e)
+      //     }
+      // },
+      // onKeyDown: function() {},
       windowOut: function() {},
       mouseLeave: function() {
           this.clearLastHover()
@@ -26719,8 +26676,9 @@ var Stats = function() {
       this.highResMesh.material.uniforms.skyDomeBottomColor.value = sceneManager.skyDomeBottomColor,
       this.highResMesh.material.uniforms.skyDomeTopColor.value = sceneManager.skyDomeTopColor);
       var e = sceneManager.getCamera().position;
-      if (this.distanceToCamera = distVec3(this.position, e),
-      this.forceRotateToCamera || this.enableRotateToCamera && this.distanceToCamera < 2e3 && this.distanceToCamera > 150 ? this.rotateToCamera = !0 : this.rotateToCamera = !1,
+      if (
+          this.distanceToCamera = distVec3(this.position, e),
+          this.forceRotateToCamera || this.enableRotateToCamera && this.distanceToCamera < 2e3 && this.distanceToCamera > 150 ? this.rotateToCamera = !0 : this.rotateToCamera = !1,
       this.rotateToCamera)
           if (this.constrainToYAxis) {
               var n = new THREE.Quaternion;
@@ -26728,7 +26686,7 @@ var Stats = function() {
               var o = e.x - c.x
                 , a = e.z - c.z
                 , s = Math.atan2(o, a);
-              n.setFromAxisAngle(new THREE.Vector3(0,1,0), s),
+              n.setFromAxisAngle(new THREE.Vector3(0,1,0), s)
               this.targetQuaternion.set(n.x, n.y, n.z, n.w)
           } else {
               var l = sceneManager.getCamera().quaternion;
@@ -26737,15 +26695,18 @@ var Stats = function() {
       else
           this.rotateToTarget && this.lookAt(this.rotationTarget);
       var h = new THREE.Quaternion;
-      if (THREE.Quaternion.slerp(this.quaternion, this.targetQuaternion, h, .05),
-      h.normalize(),
-      this.quaternion.set(h.x, h.y, h.z, h.w),
-      void 0 !== this.highResMesh) {
+      if (
+          THREE.Quaternion.slerp(this.quaternion, this.targetQuaternion, h, .05),
+          h.normalize(),
+          this.quaternion.set(h.x, h.y, h.z, h.w),
+          void 0 !== this.highResMesh
+        ) {
           var c = this.getPosition();
+          // todo
           switch (this.fadeStates.thumbnail) {
           case -1:
-              this.highResMesh.currentScale = 1e-6,
-              this.highResMesh.scale.set(1e-6, 1e-6, 1e-6),
+              // this.highResMesh.currentScale = 0.000001,
+              // this.highResMesh.scale.set(0.000001, 0.000001, 0.000001),
               this.highResMesh.material.opacity = 0,
               this.fadeStates.thumbnail = 0;
               break;
@@ -26757,12 +26718,27 @@ var Stats = function() {
           }
       }
       this.shouldHideHighRes = !1,
-      this.distanceToCamera < r ? this.distanceToCamera > t ? void 0 !== this.highResMesh && 1 === this.highResMesh.material.opacity ? (this.highResMesh.material.uniforms.nearOpacity.value = 1,
-      this.shouldHideLowRes = !0) : this.shouldHideLowRes = !1 : this.distanceToCamera > i ? (this.shouldHideLowRes = !0,
-      void 0 !== this.highResMesh && (this.highResMesh.material.uniforms.nearOpacity.value = Math.max(Math.min(map(this.distanceToCamera, i, t, 0, 1), 1), 0))) : (this.shouldHideLowRes = !0,
-      this.shouldHideHighRes = !0,
-      void 0 !== this.highResMesh && (this.highResMesh.material.uniforms.nearOpacity.value = 0)) : this.shouldHideLowRes = !1,
-      void 0 !== this.highResMesh && (this.shouldHideHighRes ? this.highResMesh.scale.set(1e-6, 1e-6, 1e-6) : this.highResMesh.scale.set(this.highResMesh.currentScale, this.highResMesh.currentScale, this.highResMesh.currentScale)),
+      this.distanceToCamera < r
+      ? this.distanceToCamera > t
+        ? this.highResMesh && 1 === this.highResMesh.material.opacity
+            ? (this.highResMesh.material.uniforms.nearOpacity.value = 1,this.shouldHideLowRes = !0)
+            : this.shouldHideLowRes = !1
+        : this.distanceToCamera > i
+            ? (
+                this.shouldHideLowRes = !0,
+                this.highResMesh && (this.highResMesh.material.uniforms.nearOpacity.value = Math.max(Math.min(map(this.distanceToCamera, i, t, 0, 1), 1), 0))
+            )
+            : (
+                this.shouldHideLowRes = !0,
+                this.shouldHideHighRes = !0,
+                this.highResMesh && (this.highResMesh.material.uniforms.nearOpacity.value = 0)
+            )
+      : this.shouldHideLowRes = !1,
+        this.highResMesh && (
+          this.shouldHideHighRes
+          ? this.highResMesh.scale.set(1e-6, 1e-6, 1e-6)
+          : this.highResMesh.scale.set(this.highResMesh.currentScale, this.highResMesh.currentScale, this.highResMesh.currentScale)
+        )
       this.calculateCornerPositions()
   }
   ,
@@ -27068,138 +27044,6 @@ var Stats = function() {
   ,
   o
 }()
-, TagNode = function() {
-  var e, t = function(t) {
-      THREE.Object3D.call(this),
-      e = this,
-      this.parentVis = t,
-      this.color = new THREE.Color(16777215),
-      this.color.setHSL(Math.random(), .7, .7),
-      this.radius = 100,
-      this.data = {},
-      this.point = this.parentVis.getPointSprite(),
-      this.point.visible = !1,
-      this.add(this.point),
-      this.isEmpty = !0
-  };
-  return t.prototype = Object.create(THREE.Object3D.prototype),
-  t.prototype.fill = function(t, i, r) {
-      function n(e) {
-          o.allItems = e,
-          o.isEmpty = !1,
-          null != r && r()
-      }
-      this.data = t;
-      var o = this;
-      null == i ? api.getTagArchiveObjects({
-          id: t.id,
-          detail: "id_only"
-      }, (function(t) {
-          for (var i = [], r = 0; r < t.length; r++) {
-              var o = t[r]
-                , a = e.parentVis.objects.item[o];
-              void 0 !== a && i.push(a)
-          }
-          n(i)
-      }
-      )) : n(i)
-  }
-  ,
-  t.prototype.empty = function() {
-      this.data = null,
-      this.allItems = [],
-      this.isEmpty = !0
-  }
-  ,
-  t
-}()
-, TagAddNode = function() {
-  function e(e) {
-      var t = THREE.ShaderLib.gradfogobject
-        , i = THREE.UniformsUtils.clone(t.uniforms);
-      return i.cameraPos.value = new THREE.Vector3(0,0,0),
-      i.skyDomeRadius.value = sceneManager.skyDomeRadius,
-      i.skyDomeExponent.value = sceneManager.skyDomeExponent,
-      i.skyDomeOffset.value = sceneManager.skyDomeOffset,
-      i.skyDomeBottomColor.value = sceneManager.skyDomeBottomColor,
-      i.skyDomeTopColor.value = sceneManager.skyDomeTopColor,
-      i.color.value = e,
-      i.opacity.value = 0,
-      i = THREE.UniformsUtils.merge([i, THREE.UniformsLib.lights]),
-      new THREE.ShaderMaterial({
-          uniforms: i,
-          vertexShader: t.vertexShader,
-          fragmentShader: t.fragmentShader,
-          side: THREE.DoubleSide,
-          transparent: !0,
-          depthWrite: !0,
-          depthTest: !0,
-          lights: !0,
-          fog: !0
-      })
-  }
-  var t = 1
-    , i = new THREE.Color(16777215)
-    , r = new THREE.Color(16711680)
-    , n = function(t, n) {
-      THREE.Object3D.call(this),
-      this.parentVis = t,
-      this.srcTags = n;
-      var o = new CompassPointer(250);
-      o.children[0].material = e(r),
-      o.children[1].material = e(i),
-      o.children[0].material.needsUpdate = !0,
-      o.children[1].material.needsUpdate = !0;
-      for (var a = 0; a < o.children.length; a++)
-          o.children[a].type = "ADD";
-      this.pointer = o,
-      this.add(o),
-      this.add(this.pointer)
-  };
-  return n.prototype = Object.create(THREE.Object3D.prototype),
-  n.prototype.setIndex = function(e) {
-      for (var t = 0; t < this.pointer.children.length; t++)
-          this.pointer.children[t].index = e
-  }
-  ,
-  n.prototype.hoverOn = function() {}
-  ,
-  n.prototype.hoverOff = function() {}
-  ,
-  n.prototype.click = function() {
-      this.parentVis.openTagsDialog()
-  }
-  ,
-  n.prototype.setOpacity = function(e) {
-      for (var i = 0; i < this.pointer.children.length; i++)
-          this.pointer.children[i].material.uniforms.opacity.value = e * t
-  }
-  ,
-  n.prototype.hide = function() {
-      for (var e = 0; e < this.pointer.children.length; e++)
-          this.pointer.children[e].visible = !1
-  }
-  ,
-  n.prototype.show = function() {
-      for (var e = 0; e < this.pointer.children.length; e++)
-          this.pointer.children[e].visible = !0
-  }
-  ,
-  n.prototype.getScalar = function() {
-      return this.pointer.getScalar()
-  }
-  ,
-  n.prototype.update = function() {
-      for (var e = this.position.distanceTo(sceneManager.getCamera().position), t = 0; t < this.pointer.children.length; t++)
-          this.pointer.children[t].material.uniforms.cameraPos.value = sceneManager.getCamera().position,
-          this.pointer.children[t].material.uniforms.nearOpacity.value = map(e, 70, 90, 0, 1);
-      var i = new THREE.Quaternion;
-      i.setFromAxisAngle(new THREE.Vector3(0,0,1), .02),
-      this.pointer.quaternion.multiply(i)
-  }
-  ,
-  n
-}()
 , ItemField = function() {
   var e, t, i, r = {}, n = [], o = function(t, i, o, a) {
       THREE.Object3D.call(this),
@@ -27210,11 +27054,9 @@ var Stats = function() {
         r[t[s].id] = s,
         n[s] = t[s].id;
       }
-      console.log('n', r, n);
       this.sizeScalar = 128,
       this.onLoad = a,
       this.noThumbList = [],
-      console.log('t, i, o', t, i, o);
       this.createThumbMesh(t, i, o)
   };
   return o.prototype = Object.create(THREE.Object3D.prototype),
@@ -27255,7 +27097,6 @@ var Stats = function() {
           h.addAttribute("highlightColor", new THREE.BufferAttribute(new Float32Array(3 * l * 3),3)),
           h.addAttribute("highlightFactor", new THREE.BufferAttribute(new Float32Array(3 * l),1)),
           h.addAttribute("visible", new THREE.BufferAttribute(new Float32Array(3 * l),1));
-          console.log('h', h);
           var c = h.getAttribute("uv").array;
           thumbSheet.image.width,
           thumbSheet.image.height,
@@ -27587,240 +27428,6 @@ var Stats = function() {
   }
   ,
   o
-}()
-, CompassPointer = function() {
-  var e, t = function(t) {
-      THREE.Object3D.call(this),
-      e = void 0 === t ? 200 : t;
-      var i = .1
-        , r = .5
-        , n = .5
-        , o = (new THREE.Color(16711680),
-      new THREE.Geometry);
-      o.vertices.push(new THREE.Vector3(0,i,0)),
-      o.vertices.push(new THREE.Vector3(i,0,0)),
-      o.vertices.push(new THREE.Vector3(0,-i,0)),
-      o.vertices.push(new THREE.Vector3(-i,0,0)),
-      o.vertices.push(new THREE.Vector3(0,0,-n)),
-      o.faces.push(new THREE.Face3(0,1,4)),
-      o.faces.push(new THREE.Face3(1,2,4)),
-      o.faces.push(new THREE.Face3(2,3,4)),
-      o.faces.push(new THREE.Face3(3,0,4)),
-      o.computeFaceNormals();
-      var a = new THREE.Geometry;
-      a.vertices.push(new THREE.Vector3(0,i,0)),
-      a.vertices.push(new THREE.Vector3(i,0,0)),
-      a.vertices.push(new THREE.Vector3(0,-i,0)),
-      a.vertices.push(new THREE.Vector3(-i,0,0)),
-      a.vertices.push(new THREE.Vector3(0,0,r)),
-      a.faces.push(new THREE.Face3(0,1,4)),
-      a.faces.push(new THREE.Face3(1,2,4)),
-      a.faces.push(new THREE.Face3(2,3,4)),
-      a.faces.push(new THREE.Face3(3,0,4)),
-      a.computeFaceNormals();
-      var s = new THREE.MeshLambertMaterial({
-          color: 16711680,
-          side: THREE.DoubleSide,
-          transparent: !0,
-          opacity: 1
-      })
-        , l = new THREE.MeshLambertMaterial({
-          color: 11184810,
-          side: THREE.DoubleSide,
-          transparent: !0,
-          opacity: 1
-      })
-        , h = new THREE.Mesh(o,s)
-        , c = new THREE.Mesh(a,l);
-      this.add(h),
-      this.add(c),
-      this.scale.set(e, e, e)
-  };
-  return t.prototype = Object.create(THREE.Object3D.prototype),
-  t.prototype.getScalar = function() {
-      return e
-  }
-  ,
-  t
-}()
-, Curve = function() {
-  var e, t, i, r, n, o, a, s, l, h = function(h, c) {
-      this.parentVis = h,
-      e = c.p1 || new THREE.Vector3(0,0,0),
-      t = c.p2 || new THREE.Vector3(100,0,0),
-      i = c.depth || 100,
-      linewidth = c.linewidth || 1,
-      r = c.res || 40;
-      var u, p = c.center || new THREE.Vector3(0,0,0), d = c.breakFactor || .5;
-      n = c.endColor || 10066329,
-      o = c.midColor || 3355443,
-      a = void 0 !== c.endOpacity ? c.endOpacity : 1,
-      s = void 0 !== c.midOpacity ? c.midOpacity : 1,
-      l = void 0 !== c.opacity ? c.opacity : 1,
-      u = void 0 === c.curveStyle ? "down" : c.curveStyle,
-      this.targetOpacity = l;
-      (new THREE.Vector3).crossVectors(e, t).normalize(),
-      x = Math.acos(e.dot(t) / (e.length() * t.length()));
-      for (var f = [], m = (lerpVec3(e, t, d).length(),
-      e.clone().sub(p)), E = t.clone().sub(p), g = (m.length(),
-      E.length(),
-      m.clone().normalize(),
-      E.clone().normalize(),
-      0); g < r; g++) {
-          var v = map(g, 0, r, 0, 1)
-            , y = lerpVec3(m, E, g / r);
-          y.add(p),
-          f.push(y)
-      }
-      f.push(t);
-      for (g = 0; g < f.length; g++) {
-          var T;
-          v = map(g, 0, f.length - 1, 0, 1);
-          if ("up" === u || "down" === u) {
-              var R = "up" === u ? 1 : -1;
-              T = v < .5 ? R * map(TWEEN.Easing.Exponential.Out(v), 0, 1, 0, i) : R * map(1 - TWEEN.Easing.Exponential.In(v), 0, 1, 0, i)
-          } else if ("sine" == u) {
-              var x = map(v, 0, 1, 0, 2 * Math.PI);
-              T = -Math.sin(x) * i
-          }
-          f[g].y += T
-      }
-      var H = new THREE.Spline(f)
-        , b = new THREE.Geometry
-        , w = [];
-      for (g = 0; g < H.points.length; g++) {
-          var q = map(g, 0, H.points.length - 1, 0, 1)
-            , M = H.getPoint(q)
-            , _ = new THREE.Vector3(M.x,M.y,M.z);
-          b.vertices.push(_.clone()),
-          w[g] = new THREE.Color(16777215);
-          x = map(g, 0, H.points.length - 1, 0, Math.PI);
-          w[g].setHSL(.5, 0, Math.sin(x))
-      }
-      b.colors = w;
-      var S = {
-          vIndex: {
-              type: "f",
-              value: []
-          }
-      }
-        , C = {
-          vCount: {
-              type: "f",
-              value: b.vertices.length
-          },
-          midColor: {
-              type: "c",
-              value: o
-          },
-          endColor: {
-              type: "c",
-              value: n
-          },
-          midOpacity: {
-              type: "f",
-              value: s
-          },
-          endOpacity: {
-              type: "f",
-              value: a
-          },
-          opacity: {
-              type: "f",
-              value: l
-          }
-      }
-        , L = this
-        , A = "curves";
-      (new ShaderLoader).load(SITE_ROOT + "static/glsl", A, (function(e, t) {
-          for (var i = new THREE.ShaderMaterial({
-              uniforms: C,
-              attributes: S,
-              vertexShader: e,
-              fragmentShader: t,
-              blending: THREE.NormalBlending,
-              depthTest: !1,
-              transparent: !0,
-              vertexColors: THREE.VertexColors
-          }), r = 0; r < b.vertices.length; r++)
-              i.attributes.vIndex.value[r] = r;
-          i.attributes.vIndex.needsUpdate = !0,
-          i.linewidth = linewidth,
-          THREE.Line.call(L, b, i),
-          L.dynamic = !0,
-          L.parentVis.sceneObject.add(L)
-      }
-      ))
-  };
-  return h.prototype = Object.create(THREE.Line.prototype),
-  h.prototype.setOpacity = function(e) {
-      this.material.uniforms.opacity.value = e
-  }
-  ,
-  h.prototype.setToTargetOpacity = function() {
-      this.material.uniforms.opacity.value = this.targetOpacity
-  }
-  ,
-  h
-}()
-, FadeLine = function() {
-  var e, t, i, r, n, o, a, s, l, h = function(h, c) {
-      var u = this;
-      this.parentObj = h,
-      e = c.p1 || new THREE.Vector3(0,0,0),
-      t = c.p2 || new THREE.Vector3(100,0,0),
-      linewidth = c.linewidth || 1,
-      i = c.res || 40,
-      r = c.endColor || new THREE.Color(10066329),
-      n = c.midColor || new THREE.Color(3355443);
-      var p, d = 0;
-      "linear" === (l = void 0 !== c.mode ? c.mode : "linear") ? d = 1 : "mirror" === l && (d = 0),
-      o = void 0 !== c.endOpacity ? c.endOpacity : 1,
-      a = void 0 !== c.midOpacity ? c.midOpacity : 1,
-      s = void 0 !== c.opacity ? c.opacity : 1,
-      p = void 0 !== c.blending ? c.blending : THREE.AdditiveBlending,
-      this.targetOpacity = s;
-      for (var f = new THREE.Geometry, m = 0; m < i; m++) {
-          var E = lerpVec3(e, t, m / i);
-          f.vertices.push(E)
-      }
-      f.vertices.push(t);
-      var g = THREE.ShaderLib.fadeline
-        , v = THREE.UniformsUtils.clone(g.uniforms);
-      v.vCount.value = f.vertices.length,
-      v.midColor.value = n,
-      v.endColor.value = r,
-      v.midOpacity.value = a,
-      v.endOpacity.value = o,
-      v.opacity.value = s,
-      v.linear.value = d;
-      var y = THREE.UniformsUtils.clone(g.attributes)
-        , T = new THREE.ShaderMaterial({
-          uniforms: v,
-          attributes: y,
-          vertexShader: g.vertexShader,
-          fragmentShader: g.fragmentShader,
-          blending: p,
-          depthWrite: !1,
-          transparent: !0
-      });
-      for (m = 0; m < f.vertices.length; m++)
-          T.attributes.vIndex.value[m] = m;
-      T.attributes.vIndex.needsUpdate = !0,
-      THREE.Line.call(u, f, T),
-      u.dynamic = !1,
-      u.parentObj.add(u)
-  };
-  return h.prototype = Object.create(THREE.Line.prototype),
-  h.prototype.setOpacity = function(e) {
-      this.material.uniforms.opacity.value = e
-  }
-  ,
-  h.prototype.setToTargetOpacity = function() {
-      this.material.uniforms.opacity.value = this.targetOpacity
-  }
-  ,
-  h
 }()
 , EasterEggManager = function() {
   function e() {
@@ -28223,11 +27830,10 @@ var Stats = function() {
   ,
   r.prototype.hatch = function() {
       var e = this;
-      console.log(3333333333333, e);
       e.managerRef.stop(),
       vis.getCurrentVis().uiEnabled = !1,
       vis.getCurrentVis().animateCamTowardTag(e.position, (function() {
-        ui.openView("tags", {
+        vis.setTo("tags", {
             tagIds: [e.data.id],
             center: e.position.clone(),
             lastView: "drift"
@@ -28629,7 +28235,6 @@ var Stats = function() {
   };
   return (A.prototype = Object.create(IVis.prototype),
   A.prototype.onInit = function(e) {
-      console.log('onInit', e);
       if (void 0 !== e ? (this.preloadInfo = e,
       C = !0 === e.isIntro,
       L = void 0 !== e.refData) : (this.preloadInfo = void 0,
@@ -28641,7 +28246,7 @@ var Stats = function() {
       L ? this.initItemsWithRef(e.refData.refId, e.refData.srcId) : this.initItems(),
       C) {
           for (var t in sceneManager.getCamera().position.set(0, 3e3, 0),
-          this.camControls.suspended = !0,
+          this.camControls.suspended = !1,
           this.objects.item) {
               var i = this.objects.item[t];
               i.position.set(i.viewData.drift.destination.x, i.viewData.drift.destination.y, i.viewData.drift.destination.z),
@@ -28675,7 +28280,7 @@ var Stats = function() {
               n.firstTime || ui.enableHelpLink(),
               r.uiEnabled = !0,
               r.animating = !1,
-              ui.enableNav(),
+            //   ui.enableNav(),
               s.reset(),
               s.start()
           }
@@ -28714,7 +28319,7 @@ var Stats = function() {
               r.push(s),
               l.viewData.drift.particle = sceneManager.physics.makeParticle(1, s.x, s.y, s.z),
               l.viewData.drift.attractions = [],
-              l.onClickCallback = e.itemClickCallback.bind(null, l),
+              // l.onClickCallback = e.itemClickCallback.bind(null, l),
               o++
           }
           n.camControls.setVerticalLimits(m.min.y - 2e3, m.max.y + 2e3)
@@ -28850,6 +28455,7 @@ var Stats = function() {
       o.normalize();
       var a = r.clone().add(o.multiplyScalar(1e3));
       // this.uiEnabled = !1,
+      // 初始进入中心
       this.camControls.animate({
           pos: r,
           look: a,
@@ -28857,11 +28463,10 @@ var Stats = function() {
           callback: function() {
               n.enableItemInteraction(),
               n.camControls.suspended = !1,
-              n.camControls.setAutoFloat(!0),
-              console.log('C', C);
+              n.camControls.setAutoFloat(0),
               // C && n.openInitAbout(),
               void 0 !== t && t();
-              // n.uiEnabled = !0
+              n.uiEnabled = !0
           }
       })
   }
@@ -28888,7 +28493,6 @@ var Stats = function() {
   ,
   A.prototype.onMouseWheel = function(e, t) {
       // ui.ensureInfoWidgetClosed(),
-      console.log('11111111111111', t);
       "normal" == this.state && this.camControls.onMouseWheel(t)
   }
   ,
@@ -28897,11 +28501,10 @@ var Stats = function() {
       this.camControls.onKeyDown(e))
   }
   ,
-  A.prototype.onKeyUp = function(e) {
-      this.checkForMouseHover(),
-      this.camControls.onKeyUp(e)
-  }
-  ,
+//   A.prototype.onKeyUp = function(e) {
+//       this.checkForMouseHover(),
+//       this.camControls.onKeyUp(e)
+//   }
   A.prototype.onNothingClicked = function() {
       this.uiEnabled && "preview" == this.state && ui.closeItemPreview(this.onCloseItemPreview)
   }
@@ -28945,6 +28548,7 @@ var Stats = function() {
   A.prototype.onUpdate = function() {
       s.update();
       var e = sceneManager.getCamera().position.clone();
+      // 相机控制
       this.camControls.update();
       var t = sceneManager.getCamera().position.clone();
       e.distanceTo(t);
@@ -28962,7 +28566,7 @@ var Stats = function() {
               r.position.y = o.y,
               r.position.z = o.z
           }
-          this.uiEnabled && !this.camControls.dragging && this.checkForMouseHover()
+        //   this.uiEnabled && !this.camControls.dragging && this.checkForMouseHover()
       }
   }
   ,
@@ -29140,73 +28744,17 @@ var Stats = function() {
   }
   ,
   A.prototype.itemClickCallback = function(e) {
-    console.log('e', e);
+    
     vis.getCurrentVis().uiEnabled = !1,
       vis.getCurrentVis().animateCamTowardTag(e.position, (function() {
-        // ui.openView("tags", {
-        //     tagIds: ['TEL2624'],
-        //     center: e.position.clone(),
-        //     lastView: "drift"
-        // })
+        console.log('e', e.basicInfo);
+        vis.setTo("tags", {
+            tagIds: [e.basicInfo.tags[0].tag_goya_id],
+            center: e.position.clone(),
+            lastView: "drift"
+        });
     }
-    ))
-    return console.log('1...........12222');
-      var e = this;
-      if ("normal" == e.parentVis.state) {
-          e.parentVis.uiEnabled = !1;
-          var t = e.basicInfo
-            , i = sceneManager.getCamera()
-            , r = e.parentVis.camControls
-            , o = i.position.clone()
-            , a = o.clone();
-          a.y = 0;
-          var l = e.position.clone();
-          l.y = 0;
-          var h, c, u = l.distanceTo(a), p = e.position.y - i.position.y, d = Math.atan2(p, u);
-          if (u < 250 || u < 600 && Math.abs(d) > .15 * Math.PI) {
-              (c = e.position.clone().sub(i.position)).y = 0,
-              c.normalize().multiplyScalar(250),
-              o.y = e.position.y;
-              var f = Math.abs(i.position.y - e.position.y);
-              h = Math.max(3 * f, 600)
-          } else
-              h = 600;
-          var m = e.position;
-          r.animate({
-              pos: o,
-              look: m,
-              dynamicTarget: e,
-              relativeVector: c,
-              duration: h,
-              callback: function() {
-                console.log('1...........1');
-                  function i() {
-                      sceneManager.setPaused(!0);
-                      var e = [];
-                      $("#ajax-content .tag-grid .tag a").each((function() {
-                          var t = $(this).attr("href").match(/tag\/(.*?)\//)[1];
-                          e.push(t)
-                      }
-                      )),
-                      0 !== e.length && s.addItemTags(e)
-                  }
-                  function r() {
-                      sceneManager.setPaused(!1),
-                      e.parentVis.uiEnabled = !1,
-                      ui.closeItemPreview(e.parentVis.onCloseItemPreview),
-                      s.start()
-                  }
-                  S = _,
-                  _ = t.id,
-                  s.stop(),
-                  n.camControls.forceStop(),
-                  ui.addToPath(e.basicInfo, "item"),
-                  console.log('1...........');
-                  ui.openItemDetails(e.basicInfo, i, r),
-                  e.parentVis.state = "detail"
-              }
-          })
-      }
+    ));
   }
   ,
   A.prototype.attractSimilar = function(e) {
@@ -29376,6 +28924,7 @@ var Stats = function() {
                   }
               })
           }
+          console.log('h', h);
           x = {
               mode: "dynamic",
               count: b,
@@ -29907,745 +29456,1086 @@ var Stats = function() {
   ,
   A)
 }()
-, TagsVis = function() {
-  function e() {
-      return new THREE.LineBasicMaterial({
-          color: 16777215,
-          linewidth: 2,
-          opacity: 0,
-          transparent: !0,
-          blending: THREE.AdditiveBlending,
-          fog: !1
-      })
-  }
-  function t(e) {
-      for (var t = [], i = 0; i < e.length; i++)
-          t.push(e[i]),
-          i !== e.length - 1 && t.push("+");
-      return t
-  }
-  function i(e) {
-      for (var t = "", i = 0; i < e.length; i++)
-          t += e[i],
-          i !== e.length - 1 && (t += "<br />+<br />");
-      return t
-  }
-  function r(e) {
-      if (0 === e.length)
-          return !1;
-      for (var t = !0, i = 0; i < e.length; i++)
-          if (0 !== e[i].indexOf("TEL")) {
-              t = !1;
-              break
-          }
-      return t
-  }
-  function n() {
-      for (var e = [], t = 0; t < f.length; t++)
-          e.push(f[t].data.id);
-      var i = "/uncertain/connections/" + e.join()
-        , r = "Studio Olafur Eliasson";
-      window.history.replaceState(null, r, i);
-      var n = "https://" + window.location.host + i;
-      0 !== $("#copy-url-input").length ? $("#copy-url-input").val(n) : ($(".share-actions .share-arrow").after('<a id="copy-url-button" href="#">Copy link</a>'),
-      $("#footer-nav").before('<input id="copy-url-input" type="text" value="' + n + '" style="display:none" />')),
-      $("#copy-url-button").unbind("click").click((function(e) {
-          e.preventDefault(),
-          void 0 !== n && $("#copy-url-input").val(n),
-          $("#copy-url-input").is(":visible") ? $("#copy-url-input").focus().select() : $("#copy-url-input").fadeIn("fast").focus().select()
-      }
-      )),
-      $("#copy-url-input").focusout((function() {
-          $(this).fadeOut("fast")
-      }
-      ))
-  }
-  function o() {
-      window.history.replaceState(null, "Studio Olafur Eliasson", "/uncertain"),
-      $(".share-actions #copy-url-button").remove(),
-      $("#copy-url-input").remove()
-  }
-  var a, s, l, h, c, u, p, d, f, m, E, g, v, y, T, R, x, H, b, w, q, M = 800, _ = (Math.cos(Math.PI / 6),
-  Math.cos(Math.PI / 6),
-  4), S = {
-      0: [0],
-      1: [1],
-      2: [2],
-      3: [3],
-      4: [0, 1],
-      5: [1, 2],
-      6: [2, 0],
-      7: [0, 3],
-      8: [1, 3],
-      9: [2, 3],
-      10: [0, 1, 2],
-      11: [0, 1, 3],
-      12: [0, 2, 3],
-      13: [1, 2, 3],
-      14: [0, 1, 2, 3]
-  }, C = {
-      0: [0, 4, 6, 7, 10, 11, 12, 14],
-      1: [1, 4, 5, 8, 10, 11, 13, 14],
-      2: [2, 5, 6, 9, 10, 12, 13, 14],
-      3: [3, 7, 8, 9, 11, 12, 13, 14]
-  }, L = new THREE.Quaternion, A = 0, k = new TWEEN.Tween, D = new TWEEN.Tween, P = 2e3, I = 2e3, V = 800, O = 400, F = 200, z = [], U = -2e4, B = [], N = new THREE.Object3D, j = new THREE.Object3D, G = new THREE.Object3D, W = .8, X = 3, Q = 60, Y = .06, Z = .08, K = .06, J = .06, ee = .025, te = 4, ie = 1, re = .62 * Math.PI, ne = new Array(15), oe = new Array(15), ae = new Array(15), se = [], le = new Array(4), he = [], ce = -1, ue = new THREE.Vector3, pe = .25, de = .12, fe = .17, me = 0, Ee = 1, ge = 4, ve = !1, ye = function(e, t, i) {
-      IVis.call(this, e, t, i),
-      a = this,
-      this.name = "tags",
-      this.camControls = new TagsCamControls(e.getCamera(),L),
-      c = sceneManager.physics,
-      (q = new THREE.LoadingManager).onLoad = function() {
-          for (var e = 0; e < ae.length; e++)
-              void 0 !== ae[e] && (ae[e].lightSprite.material.map = H,
-              ae[e].glowSprite.material.map = b)
-      }
-      ,
-      setTimeout((function() {
-          var e = new THREE.TextureLoader(q);
-          e.crossOrigin = "anonymous",
-          e.load(PATHS.ASSETS + "/webgl/light_point.jpg", (function(e) {
-              H = e
-          }
-          ));
-          var t = new THREE.TextureLoader(q);
-          t.crossOrigin = "anonymous",
-          t.load(PATHS.ASSETS + "/webgl/glow.jpg", (function(e) {
-              b = e
-          }
-          ));
-          var i = new THREE.TextureLoader(q);
-          i.crossOrigin = "anonymous",
-          i.load(PATHS.ASSETS + "/webgl/point.jpg", (function(e) {
-              w = e
-          }
-          ))
-      }
-      ), 100),
-      this.onResize = function() {
-          $("#tags-dialog").each((function() {
-              var e = $(this).find(".upper-section").height()
-                , t = .5 * ($(window).height() - e);
-              t = Math.max(t, 76),
-              $(this).css("margin-top", t + "px")
-          }
-          ))
-      }
-      ,
-      this.shouldWaitForFadeout = !0
-  };
-  return ye.prototype = Object.create(IVis.prototype),
-  ye.prototype.onInit = function(t) {
-      console.log('ye onInit', t);
-      null != t ? (this.preloadInfo = t,
-      ve = t.isIntro || !1) : this.preloadInfo = void 0,
-      this.state = "out",
-      this.sceneObject.add(j),
-      this.sceneObject.add(G),
-      f = [],
-      m = [],
-      E = [],
-      g = [],
-      v = [],
-      y = [],
-      T = [];
-      console.log('ne', ne);
-      for (var i = 0; i < ne.length; i++) {
-          ne[i] = new Array,
-          ae[i] = new THREE.Object3D,
-          ae[i].viewData = {
-              tags: {}
-          },
-          ae[i].viewData.tags.particle = c.makeParticle(10, 0, 0, 0),
-          ae[i].viewData.tags.particle.fixed,
-          ae[i].viewData.tags.repulsions = {},
-          ae[i].viewData.tags.positionPrevious = new THREE.Vector3,
-          ae[i].viewData.tags.positionTarget = new THREE.Vector3,
-          ae[i].inbetweenLines = {},
-          ae[i].itemLines = {},
-          ae[i].glowTween = new TWEEN.Tween,
-          ae[i].isNew = !1,
-          ae[i].selfIndex = i;
-          var r = new THREE.SpriteMaterial({
-              map: H,
-              blending: THREE.AdditiveBlending,
-              transparent: !0,
-              opacity: 0
-          })
-            , n = new THREE.Sprite(r);
-          n.scale.set(1e-5, 1e-5, 1e-5),
-          n.maxOpacity = pe,
-          n.previousScale = new THREE.Vector3,
-          n.targetScale = new THREE.Vector3,
-          n.name = "light sprite",
-          n.skipRaycast = !0,
-          ae[i].lightSprite = n,
-          ae[i].add(n);
-          var o = new THREE.SpriteMaterial({
-              map: b,
-              blending: THREE.AdditiveBlending,
-              transparent: !0,
-              opacity: 0
-          })
-            , u = new THREE.Sprite(o);
-          u.scale.set(1e-5, 1e-5, 1e-5),
-          u.maxOpacity = de,
-          u.previousScale = new THREE.Vector3,
-          u.targetScale = new THREE.Vector3,
-          u.name = "glow sprite",
-          u.skipRaycast = !0,
-          ae[i].glowSprite = u,
-          ae[i].add(u);
-          var p = new THREE.PointLight(16777215,0,1);
-          p.maxIntensity = 2,
-          ae[i].light = p,
-          ae[i].add(p);
-          var d = new THREE.SphereGeometry(1,20,20)
-            , R = new THREE.MeshBasicMaterial({
-              color: 16777215,
-              transparent: !0,
-              opacity: 0,
-              blending: THREE.AdditiveBlending,
-              depthWrite: !1
-          })
-            , x = new THREE.Mesh(d,R);
-          x.maxOpacity = ee,
-          x.previousScale = new THREE.Vector3,
-          x.targetScale = new THREE.Vector3,
-          x.type = "BCS",
-          x.index = i,
-          x.name = "click sphere",
-          ae[i].add(x),
-          ae[i].clickSphere = x,
-          this.sceneObject.add(ae[i]),
-          oe[i] = 0
-      }
-      for (i = 0; i < le.length; i++)
-          le[i] = new THREE.PointLight(16777215,0,1),
-          this.sceneObject.add(le[i]);
-      this.updateLightMaterials();
-      var w = this.camControls.getLookVector();
-      w.y = 0,
-      w.normalize();
-      var q = 1.5 * Math.PI - Math.atan2(w.z, w.x);
-      (L = new THREE.Quaternion).setFromAxisAngle(new THREE.Vector3(0,1,0), q);
-      var M, _ = new THREE.Vector3(1,0,0).clone().applyQuaternion(L).normalize();
-      debugger;
-      A = Math.atan2(_.z, _.x),
-      this.camControls.init(L),
-      this.initTagsDialog();
-      if (t && t.center) {
-        (M = t.center.clone()).y = sceneManager.getCamera().position.y;
-      } else {
-          var S = this.camControls.getLookVector();
-          S.y = 0,
-          S.normalize(),
-          M = sceneManager.getCamera().position.clone().add(S.multiplyScalar(1e3))
-      }
-      debugger;
-      centerAnchor = new THREE.Object3D,
-      centerAnchor.position.set(M.x, M.y, M.z),
-      centerAnchor.point = this.getPointSprite(),
-      centerAnchor.point.visible = !1,
-      centerAnchor.add(centerAnchor.point),
-      this.sceneObject.add(centerAnchor);
-      var C = itemField.sizeScalar * itemField.sizeScalar * 2 * propertyCount(this.objects.item);
-      h = Math.sqrt(C / 4 * Math.PI),
-      l = h - 2,
-      this.camControls.setRotationCenter(centerAnchor.position),
-      this.camControls.setZoomLimits(s, l),
-      console.log('this.initItems()');
-      this.initItems();
-      // 后退
-    //   $("#nav-back").stop().fadeIn("fast").unbind("click").click((function() {
-    //       a.uiEnabled && ($(this).stop().fadeOut("fast"),
-    //       ui.openView("drift"))
-    //   }
-    //   ));
-      for (i = 0; i < 3; i++) {
-          (d = new THREE.Geometry).vertices.push(new THREE.Vector3),
-          d.vertices.push(new THREE.Vector3),
-          d.dynamic = !1;
-          R = e();
-          B.push(new THREE.Line(d,R)),
-          this.sceneObject.add(B[i])
-      }
-      this.tweenFog(27e-5, this.transDuration),
-      sceneManager.tweenSkyDomeState(sceneManager.SKYDOME_VIEW_COLORS.tags, this.transDuration),
-      !1,
-      this.hideAddStuff(),
-      this.camControls.animate({
-          pos: sceneManager.getCamera().position.clone(),
-          look: M,
-          duration: a.transDuration
-      })
-  }
-  ,
-  ye.prototype.initTagsDialog = function() {
-      debugger;
-      function e(e, t) {
-          return (e = e.name.toUpperCase()) < (t = t.name.toUpperCase()) ? -1 : e > t ? 1 : 0
-      }
-      u = api.tagList,
-      p = api.tagListArray,
-      $("#ui #local").append('<div id="tags-dialog-wrapper"><div id="tags-dialog"><div class="upper-section"><div class="heading"><h1>Choose a tag</h1></div><div id="suggested"><ul class="tags"></ul></div><div class="refresh-suggested-container"><img class="refresh-suggested" src="/assets/images/refresh_black_32.png" /></div><div id="expand-all-tags" class="alpha-group"><span>View all tags \u2193</span></div></div><div id="all"></div></div></div>'),
-      d = $("#tags-dialog"),
-      tagsDialogWrapper = $("#tags-dialog-wrapper"),
-      tagsDialogWrapper.hide(),
-      d.find("#all").hide(),
-      d.find("#expand-all-tags span").click((function() {
-          var e, t = 400;
-          $(this).hasClass("opened") ? ($(this).removeClass("opened"),
-          $(this).html("View all tags \u2193"),
-          $("#tags-dialog-wrapper").stop().animate({
-              scrollTop: 0
-          }, {
-              duration: t,
-              easing: "easeOutQuad",
-              complete: function() {
-                  d.find("#all").stop().fadeOut("fast")
-              }
-          })) : (d.find("#all").stop().fadeIn("fast"),
-          $(this).addClass("opened"),
-          $(this).html("Hide all tags \u2191"),
-          e = d.find("#all").position().top + 5,
-          $("#tags-dialog-wrapper").stop().animate({
-              scrollTop: e
-          }, {
-              duration: t,
-              easing: "easeOutQuad"
-          }))
-      }
-      ));
-      this.generateUniqueRandomInts(25, p.length - 1);
-      this.refreshSuggested();
-      for (var t = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"], i = new Array(t.length), r = [], n = d.find("#all"), o = 0; o < t.length; o++) {
-          i[o] = [];
-          var s = "alpha-" + t[o];
-          n.append('<div id="' + s + '" class="alpha-group"><div class="label">' + t[o] + '</div><div class="tags"></div></div>')
-      }
-      n.append('<div id="alpha-rest" class="alpha-group"><div class="label">...</div><div class="tags"></div></div>');
-      for (o = 0; o < p.length; o++) {
-          var l = (m = p[o]).name.charAt(0).toUpperCase()
-            , h = t.indexOf(l);
-          -1 != h ? i[h].push(m) : r.push(m)
-      }
-      for (o = 0; o < i.length; o++) {
-          i[o].sort(e);
-          for (var c = n.find("#alpha-" + t[o] + " .tags"), f = 0; f < i[o].length; f++) {
-              var m = i[o][f];
-              c.append('<span id="' + m.id + '" class="tag-basic"><a href="#">' + m.name + "</a></span>")
-          }
-      }
-      r.sort(e);
-      var E = n.find("#alpha-rest .tags");
-      for (o = 0; o < r.length; o++) {
-          m = r[o];
-          E.append('<span id="' + m.id + '" class="tag-basic"><a href="#">' + m.name + "</a></span>")
-      }
-      d.find(".alpha-group .tags").each((function() {
-          $(this).is(":empty") && $(this).parent().hide(),
-          1 === $(this).find("a").length && $(this).addClass("no-columns")
-      }
-      )),
-      d.find(".tag, .tag-basic").click((function(e) {
-          e.preventDefault(),
-          a.onTagClick(this)
-      }
-      )),
-      d.find(".refresh-suggested").click((function() {
-          a.refreshSuggested()
-      }
-      ))
-  }
-  ,
-  ye.prototype.openTagsDialog = function(e) {
-      this.uiEnabled = !1,
-      ui.disableHelpLink(),
-      $("#nav-back").stop().fadeIn("fast"),
-      d.find("#expand-all-tags span").html("View all tags \u2193").removeClass("opened"),
-      d.find("#all").hide(),
-      this.hideAllLabels(),
-      f.length > 0 ? (d.find(".heading h1").html("Add a tag"),
-      $("#nav-back").unbind("click").click((function() {
-          a.uiEnabled && (a.closeTagsDialog(),
-          a.fadeUpAllBucketNodes(),
-          a.adjustCameraDistance())
-      }
-      ))) : $("#nav-back").unbind("click").click((function() {
-          a.uiEnabled && ($(this).stop().fadeOut("fast"),
-          ui.openView("drift"))
-      }
-      ));
-      var t = function(e) {
-          null == e && (e = a.getRandomTags(25));
-          var t = d.find("#suggested .tags");
-          t.empty();
-          for (var i = 0; i < e.length; i++)
-              t.append('<li id="' + e[i].id + '" class="tag"><a href="#">' + e[i].name + "</a></li>");
-          t.find(".tag").click((function(e) {
-              e.preventDefault(),
-              a.onTagClick(this)
-          }
-          )),
-          $(".tag").show().each((function() {
-              for (var e = $(this).attr("id"), t = 0; t < f.length; t++)
-                  f[t].data.id == e && $(this).hide()
-          }
-          )),
-          tagsDialogWrapper.stop().scrollTop(0).fadeIn("slow", (function() {
-              a.uiEnabled = !0
-          }
-          )),
-          a.onResize()
-      };
-      if (null == e && 0 == m.length ? this.getRandomTags(25, t) : this.getSuggestedTags(e, 25, t),
-      !1,
-      this.hideAddStuff(),
-      0 != f.length) {
-          sceneManager.getCamera().position.distanceTo(centerAnchor.position);
-          var i = sceneManager.getCamera().position.clone().sub(centerAnchor.position).normalize().multiplyScalar(l).add(centerAnchor.position);
-          this.camControls.animate({
-              pos: i,
-              duration: V
-          })
-      }
-  }
-  ,
-  ye.prototype.closeTagsDialog = function() {
-      $("#nav-back").unbind("click").click((function() {
-          a.uiEnabled && ($(this).stop().fadeOut("fast"),
-          ui.openView("drift"))
-      }
-      )),
-      this.uiEnabled = !1,
-      ui.enableHelpLink(),
-      $("body").css("cursor", "default"),
-      tagsDialogWrapper.stop().fadeOut("fast", (function() {
-          setTimeout((function() {
-              !1 === a.uiEnabled && ($("#nav-back").stop().fadeIn("fast"),
-              a.uiEnabled = !0,
-              !0,
-              a.showAllLabels())
-          }
-          ), P + 250)
-      }
-      ))
-  }
-  ,
-  ye.prototype.initItems = function() {
-      console.log('initItems');
-      function e() {
-          if (ui.enableNav(),
-          null != v.preloadInfo)
-              if (!0 === v.preloadInfo.loadLastTags) {
-                  if (void 0 !== v.preloadInfo.lastTags)
-                      r(v.preloadInfo.lastTags) && (z = v.preloadInfo.lastTags);
-                  0 !== z.length ? v.setTags(z) : v.openTagsDialog()
-              } else
-                  void 0 !== v.preloadInfo.tagIds ? v.setTags(v.preloadInfo.tagIds) : v.openTagsDialog();
-          else
-              v.openTagsDialog();
-          v.openInitAbout()
-      }
-      var t = [];
-      if (void 0 !== this.preloadInfo && void 0 !== this.preloadInfo.lastView)
-          switch (this.preloadInfo.lastView) {
-          case "drift":
-              for (var i in this.objects.item) {
-                  var n = (p = this.objects.item[i]).position.clone().sub(centerAnchor.position)
-                    , o = n.clone().normalize();
-                  (a = n.add(o.multiplyScalar(h))).add(centerAnchor.position),
-                  t.push(a)
-              }
-              break;
-          case "search":
-              for (var i in this.objects.item) {
-                  var a = (p = this.objects.item[i]).viewData.search.positionRest.clone();
-                  t.push(a)
-              }
-          }
-      else {
-          var s = 2 * Math.PI / api.itemListArray.length
-            , l = 0
-            , u = 5e3;
-          for (var i in this.objects.item) {
-              var p = this.objects.item[i]
-                , d = s * l + .02 * Math.random()
-                , f = (a = new THREE.Vector3(h + 1e3 + 4e3 * Math.random(),0,0),
-              (new THREE.Quaternion).setFromAxisAngle(new THREE.Vector3(0,1,0), d));
-              a.y += Math.random() * u - u / 2,
-              a.applyQuaternion(f),
-              t.push(a),
-              l++
-          }
-      }
-      var m = this.matchClosestPositions(t, sceneManager.getCamera().position);
-      for (var i in this.objects.item) {
-          (p = this.objects.item[i]).viewData.tags = {},
-          p.viewData.tags.positionPrev = p.position.clone();
-          var E = m[i];
-          p.viewData.tags.positionRest = E,
-          p.viewData.tags.positionActive = new THREE.Vector3,
-          p.viewData.tags.particle = c.makeParticle(1, p.position.x, p.position.y, p.position.z),
-          p.viewData.tags.repulsions = [],
-          p.viewData.tags.activeTagConnections = [],
-          p.viewData.tags.bucketConnection = -1,
-          p.onClickCallback = this.itemClickCallback.bind(null, p),
-          p.forceRotateToCamera = !1,
-          p.enableRotateToCamera = !1,
-          p.rotateToTarget = !0;
-          var g = new THREE.Vector3(0,0,1);
-          g.applyQuaternion(p.quaternion).multiplyScalar(2e3).add(centerAnchor.position),
-          p.rotationTarget = g,
-          p.viewData.tags.rotationTargetPrev = g,
-          p.viewData.tags.rotationTargetDest = centerAnchor.position,
-          p.isInteractive = !1
-      }
-      var v = this;
-      if (ve)
-          for (var i in v.objects.item) {
-              var y = (p = v.objects.item[i]).viewData.tags.positionRest.clone();
-              y.sub(centerAnchor.position).multiplyScalar(2).add(centerAnchor.position),
-              p.position.set(y.x, y.y, y.z),
-              p.viewData.tags.particle.position.set(y.x, y.y, y.z),
-              p.viewData.tags.destination = y.clone();
-              var T = p.viewData.tags.rotationTargetDest;
-              p.rotationTarget.set(T.x, T.y, T.z)
-          }
-      k = new TWEEN.Tween({
-          t: 0
-      }).to({
-          t: 1
-      }, this.transDuration).onUpdate((function() {
-          for (var e in v.objects.item) {
-              var t = v.objects.item[e]
-                , i = lerpVec3(t.viewData.tags.positionPrev, t.viewData.tags.positionRest, this.t);
-              t.position.set(i.x, i.y, i.z),
-              t.viewData.tags.destination = i.clone();
-              var r = lerpVec3(t.viewData.tags.rotationTargetPrev, t.viewData.tags.rotationTargetDest, this.t);
-              t.rotationTarget.set(r.x, r.y, r.z)
-          }
-      }
-      )).easing(TWEEN.Easing.Quartic.InOut).onComplete((function() {
-          e()
-      }
-      )).start()
-  }
-  ,
-  ye.prototype.getCamControls = function() {
-      return this.camControls
-  }
-  ,
-  ye.prototype.initCamPos = function() {}
-  ,
-  ye.prototype.onKeyDown = function(e) {
-      "in" === this.state ? 38 === e.keyCode ? this.handleBucketScroll(2.5) : 40 === e.keyCode && this.handleBucketScroll(-2.5) : "out" === this.state && (38 === e.keyCode ? this.camControls.onMouseWheel(5) : 40 === e.keyCode && this.camControls.onMouseWheel(-5))
-  }
-  ,
-  ye.prototype.onNothingClicked = function() {
-      this.uiEnabled && "in" === this.state && this.closeSphere(R)
-  }
-  ,
-  ye.prototype.onMouseDown = function(e) {
-      this.camControls.onMouseDown(e)
-  }
-  ,
-  ye.prototype.onMouseUp = function() {
-      this.camControls.onMouseUp()
-  }
-  ,
-  ye.prototype.onMouseMove = function(e) {
-      "out" == this.state && (this.camControls.dragging && this.ensureHoverOffSphere(),
-      this.camControls.onMouseMove(e))
-  }
-  ,
-  ye.prototype.onMouseWheel = function(e, t) {
-      switch (this.state) {
-      case "in":
-          this.handleBucketScroll(t);
-          break;
-      case "out":
-          this.camControls.onMouseWheel(t)
-      }
-  }
-  ,
-  ye.prototype.onMouseLeave = function() {
-      this.hideAddStuff(),
-      this.camControls.onMouseUp()
-  }
-  ,
-  ye.prototype.handleBucketScroll = function(e) {
-      var t, i = 20 * -e, r = !1;
-      (e < 0 ? (this.bucketScrollPos + i > this.bucketScrollHeight && (i = this.bucketScrollHeight - this.bucketScrollPos),
-      r = !0) : (this.bucketScrollPos + i < 0 && (i = -this.bucketScrollPos),
-      r = !0),
-      r) && (this.bucketScrollPos += i,
-      (t = e > 0 ? new THREE.Vector3(0,1,0) : new THREE.Vector3(0,-1,0)).applyQuaternion(sceneManager.getCamera().quaternion),
-      t.multiplyScalar(Math.abs(i)),
-      this.camControls.getTargetScrollPos().add(t))
-  }
-  ,
-  ye.prototype.onUpdate = function() {
-      for (var e in this.camControls.update(),
-      this.objects.item) {
-          var t = this.objects.item[e];
-          void 0 !== t.viewData.tags.destination && (t.position.x = t.viewData.tags.particle.position.x = lerp(t.viewData.tags.particle.position.x, t.viewData.tags.destination.x, .1),
-          t.position.y = t.viewData.tags.particle.position.y = lerp(t.viewData.tags.particle.position.y, t.viewData.tags.destination.y, .1),
-          t.position.z = t.viewData.tags.particle.position.z = lerp(t.viewData.tags.particle.position.z, t.viewData.tags.destination.z, .1))
-      }
-      for (var i = 0; i < he.length; i++)
-          he[i].update();
-      var r = sceneManager.getCamera().position;
-      for (i = 0; i < ae.length; i++) {
-          var n = r.clone().sub(ae[i].position).normalize().multiplyScalar(1);
-          ae[i].lightSprite.position.set(n.x, n.y, n.z),
-          ae[i].glowSprite.position.set(n.x, n.y, n.z)
-      }
-      this.updateLabels()
-  }
-  ,
-  ye.prototype.onRelease = function() {
-      this.uiEnabled = !1,
-      o(),
-      ui.disableHelpLink(),
-      this.removeTagAdders(),
-      k.stop();
-      for (var e = 0; e < ae.length; e++)
-          ae[e].remove(ae[e].spriteX),
-          e > 3 && ae[e].remove(ae[e].spriteLabel),
-          ae[e].light.lastIntensity = ae[e].light.intensity,
-          ae[e].lightSprite.lastOpacity = ae[e].lightSprite.material.opacity,
-          ae[e].glowSprite.lastOpacity = ae[e].glowSprite.material.opacity,
-          ae[e].clickSphere.lastOpacity = ae[e].clickSphere.material.opacity;
-      for (e = 0; e < g.length; e++) {
-          var t = g[e]
-            , i = a.objects.item[t];
-          c.removeParticleForces(i.viewData.tags.particle),
-          i.viewData.tags.repulsions = {},
-          i.viewData.tags.activeTagConnections = []
-      }
-      d.is(":visible") ? d.fadeOut("fast", (function() {
-          $("#ui #local").empty()
-      }
-      )) : $("#ui #local").empty()
-  }
-  ,
-  ye.prototype.duringRelease = function(e) {
-      for (var t = 0; t < ae.length; t++)
-          ae[t].light.intensity = lerp(ae[t].light.lastIntensity, 0, e)
-  }
-  ,
-  ye.prototype.onReleaseEnd = function() {
-      this.removeItemLines(),
-      this.removeAllInbetweenLines(),
-      this.removeAllTagCenterLines(),
-      this.updateLightMaterials()
-  }
-  ,
-  ye.prototype.getRefQuaternion = function() {
-      return L
-  }
-  ,
-  ye.prototype.refreshSuggested = function() {
-      function e(e) {
-          i.empty(),
-          i.show();
-          for (var r = a.generateUniqueRandomInts(t, p.length - 1), n = 0; n < r.length; n++) {
-              var o = p[r[n]];
-              i.append('<li id="' + o.id + '" class="tag"><a href="#">' + o.name + "</a></li>"),
-              e && i.find("#" + o.id).css("opacity", 0)
-          }
-          if (i.find(".tag").click((function(e) {
-              e.preventDefault(),
-              a.onTagClick(this)
-          }
-          )),
-          e) {
-              var s = i.find(".tag")
-                , l = 0;
-              s.each((function() {
-                  var e = this;
-                  setTimeout((function() {
-                      $(e).stop().fadeTo(200, 1)
-                  }
-                  ), l),
-                  l += 100
-              }
-              ))
-          }
-      }
-      var t = 25
-        , i = d.find("#suggested .tags");
-        if (i.find(".tag").length) {
-            i.stop().fadeOut("fast", (function() {
-                e(!0)
+,
+TagsCamControls = function() {
+    var e, t, i = 100, r = i, n = new THREE.Quaternion, o = new THREE.Quaternion, a = new THREE.Quaternion, s = new THREE.Vector3, l = !1, h = !0, c = !0, u = 0, p = 8e-4, d = (new THREE.Vector3(0,-1,0),
+    new THREE.Vector3), f = 0, m = 1e6, E = 0, g = 0, v = (a = new THREE.Quaternion,
+    0), y = 0, T = 0, R = 0, x = 0, H = !1, b = function(i) {
+        this,
+        e = i,
+        this.moveSpeed = 200,
+        this.transitionDuration = 3e3,
+        this.drag = .3,
+        t = new TWEEN.Tween,
+        this.mousedown = !1,
+        this.dragging = !1
+    };
+    return b.prototype = {
+        constructor: b,
+        init: function(t) {
+            a.copy(t),
+            n.copy(e.quaternion),
+            i = r;
+            var o = new THREE.Vector3(0,0,-1);
+            o.applyQuaternion(a),
+            o.y = 0,
+            o.normalize(),
+            v = .5 * Math.PI + Math.atan2(o.z, o.x)
+        },
+        setOutPosition: function(e) {
+            outPosition.set(e.x, e.y, e.z)
+        },
+        setInDistance: function(e) {
+            inDistance = e
+        },
+        onMouseDown: function(e) {
+            R = y,
+            x = T,
+            y = e.clientX,
+            T = e.clientY,
+            this.mousedown = !0
+        },
+        onMouseUp: function() {
+            this.mousedown = !1,
+            this.dragging = !1
+        },
+        onMouseLeave: function() {
+            this.mousedown = !1,
+            this.dragging = !1
+        },
+        onMouseMove: function(e) {
+            (R = y,
+            x = T,
+            y = e.clientX,
+            T = e.clientY,
+            this.mousedown && !l) && (this.dragging || (this.dragging = !0),
+            E += .01 * -(y - R),
+            g += .01 * -(T - x),
+            this.updateTargets(),
+            u = 0)
+        },
+        updateTargets: function() {
+            g > Math.PI / 2 ? g = Math.PI / 2 : g < -Math.PI / 2 && (g = -Math.PI / 2);
+            var e = new THREE.Quaternion;
+            e.setFromAxisAngle(new THREE.Vector3(0,1,0), E + v);
+            var t = new THREE.Quaternion;
+            t.setFromAxisAngle(new THREE.Vector3(1,0,0), g),
+            n = a.clone().multiply(e).multiply(t)
+        },
+        onMouseWheel: function(e) {
+            l || H || (i += 25 * -e,
+            i = Math.min(Math.max(i, f), m))
+        },
+        onKeyDown: function() {
+            this.dragging = !0
+        },
+        onKeyUp: function() {
+            ui.previewOpen && ui.closeItemPreview(),
+            this.dragging = !1
+        },
+        update: function() {
+            l || (H ? e.position.lerp(s, this.drag) : (r = lerp(r, i, this.drag),
+            o.slerp(n, this.drag),
+            e.position.set(0, 0, 1),
+            e.position.multiplyScalar(r),
+            e.position.applyQuaternion(o),
+            e.position.add(d)),
+            e.quaternion.slerp(n, this.drag),
+            this.dragging ? e.lookAt(d) : h && c && (u < p && (u += 1e-5),
+            E += u,
+            this.updateTargets()))
+        },
+        animate: function(a) {
+            t.stop();
+            var h = {
+                cx: e.position.x,
+                cy: e.position.y,
+                cz: e.position.z,
+                t: 0
+            }
+              , c = {
+                cx: a.pos.x,
+                cy: a.pos.y,
+                cz: a.pos.z,
+                t: 1
+            }
+              , p = !1;
+            if (void 0 !== a.look) {
+                var f = e.position.distanceTo(a.look)
+                  , m = this.getLookVector().multiplyScalar(f).add(e.position);
+                h.lx = m.x,
+                h.ly = m.y,
+                h.lz = m.z,
+                c.lx = a.look.x,
+                c.ly = a.look.y,
+                c.lz = a.look.z,
+                p = !0
+            }
+            l = !0,
+            t = new TWEEN.Tween(h).to(c, a.duration).onUpdate((function() {
+                e.position.set(this.cx, this.cy, this.cz),
+                p && e.lookAt(new THREE.Vector3(this.lx,this.ly,this.lz))
+            }
+            )).easing(TWEEN.Easing.Quadratic.InOut).onComplete((function() {
+                var t = e.position.clone().sub(d).length();
+                i = t,
+                r = t,
+                s.copy(e.position),
+                p && (n.copy(e.quaternion),
+                o.copy(e.quaternion)),
+                void 0 !== a.callback && a.callback(),
+                l = !1,
+                u = 0
+            }
+            )).start()
+        },
+        animateSlerp: function(a) {
+            t.stop();
+            var h = e.position.clone().sub(d)
+              , c = a.pos.clone().sub(d)
+              , p = h.length()
+              , f = c.length()
+              , m = new THREE.Vector3(1,0,0)
+              , v = this.quaternionBetweenVecs(m, h.normalize())
+              , y = this.quaternionBetweenVecs(m, c.normalize());
+            new THREE.Quaternion;
+            l = !0,
+            t = new TWEEN.Tween({
+                t: 0
+            }).to({
+                t: 1
+            }, a.duration).onUpdate((function() {
+                var t = v.clone().slerp(y, this.t)
+                  , i = lerp(p, f, this.t)
+                  , r = m.clone().applyQuaternion(t).multiplyScalar(i).add(d);
+                e.position.copy(r),
+                e.lookAt(d)
+            }
+            )).easing(TWEEN.Easing.Quadratic.InOut).onComplete((function() {
+                var t = e.position.clone().sub(d).length();
+                i = t,
+                r = t,
+                n.copy(e.quaternion),
+                o.copy(e.quaternion),
+                s.copy(e.position);
+                var h = e.position.x - d.x
+                  , c = e.position.y - d.y
+                  , p = e.position.z - d.z
+                  , f = e.position.distanceTo(d);
+                E = .5 * Math.PI - Math.atan2(p, h),
+                g = -Math.asin(c / f),
+                void 0 !== a.callback && a.callback(),
+                l = !1,
+                u = 0
+            }
+            )).start()
+        },
+        stopAnimation: function() {
+            t.stop()
+        },
+        getLookVector: function() {
+            var t = new THREE.Vector3(0,0,-1);
+            return t.applyQuaternion(e.quaternion),
+            t.normalize(),
+            t
+        },
+        getTargetScrollPos: function() {
+            return s
+        },
+        isAnimating: function() {
+            return l
+        },
+        setScrollMode: function(e) {
+            H = e
+        },
+        setRotationCenter: function(t) {
+            d = t;
+            var i = e.position.x - d.x
+              , r = e.position.z - d.z;
+            E = .5 * Math.PI - Math.atan2(r, i),
+            g = 0
+        },
+        setZoomLimits: function(e, t) {
+            f = e,
+            m = t,
+            i = Math.max(Math.min(i, m), f)
+        },
+        setAutoRotate: function(e) {
+            h = e
+        },
+        quaternionBetweenVecs: function(e, t) {
+            var i = new THREE.Vector3;
+            i.crossVectors(e, t),
+            i.normalize(),
+            0 == i.x && 0 == i.y && 0 == i.z && (i = t);
+            var r = GeomUtils.angleBetweenVecs(e, t)
+              , n = new THREE.Quaternion;
+            return n.setFromAxisAngle(i, r),
+            n.normalize(),
+            n
+        }
+    },
+    b
+}()
+,
+TagNode = function() {
+    var e, t = function(t) {
+        THREE.Object3D.call(this),
+        e = this,
+        this.parentVis = t,
+        this.color = new THREE.Color(16777215),
+        this.color.setHSL(Math.random(), .7, .7),
+        this.radius = 100,
+        this.data = {},
+        this.point = this.parentVis.getPointSprite(),
+        this.point.visible = !1,
+        this.add(this.point),
+        this.isEmpty = !0
+    };
+    return t.prototype = Object.create(THREE.Object3D.prototype),
+    t.prototype.fill = function(t, i, r) {
+        function n(e) {
+            o.allItems = e,
+            o.isEmpty = !1,
+            null != r && r()
+        }
+        this.data = t;
+        var o = this;
+        null == i ? api.getTagArchiveObjects({
+            id: t.id,
+            detail: "id_only"
+        }, (function(t) {
+            for (var i = [], r = 0; r < t.length; r++) {
+                var o = t[r]
+                  , a = e.parentVis.objects.item[o];
+                void 0 !== a && i.push(a)
+            }
+            n(i)
+        }
+        )) : n(i)
+    }
+    ,
+    t.prototype.empty = function() {
+        this.data = null,
+        this.allItems = [],
+        this.isEmpty = !0
+    }
+    ,
+    t
+}()
+,
+TagAddNode = function() {
+    function e(e) {
+        var t = THREE.ShaderLib.gradfogobject
+          , i = THREE.UniformsUtils.clone(t.uniforms);
+        return i.cameraPos.value = new THREE.Vector3(0,0,0),
+        i.skyDomeRadius.value = sceneManager.skyDomeRadius,
+        i.skyDomeExponent.value = sceneManager.skyDomeExponent,
+        i.skyDomeOffset.value = sceneManager.skyDomeOffset,
+        i.skyDomeBottomColor.value = sceneManager.skyDomeBottomColor,
+        i.skyDomeTopColor.value = sceneManager.skyDomeTopColor,
+        i.color.value = e,
+        i.opacity.value = 0,
+        i = THREE.UniformsUtils.merge([i, THREE.UniformsLib.lights]),
+        new THREE.ShaderMaterial({
+            uniforms: i,
+            vertexShader: t.vertexShader,
+            fragmentShader: t.fragmentShader,
+            side: THREE.DoubleSide,
+            transparent: !0,
+            depthWrite: !0,
+            depthTest: !0,
+            lights: !0,
+            fog: !0
+        })
+    }
+    var t = 1
+      , i = new THREE.Color(16777215)
+      , r = new THREE.Color(16711680)
+      , n = function(t, n) {
+        THREE.Object3D.call(this),
+        this.parentVis = t,
+        this.srcTags = n;
+        var o = new CompassPointer(250);
+        o.children[0].material = e(r),
+        o.children[1].material = e(i),
+        o.children[0].material.needsUpdate = !0,
+        o.children[1].material.needsUpdate = !0;
+        for (var a = 0; a < o.children.length; a++)
+            o.children[a].type = "ADD";
+        this.pointer = o,
+        this.add(o),
+        this.add(this.pointer)
+    };
+    return n.prototype = Object.create(THREE.Object3D.prototype),
+    n.prototype.setIndex = function(e) {
+        for (var t = 0; t < this.pointer.children.length; t++)
+            this.pointer.children[t].index = e
+    }
+    ,
+    n.prototype.hoverOn = function() {}
+    ,
+    n.prototype.hoverOff = function() {}
+    ,
+    n.prototype.click = function() {
+        this.parentVis.openTagsDialog()
+    }
+    ,
+    n.prototype.setOpacity = function(e) {
+        for (var i = 0; i < this.pointer.children.length; i++)
+            this.pointer.children[i].material.uniforms.opacity.value = e * t
+    }
+    ,
+    n.prototype.hide = function() {
+        for (var e = 0; e < this.pointer.children.length; e++)
+            this.pointer.children[e].visible = !1
+    }
+    ,
+    n.prototype.show = function() {
+        for (var e = 0; e < this.pointer.children.length; e++)
+            this.pointer.children[e].visible = !0
+    }
+    ,
+    n.prototype.getScalar = function() {
+        return this.pointer.getScalar()
+    }
+    ,
+    n.prototype.update = function() {
+        for (var e = this.position.distanceTo(sceneManager.getCamera().position), t = 0; t < this.pointer.children.length; t++)
+            this.pointer.children[t].material.uniforms.cameraPos.value = sceneManager.getCamera().position,
+            this.pointer.children[t].material.uniforms.nearOpacity.value = map(e, 70, 90, 0, 1);
+        var i = new THREE.Quaternion;
+        i.setFromAxisAngle(new THREE.Vector3(0,0,1), .02),
+        this.pointer.quaternion.multiply(i)
+    }
+    ,
+    n
+}()
+,TagsVis = function() {
+    function e() {
+        return new THREE.LineBasicMaterial({
+            color: 16777215,
+            linewidth: 2,
+            opacity: 0,
+            transparent: !0,
+            blending: THREE.AdditiveBlending,
+            fog: !1
+        })
+    }
+    function t(e) {
+        for (var t = [], i = 0; i < e.length; i++)
+            t.push(e[i]),
+            i !== e.length - 1 && t.push("+");
+        return t
+    }
+    function i(e) {
+        for (var t = "", i = 0; i < e.length; i++)
+            t += e[i],
+            i !== e.length - 1 && (t += "<br />+<br />");
+        return t
+    }
+    function r(e) {
+        if (0 === e.length)
+            return !1;
+        for (var t = !0, i = 0; i < e.length; i++)
+            if (0 !== e[i].indexOf("TEL")) {
+                t = !1;
+                break
+            }
+        return t
+    }
+    function n() {
+        for (var e = [], t = 0; t < f.length; t++)
+            e.push(f[t].data.id);
+        var i = "/uncertain/connections/" + e.join()
+          , r = "Studio Olafur Eliasson";
+        window.history.replaceState(null, r, i);
+        var n = "https://" + window.location.host + i;
+        0 !== $("#copy-url-input").length ? $("#copy-url-input").val(n) : ($(".share-actions .share-arrow").after('<a id="copy-url-button" href="#">Copy link</a>'),
+        $("#footer-nav").before('<input id="copy-url-input" type="text" value="' + n + '" style="display:none" />')),
+        $("#copy-url-button").unbind("click").click((function(e) {
+            e.preventDefault(),
+            void 0 !== n && $("#copy-url-input").val(n),
+            $("#copy-url-input").is(":visible") ? $("#copy-url-input").focus().select() : $("#copy-url-input").fadeIn("fast").focus().select()
+        }
+        )),
+        $("#copy-url-input").focusout((function() {
+            $(this).fadeOut("fast")
+        }
+        ))
+    }
+    // function o() {
+    //     window.history.replaceState(null, "Studio Olafur Eliasson", "/uncertain"),
+    //     $(".share-actions #copy-url-button").remove(),
+    //     $("#copy-url-input").remove()
+    // }
+    var a, s, l, h, c, u, p, d, f, m, E, g, v, y, T, R, x, H, b, w, q, M = 800, _ = (Math.cos(Math.PI / 6),
+    Math.cos(Math.PI / 6),
+    4), S = {
+        0: [0],
+        1: [1],
+        2: [2],
+        3: [3],
+        4: [0, 1],
+        5: [1, 2],
+        6: [2, 0],
+        7: [0, 3],
+        8: [1, 3],
+        9: [2, 3],
+        10: [0, 1, 2],
+        11: [0, 1, 3],
+        12: [0, 2, 3],
+        13: [1, 2, 3],
+        14: [0, 1, 2, 3]
+    }, C = {
+        0: [0, 4, 6, 7, 10, 11, 12, 14],
+        1: [1, 4, 5, 8, 10, 11, 13, 14],
+        2: [2, 5, 6, 9, 10, 12, 13, 14],
+        3: [3, 7, 8, 9, 11, 12, 13, 14]
+    }, L = new THREE.Quaternion, A = 0, k = new TWEEN.Tween, D = new TWEEN.Tween, P = 2e3, I = 2e3, V = 800, O = 400, F = 200, z = [], U = -2e4, B = [], N = new THREE.Object3D, j = new THREE.Object3D, G = new THREE.Object3D, W = .8, X = 3, Q = 60, Y = .06, Z = .08, K = .06, J = .06, ee = .025, te = 4, ie = 1, re = .62 * Math.PI, ne = new Array(15), oe = new Array(15), ae = new Array(15), se = [], le = new Array(4), he = [], ce = -1, ue = new THREE.Vector3, pe = .25, de = .12, fe = .17, me = 0, Ee = 1, ge = 4, ve = !1, ye = function(e, t, i) {
+        IVis.call(this, e, t, i),
+        a = this,
+        this.name = "tags",
+        this.camControls = new TagsCamControls(e.getCamera(),L),
+        c = sceneManager.physics,
+        (q = new THREE.LoadingManager).onLoad = function() {
+            for (var e = 0; e < ae.length; e++)
+                void 0 !== ae[e] && (ae[e].lightSprite.material.map = H,
+                ae[e].glowSprite.material.map = b)
+        }
+        ,
+        setTimeout((function() {
+            var e = new THREE.TextureLoader(q);
+            e.crossOrigin = "anonymous",
+            e.load("./webgl/light_point.jpg", (function(e) {
+                H = e
+            }
+            ));
+            var t = new THREE.TextureLoader(q);
+            t.crossOrigin = "anonymous",
+            t.load("./webgl/glow.jpg", (function(e) {
+                b = e
+            }
+            ));
+            var i = new THREE.TextureLoader(q);
+            i.crossOrigin = "anonymous",
+            i.load("./webgl/point.jpg", (function(e) {
+                w = e
             }
             ))
-        } else {
-            e(!1)
         }
-  }
-  ,
-  ye.prototype.onTagClick = function(e) {
-      a.closeTagsDialog();
-      var t = $(e).attr("id");
-      a.addTag(t)
-  }
-  ,
-  ye.prototype.clearTags = function() {
-      this.uiEnabled = !1,
-      this.fadeOutAll((function() {
-          for (var e = f.length - 1; e >= 0; e--)
-              a.removeTag(e);
-          var t = new THREE.Vector3(1e-5,1e-5,1e-5);
-          for (e = 0; e < ae.length; e++)
-              ae[e].lightSprite.previousScale = t,
-              ae[e].glowSprite.previousScale = t,
-              ae[e].clickSphere.previousScale = t,
-              ae[e].shiftIndex = void 0;
-          a.calculateBuckets(),
-          a.calculateActivePositions(!0),
-          a.repelItemsToAdd(),
-          a.removeItemLines(),
-          a.setLabels(),
-          z = [];
-          for (e = 0; e < f.length; e++)
-              z.push(f[e].data.id);
-          a.animateContent(),
-          a.adjustCameraDistance()
-      }
-      ))
-  }
-  ,
-  ye.prototype.setTags = function(e) {
-      this.uiEnabled = !1,
-      d.is(":visible") && d.stop().fadeOut("fast"),
-      this.fadeOutAll((function() {
-          E = [];
-          for (var t = 0; t < f.length; t++)
-              E.push(t);
-          if (0 == f.length)
-              0;
-          else if (M,
-          0 != E.length)
-              for (t = E.length - 1; t >= 0; t--)
-                  a.removeTag(E[t]);
-          y = g.slice();
-          for (t = 0; t < y.length; t++) {
-              var i = a.objects.item[y[t]];
-              i.viewData.tags.positionPrev = i.position.clone()
-          }
-          for (t = 0; t < e.length; t++) {
-              var r = new TagNode(a,null);
-              r.viewData = {
-                  tags: {}
-              },
-              f.push(r),
-              f[t].selfIndex = t,
-              a.sceneObject.add(r)
-          }
-          console.log('r', r);
-          switch (f.length) {
+        ), 100),
+        this.onResize = function() {
+            $("#tags-dialog").each((function() {
+                var e = $(this).find(".upper-section").height()
+                  , t = .5 * ($(window).height() - e);
+                t = Math.max(t, 76),
+                $(this).css("margin-top", t + "px")
+            }
+            ))
+        }
+        ,
+        this.shouldWaitForFadeout = !0
+    };
+    return ye.prototype = Object.create(IVis.prototype),
+    ye.prototype.onInit = function(t) {
+        null != t ? (this.preloadInfo = t,
+        ve = t.isIntro || !1) : this.preloadInfo = void 0,
+        this.state = "out",
+        this.sceneObject.add(j),
+        this.sceneObject.add(G),
+        f = [],
+        m = [],
+        E = [],
+        g = [],
+        v = [],
+        y = [],
+        T = [];
+        for (var i = 0; i < ne.length; i++) {
+            ne[i] = new Array,
+            ae[i] = new THREE.Object3D,
+            ae[i].viewData = {
+                tags: {}
+            },
+            ae[i].viewData.tags.particle = c.makeParticle(10, 0, 0, 0),
+            ae[i].viewData.tags.particle.fixed,
+            ae[i].viewData.tags.repulsions = {},
+            ae[i].viewData.tags.positionPrevious = new THREE.Vector3,
+            ae[i].viewData.tags.positionTarget = new THREE.Vector3,
+            ae[i].inbetweenLines = {},
+            ae[i].itemLines = {},
+            ae[i].glowTween = new TWEEN.Tween,
+            ae[i].isNew = !1,
+            ae[i].selfIndex = i;
+            var r = new THREE.SpriteMaterial({
+                map: H,
+                blending: THREE.AdditiveBlending,
+                transparent: !0,
+                opacity: 0
+            })
+              , n = new THREE.Sprite(r);
+            n.scale.set(1e-5, 1e-5, 1e-5),
+            n.maxOpacity = pe,
+            n.previousScale = new THREE.Vector3,
+            n.targetScale = new THREE.Vector3,
+            n.name = "light sprite",
+            n.skipRaycast = !0,
+            ae[i].lightSprite = n,
+            ae[i].add(n);
+            var o = new THREE.SpriteMaterial({
+                map: b,
+                blending: THREE.AdditiveBlending,
+                transparent: !0,
+                opacity: 0
+            })
+              , u = new THREE.Sprite(o);
+            u.scale.set(1e-5, 1e-5, 1e-5),
+            u.maxOpacity = de,
+            u.previousScale = new THREE.Vector3,
+            u.targetScale = new THREE.Vector3,
+            u.name = "glow sprite",
+            u.skipRaycast = !0,
+            ae[i].glowSprite = u,
+            ae[i].add(u);
+            var p = new THREE.PointLight(16777215,0,1);
+            p.maxIntensity = 2,
+            ae[i].light = p,
+            ae[i].add(p);
+            var d = new THREE.SphereGeometry(1,20,20)
+              , R = new THREE.MeshBasicMaterial({
+                color: 16777215,
+                transparent: !0,
+                opacity: 0,
+                blending: THREE.AdditiveBlending,
+                depthWrite: !1
+            })
+              , x = new THREE.Mesh(d,R);
+            x.maxOpacity = ee,
+            x.previousScale = new THREE.Vector3,
+            x.targetScale = new THREE.Vector3,
+            x.type = "BCS",
+            x.index = i,
+            x.name = "click sphere",
+            ae[i].add(x),
+            ae[i].clickSphere = x,
+            this.sceneObject.add(ae[i]),
+            oe[i] = 0
+        }
+        for (i = 0; i < le.length; i++) {
+            le[i] = new THREE.PointLight(16777215,0,1),
+            this.sceneObject.add(le[i]);
+        }
+        this.updateLightMaterials();
+        var w = this.camControls.getLookVector();
+        w.y = 0,
+        w.normalize();
+        var q = 1.5 * Math.PI - Math.atan2(w.z, w.x);
+        (L = new THREE.Quaternion).setFromAxisAngle(new THREE.Vector3(0,1,0), q);
+        var M, _ = new THREE.Vector3(1,0,0).clone().applyQuaternion(L).normalize();
+        A = Math.atan2(_.z, _.x),
+        this.camControls.init(L),
+        this.initTagsDialog();
+        if (t && t.center)
+            (M = t.center.clone()).y = sceneManager.getCamera().position.y;
+        else {
+            var S = this.camControls.getLookVector();
+            S.y = 0,
+            S.normalize(),
+            M = sceneManager.getCamera().position.clone().add(S.multiplyScalar(1e3))
+        }
+        centerAnchor = new THREE.Object3D,
+        centerAnchor.position.set(M.x, M.y, M.z),
+        centerAnchor.point = this.getPointSprite(),
+        centerAnchor.point.visible = !1,
+        centerAnchor.add(centerAnchor.point),
+        this.sceneObject.add(centerAnchor);
+        var C = itemField.sizeScalar * itemField.sizeScalar * 2 * propertyCount(this.objects.item);
+        h = Math.sqrt(C / 4 * Math.PI),
+        l = h - 2,
+        this.camControls.setRotationCenter(centerAnchor.position),
+        this.camControls.setZoomLimits(s, l),
+        this.initItems();
+        for (i = 0; i < 3; i++) {
+            (d = new THREE.Geometry).vertices.push(new THREE.Vector3),
+            d.vertices.push(new THREE.Vector3),
+            d.dynamic = !1;
+            R = e();
+            B.push(new THREE.Line(d,R)),
+            this.sceneObject.add(B[i])
+        }
+        this.tweenFog(27e-5, this.transDuration),
+        sceneManager.tweenSkyDomeState(sceneManager.SKYDOME_VIEW_COLORS.tags, this.transDuration),
+        !1,
+        this.hideAddStuff(),
+        this.camControls.animate({
+            pos: sceneManager.getCamera().position.clone(),
+            look: M,
+            duration: a.transDuration
+        })
+    }
+    ,
+    ye.prototype.initTagsDialog = function() {
+        function e(e, t) {
+            return (e = e.name.toUpperCase()) < (t = t.name.toUpperCase()) ? -1 : e > t ? 1 : 0
+        }
+        u = api.tagList,
+        p = api.tagListArray,
+        $("#ui #local").append('<div id="tags-dialog-wrapper"><div id="tags-dialog"><div class="upper-section"><div class="heading"><h1>Choose a tag</h1></div><div id="suggested"><ul class="tags"></ul></div><div class="refresh-suggested-container"><img class="refresh-suggested" src="./ui/refresh_black_32.png" /></div><div id="expand-all-tags" class="alpha-group"><span>View all tags \u2193</span></div></div><div id="all"></div></div></div>'),
+        d = $("#tags-dialog"),
+        tagsDialogWrapper = $("#tags-dialog-wrapper"),
+        tagsDialogWrapper.hide(),
+        d.find("#all").hide(),
+        d.find("#expand-all-tags span").click((function() {
+            var e, t = 400;
+            $(this).hasClass("opened") ? ($(this).removeClass("opened"),
+            $(this).html("View all tags \u2193"),
+            $("#tags-dialog-wrapper").stop().animate({
+                scrollTop: 0
+            }, {
+                duration: t,
+                easing: "easeOutQuad",
+                complete: function() {
+                    d.find("#all").stop().fadeOut("fast")
+                }
+            })) : (d.find("#all").stop().fadeIn("fast"),
+            $(this).addClass("opened"),
+            $(this).html("Hide all tags \u2191"),
+            e = d.find("#all").position().top + 5,
+            $("#tags-dialog-wrapper").stop().animate({
+                scrollTop: e
+            }, {
+                duration: t,
+                easing: "easeOutQuad"
+            }))
+        }
+        ));
+        this.generateUniqueRandomInts(25, 282);
+        this.refreshSuggested();
+        for (var t = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"], i = new Array(t.length), r = [], n = d.find("#all"), o = 0; o < t.length; o++) {
+            i[o] = [];
+            var s = "alpha-" + t[o];
+            n.append('<div id="' + s + '" class="alpha-group"><div class="label">' + t[o] + '</div><div class="tags"></div></div>')
+        }
+        n.append('<div id="alpha-rest" class="alpha-group"><div class="label">...</div><div class="tags"></div></div>');
+        for (o = 0; o < p.length; o++) {
+            var l = (m = p[o]).name.charAt(0).toUpperCase()
+              , h = t.indexOf(l);
+            -1 != h ? i[h].push(m) : r.push(m)
+        }
+        for (o = 0; o < i.length; o++) {
+            i[o].sort(e);
+            for (var c = n.find("#alpha-" + t[o] + " .tags"), f = 0; f < i[o].length; f++) {
+                var m = i[o][f];
+                c.append('<span id="' + m.id + '" class="tag-basic"><a href="#">' + m.name + "</a></span>")
+            }
+        }
+        r.sort(e);
+        var E = n.find("#alpha-rest .tags");
+        for (o = 0; o < r.length; o++) {
+            m = r[o];
+            E.append('<span id="' + m.id + '" class="tag-basic"><a href="#">' + m.name + "</a></span>")
+        }
+        d.find(".alpha-group .tags").each((function() {
+            $(this).is(":empty") && $(this).parent().hide(),
+            1 === $(this).find("a").length && $(this).addClass("no-columns")
+        }
+        )),
+        d.find(".tag, .tag-basic").click((function(e) {
+            e.preventDefault(),
+            a.onTagClick(this)
+        }
+        )),
+        d.find(".refresh-suggested").click((function() {
+            a.refreshSuggested()
+        }
+        ))
+    }
+    ,
+    ye.prototype.openTagsDialog = function(e) {
+        this.uiEnabled = !1,
+        ui.disableHelpLink(),
+        $("#back").stop().fadeIn("fast"),
+        d.find("#expand-all-tags span").html("View all tags \u2193").removeClass("opened"),
+        d.find("#all").hide(),
+        this.hideAllLabels(),
+        f.length > 0 ? (d.find(".heading h1").html("Add a tag"),
+        $("#back").unbind("click").click((function() {
+            a.uiEnabled && (a.closeTagsDialog(),
+            a.fadeUpAllBucketNodes(),
+            a.adjustCameraDistance())
+        }
+        ))) : $("#back").unbind("click").click((function() {
+            a.uiEnabled && ($(this).stop().fadeOut("fast"),
+            vis.setTo("drift"))
+        }
+        ));
+        var t = function(e) {
+            null == e && (e = a.getRandomTags(25));
+            var t = d.find("#suggested .tags");
+            t.empty();
+            for (var i = 0; i < e.length; i++)
+                t.append('<li id="' + e[i].id + '" class="tag"><a href="#">' + e[i].name + "</a></li>");
+            t.find(".tag").click((function(e) {
+                e.preventDefault(),
+                a.onTagClick(this)
+            }
+            )),
+            $(".tag").show().each((function() {
+                for (var e = $(this).attr("id"), t = 0; t < f.length; t++)
+                    f[t].data.id == e && $(this).hide()
+            }
+            )),
+            tagsDialogWrapper.stop().scrollTop(0).fadeIn("slow", (function() {
+                a.uiEnabled = !0
+            }
+            )),
+            a.onResize()
+        };
+        if (null == e && 0 == m.length ? this.getRandomTags(25, t) : this.getSuggestedTags(e, 25, t),
+        !1,
+        this.hideAddStuff(),
+        0 != f.length) {
+            sceneManager.getCamera().position.distanceTo(centerAnchor.position);
+            var i = sceneManager.getCamera().position.clone().sub(centerAnchor.position).normalize().multiplyScalar(l).add(centerAnchor.position);
+            this.camControls.animate({
+                pos: i,
+                duration: V
+            })
+        }
+    }
+    ,
+    ye.prototype.closeTagsDialog = function() {
+        $("#back").unbind("click").click((function() {
+            a.uiEnabled && ($(this).stop().fadeOut("fast"),
+            ui.openView("drift"))
+        }
+        )),
+        this.uiEnabled = !1,
+        ui.enableHelpLink(),
+        $("body").css("cursor", "default"),
+        tagsDialogWrapper.stop().fadeOut("fast", (function() {
+            setTimeout((function() {
+                !1 === a.uiEnabled && ($("#back").stop().fadeIn("fast"),
+                a.uiEnabled = !0,
+                !0,
+                a.showAllLabels())
+            }
+            ), P + 250)
+        }
+        ))
+    }
+    ,
+    ye.prototype.initItems = function() {
+        function e() {
+            if (
+                // ui.enableNav(),
+            null != v.preloadInfo)
+                if (!0 === v.preloadInfo.loadLastTags) {
+                    if (void 0 !== v.preloadInfo.lastTags)
+                        r(v.preloadInfo.lastTags) && (z = v.preloadInfo.lastTags);
+                    0 !== z.length && v.setTags(z)
+                    // : v.openTagsDialog()
+                } else
+                    void 0 !== v.preloadInfo.tagIds ? v.setTags(v.preloadInfo.tagIds) : v.openTagsDialog();
+            // else
+            //     v.openTagsDialog();
+            // v.openInitAbout()
+        }
+        var t = [];
+        if (void 0 !== this.preloadInfo && void 0 !== this.preloadInfo.lastView)
+            switch (this.preloadInfo.lastView) {
+            case "drift":
+                for (var i in this.objects.item) {
+                    var n = (p = this.objects.item[i]).position.clone().sub(centerAnchor.position)
+                      , o = n.clone().normalize();
+                    (a = n.add(o.multiplyScalar(h))).add(centerAnchor.position),
+                    t.push(a)
+                }
+                break;
+            case "search":
+                for (var i in this.objects.item) {
+                    var a = (p = this.objects.item[i]).viewData.search.positionRest.clone();
+                    t.push(a)
+                }
+            }
+        else {
+            var s = 2 * Math.PI / api.itemListArray.length
+              , l = 0
+              , u = 5e3;
+            for (var i in this.objects.item) {
+                var p = this.objects.item[i]
+                  , d = s * l + .02 * Math.random()
+                  , f = (a = new THREE.Vector3(h + 1e3 + 4e3 * Math.random(),0,0),
+                (new THREE.Quaternion).setFromAxisAngle(new THREE.Vector3(0,1,0), d));
+                a.y += Math.random() * u - u / 2,
+                a.applyQuaternion(f),
+                t.push(a),
+                l++
+            }
+        }
+        var m = this.matchClosestPositions(t, sceneManager.getCamera().position);
+        for (var i in this.objects.item) {
+            (p = this.objects.item[i]).viewData.tags = {},
+            p.viewData.tags.positionPrev = p.position.clone();
+            var E = m[i];
+            p.viewData.tags.positionRest = E,
+            p.viewData.tags.positionActive = new THREE.Vector3,
+            p.viewData.tags.particle = c.makeParticle(1, p.position.x, p.position.y, p.position.z),
+            p.viewData.tags.repulsions = [],
+            p.viewData.tags.activeTagConnections = [],
+            p.viewData.tags.bucketConnection = -1,
+            p.onClickCallback = this.itemClickCallback,
+            p.forceRotateToCamera = !1,
+            p.enableRotateToCamera = !1,
+            p.rotateToTarget = !0;
+            var g = new THREE.Vector3(0,0,1);
+            g.applyQuaternion(p.quaternion).multiplyScalar(2e3).add(centerAnchor.position),
+            p.rotationTarget = g,
+            p.viewData.tags.rotationTargetPrev = g,
+            p.viewData.tags.rotationTargetDest = centerAnchor.position,
+            p.isInteractive = !1
+        }
+        var v = this;
+        if (ve)
+            for (var i in v.objects.item) {
+                var y = (p = v.objects.item[i]).viewData.tags.positionRest.clone();
+                y.sub(centerAnchor.position).multiplyScalar(2).add(centerAnchor.position),
+                p.position.set(y.x, y.y, y.z),
+                p.viewData.tags.particle.position.set(y.x, y.y, y.z),
+                p.viewData.tags.destination = y.clone();
+                var T = p.viewData.tags.rotationTargetDest;
+                p.rotationTarget.set(T.x, T.y, T.z)
+            }
+        k = new TWEEN.Tween({
+            t: 0
+        }).to({
+            t: 1
+        }, this.transDuration).onUpdate((function() {
+            for (var e in v.objects.item) {
+                var t = v.objects.item[e]
+                  , i = lerpVec3(t.viewData.tags.positionPrev, t.viewData.tags.positionRest, this.t);
+                t.position.set(i.x, i.y, i.z),
+                t.viewData.tags.destination = i.clone();
+                var r = lerpVec3(t.viewData.tags.rotationTargetPrev, t.viewData.tags.rotationTargetDest, this.t);
+                t.rotationTarget.set(r.x, r.y, r.z)
+            }
+        }
+        )).easing(TWEEN.Easing.Quartic.InOut).onComplete((function() {
+            e()
+        }
+        )).start()
+    }
+    ,
+    ye.prototype.getCamControls = function() {
+        return this.camControls
+    }
+    ,
+    ye.prototype.initCamPos = function() {}
+    ,
+    ye.prototype.onKeyDown = function(e) {
+        "in" === this.state ? 38 === e.keyCode ? this.handleBucketScroll(2.5) : 40 === e.keyCode && this.handleBucketScroll(-2.5) : "out" === this.state && (38 === e.keyCode ? this.camControls.onMouseWheel(5) : 40 === e.keyCode && this.camControls.onMouseWheel(-5))
+    }
+    ,
+    ye.prototype.onNothingClicked = function() {
+        $("#back").trigger("click");
+        // this.uiEnabled && "in" === this.state && this.closeSphere(R)
+    }
+    ,
+    ye.prototype.onMouseDown = function(e) {
+        this.camControls.onMouseDown(e)
+    }
+    ,
+    ye.prototype.onMouseUp = function() {
+        this.camControls.onMouseUp()
+    }
+    ,
+    ye.prototype.onMouseMove = function(e) {
+        "out" == this.state && (this.camControls.dragging && this.ensureHoverOffSphere(),
+        this.camControls.onMouseMove(e))
+    }
+    ,
+    ye.prototype.onMouseWheel = function(e, t) {
+        switch (this.state) {
+        case "in":
+            this.handleBucketScroll(t);
+            break;
+        case "out":
+            this.camControls.onMouseWheel(t)
+        }
+    }
+    ,
+    ye.prototype.onMouseLeave = function() {
+        this.hideAddStuff(),
+        this.camControls.onMouseUp()
+    }
+    ,
+    ye.prototype.handleBucketScroll = function(e) {
+        var t, i = 20 * -e, r = !1;
+        (e < 0 ? (this.bucketScrollPos + i > this.bucketScrollHeight && (i = this.bucketScrollHeight - this.bucketScrollPos),
+        r = !0) : (this.bucketScrollPos + i < 0 && (i = -this.bucketScrollPos),
+        r = !0),
+        r) && (this.bucketScrollPos += i,
+        (t = e > 0 ? new THREE.Vector3(0,1,0) : new THREE.Vector3(0,-1,0)).applyQuaternion(sceneManager.getCamera().quaternion),
+        t.multiplyScalar(Math.abs(i)),
+        this.camControls.getTargetScrollPos().add(t))
+    }
+    ,
+    ye.prototype.onUpdate = function() {
+        for (var e in this.camControls.update(),
+        this.objects.item) {
+            var t = this.objects.item[e];
+            void 0 !== t.viewData.tags.destination && (t.position.x = t.viewData.tags.particle.position.x = lerp(t.viewData.tags.particle.position.x, t.viewData.tags.destination.x, .1),
+            t.position.y = t.viewData.tags.particle.position.y = lerp(t.viewData.tags.particle.position.y, t.viewData.tags.destination.y, .1),
+            t.position.z = t.viewData.tags.particle.position.z = lerp(t.viewData.tags.particle.position.z, t.viewData.tags.destination.z, .1))
+        }
+        for (var i = 0; i < he.length; i++)
+            he[i].update();
+        var r = sceneManager.getCamera().position;
+        for (i = 0; i < ae.length; i++) {
+            var n = r.clone().sub(ae[i].position).normalize().multiplyScalar(1);
+            ae[i].lightSprite.position.set(n.x, n.y, n.z),
+            ae[i].glowSprite.position.set(n.x, n.y, n.z)
+        }
+        this.updateLabels()
+    }
+    ,
+    ye.prototype.onRelease = function() {
+        this.uiEnabled = !1,
+        o(),
+        // ui.disableHelpLink(),
+        this.removeTagAdders(),
+        k.stop();
+        for (var e = 0; e < ae.length; e++)
+            ae[e].remove(ae[e].spriteX),
+            e > 3 && ae[e].remove(ae[e].spriteLabel),
+            ae[e].light.lastIntensity = ae[e].light.intensity,
+            ae[e].lightSprite.lastOpacity = ae[e].lightSprite.material.opacity,
+            ae[e].glowSprite.lastOpacity = ae[e].glowSprite.material.opacity,
+            ae[e].clickSphere.lastOpacity = ae[e].clickSphere.material.opacity;
+        for (e = 0; e < g.length; e++) {
+            var t = g[e]
+              , i = a.objects.item[t];
+            c.removeParticleForces(i.viewData.tags.particle),
+            i.viewData.tags.repulsions = {},
+            i.viewData.tags.activeTagConnections = []
+        }
+        d.is(":visible") ? d.fadeOut("fast", (function() {
+            $("#ui #local").empty()
+        }
+        )) : $("#ui #local").empty()
+    }
+    ,
+    ye.prototype.duringRelease = function(e) {
+        for (var t = 0; t < ae.length; t++)
+            ae[t].light.intensity = lerp(ae[t].light.lastIntensity, 0, e)
+    }
+    ,
+    ye.prototype.onReleaseEnd = function() {
+        this.removeItemLines(),
+        this.removeAllInbetweenLines(),
+        this.removeAllTagCenterLines(),
+        this.updateLightMaterials()
+    }
+    ,
+    ye.prototype.getRefQuaternion = function() {
+        return L
+    }
+    ,
+    ye.prototype.refreshSuggested = function() {
+        function e(e) {
+            i.empty(),
+            i.show();
+            // for (var r = a.generateUniqueRandomInts(t, 282), n = 0; n < r.length; n++) {
+            //     var o = p[r[n]];
+            //     i.append('<li id="' + o.id + '" class="tag"><a href="#">' + o.name + "</a></li>"),
+            //     e && i.find("#" + o.id).css("opacity", 0)
+            // }
+            if (i.find(".tag").click((function(e) {
+                e.preventDefault(),
+                a.onTagClick(this)
+            }
+            )),
+            e) {
+                var s = i.find(".tag")
+                  , l = 0;
+                s.each((function() {
+                    var e = this;
+                    setTimeout((function() {
+                        $(e).stop().fadeTo(200, 1)
+                    }
+                    ), l),
+                    l += 100
+                }
+                ))
+            }
+        }
+        var t = 25
+          , i = d.find("#suggested .tags");
+        0 != i.find(".tag").length ? i.stop().fadeOut("fast", (function() {
+            e(!0)
+        }
+        )) : e(!1)
+    }
+    ,
+    ye.prototype.onTagClick = function(e) {
+        a.closeTagsDialog();
+        var t = $(e).attr("id");
+        a.addTag(t)
+    }
+    ,
+    ye.prototype.clearTags = function() {
+        this.uiEnabled = !1,
+        this.fadeOutAll((function() {
+            for (var e = f.length - 1; e >= 0; e--)
+                a.removeTag(e);
+            var t = new THREE.Vector3(1e-5,1e-5,1e-5);
+            for (e = 0; e < ae.length; e++)
+                ae[e].lightSprite.previousScale = t,
+                ae[e].glowSprite.previousScale = t,
+                ae[e].clickSphere.previousScale = t,
+                ae[e].shiftIndex = void 0;
+            a.calculateBuckets(),
+            a.calculateActivePositions(!0),
+            a.repelItemsToAdd(),
+            a.removeItemLines(),
+            a.setLabels(),
+            z = [];
+            for (e = 0; e < f.length; e++)
+                z.push(f[e].data.id);
+            a.animateContent(),
+            a.adjustCameraDistance()
+        }
+        ))
+    }
+    ,
+    ye.prototype.setTags = function(e) {
+        this.uiEnabled = !1,
+        d.is(":visible") && d.stop().fadeOut("fast"),
+        this.fadeOutAll((function() {
+            E = [];
+            for (var t = 0; t < f.length; t++)
+                E.push(t);
+            if (0 == f.length)
+                0;
+            else if (M,
+            0 != E.length)
+                for (t = E.length - 1; t >= 0; t--)
+                    a.removeTag(E[t]);
+            y = g.slice();
+            for (t = 0; t < y.length; t++) {
+                var i = a.objects.item[y[t]];
+                i.viewData.tags.positionPrev = i.position.clone()
+            }
+            for (t = 0; t < e.length; t++) {
+                var r = new TagNode(a,null);
+                r.viewData = {
+                    tags: {}
+                },
+                f.push(r),
+                f[t].selfIndex = t,
+                a.sceneObject.add(r)
+            }
+            switch (f.length) {
             case 1:
                 f[0].position.set(centerAnchor.position.x, centerAnchor.position.y, centerAnchor.position.z);
                 break;
@@ -30657,8 +30547,8 @@ var Stats = function() {
                 break;
             case 3:
                 var o = new THREE.Vector3(0,M,0)
-                    , s = .666666 * Math.PI
-                    , l = o.clone().applyEuler(new THREE.Euler(0,0,s)).add(centerAnchor.position);
+                  , s = .666666 * Math.PI
+                  , l = o.clone().applyEuler(new THREE.Euler(0,0,s)).add(centerAnchor.position);
                 f[0].position.set(l.x, l.y, l.z);
                 var h = o.clone().applyEuler(new THREE.Euler(0,0,-s)).add(centerAnchor.position);
                 f[1].position.set(h.x, h.y, h.z);
@@ -30678,8 +30568,8 @@ var Stats = function() {
                 s = 109.5 * Math.PI / 180,
                 t = 0; t < f.length - 2; t++) {
                     var p = o.clone().normalize()
-                        , d = f[t].position.clone().sub(centerAnchor.position).normalize()
-                        , m = p.cross(d);
+                      , d = f[t].position.clone().sub(centerAnchor.position).normalize()
+                      , m = p.cross(d);
                     m.normalize();
                     var R = new THREE.Quaternion;
                     R.setFromAxisAngle(m, s);
@@ -30690,2691 +30580,2119 @@ var Stats = function() {
                 }
                 var H = o.add(centerAnchor.position);
                 f[f.length - 1].position.set(H.x, H.y, H.z)
-          }
-          var b = {
-              ids: e,
-              detail: "id_only"
-          };
-          ui.startLoader(),
-          api.getTagsArchiveObjects(b, (function(t) {
-              ui.stopLoader();
-              console.log(t, r, e);
-              for (var i = 0; i < e.length; i++) {
-                  for (
-                    //   var r = e[i],
-                      var r = 'TEL2624',
-                      o = u[r], s = [], l = 0; l < t[r].length; l++) {
-                      var h = t[r][l]
-                        , c = a.objects.item[h];
-                      void 0 !== c && s.push(c)
-                  }
-                  f[i].fill(o, s)
-              }
-              n();
-              for (i = 0; i < e.length; i++) {
-                  var p = f[i];
-                  for (l = 0; l < p.allItems.length; l++) {
-                      var d = p.allItems[l].basicInfo.id
-                        , m = a.objects.item[d];
-                      -1 == g.indexOf(d) ? (m.viewData.tags.activeTagConnections = [f[i].data.id],
-                      g.push(d),
-                      v.push(d)) : m.viewData.tags.activeTagConnections.push(f[i].data.id),
-                      m.isInteractive = !0
-                  }
-                  for (l = 0; l < v.length; l++)
-                      for (var E = 0; E < T.length; E++)
-                          if (v[l] == T[E]) {
-                              T.splice(E, 1);
-                              break
-                          }
-              }
-              a.calculateBuckets(),
-              a.calculateActivePositions(!0),
-              a.repelItemsToAdd(),
-              a.removeItemLines(),
-              a.setLabels(),
-              ae[f.length - 1].isNew = !0,
-              z = [];
-              for (i = 0; i < f.length; i++)
-                  z.push(f[i].data.id);
-              a.animateContent(),
-              a.adjustCameraDistance()
-          }
-          ))
-      }
-      ))
-  }
-  ,
-  ye.prototype.addTag = function(e) {
-      var t = f.length;
-      this.uiEnabled = !1,
-      this.fadeOutAll((function() {
-          for (var i = 0; i < _; i++)
-              ae[i].viewData.tags.positionPrevious = ae[i].position.clone();
-          for (i = 0; i < _; i++)
-              if (f.length > i) {
-                  for (var r = !1, o = 0; o < E.length; o++)
-                      if (i === E[o]) {
-                          r = !0;
-                          break
-                      }
-                  if (!r) {
-                      var s = 0;
-                      for (o = 0; o < E.length; o++)
-                          i > E[o] && s++;
-                      ae[i].shiftIndex = i - s
-                  }
-              }
-          var l;
-          if (0 == f.length)
-              0;
-          else if (M,
-          0 != E.length)
-              for (i = E.length - 1; i >= 0; i--)
-                  a.removeTag(E[i]);
-          y = g.slice();
-          for (i = 0; i < y.length; i++) {
-              var h = a.objects.item[y[i]];
-              h.viewData.tags.positionPrev = h.position.clone()
-          }
-          0 == f.length ? (H = centerAnchor.position.clone(),
-          l = new THREE.Vector3) : H = (l = he[ce].position.clone().sub(centerAnchor.position).normalize().multiplyScalar(M)).clone().add(centerAnchor.position);
-          var c, p = new TagNode(a,null), d = u[e];
-          switch (p.viewData = {
-              tags: {}
-          },
-          p.position.set(H.x, H.y, H.z),
-          2 == f.length ? c = .666666666 * Math.PI : 3 == f.length && (c = 109.5 * Math.PI / 180),
-          f.length) {
-          case 1:
-              (H = l.clone()).negate().add(centerAnchor.position),
-              f[0].position.set(H.x, H.y, H.z);
-              break;
-          case 2:
-          case 3:
-              for (i = 0; i < f.length; i++) {
-                  var m = l.clone().normalize()
-                    , R = f[i].position.clone().sub(centerAnchor.position).normalize()
-                    , x = m.cross(R);
-                  x.normalize();
-                  var H, b = new THREE.Quaternion;
-                  b.setFromAxisAngle(x, c),
-                  (H = l.clone()).applyQuaternion(b),
-                  H.add(centerAnchor.position),
-                  f[i].position.set(H.x, H.y, H.z)
-              }
-          }
-          f.push(p),
-          a.sceneObject.add(p);
-          for (i = 0; i < f.length; i++)
-              f[i].selfIndex = i;
-          ui.startLoader(),
-          p.fill(d, null, (function() {
-              ui.stopLoader(),
-              n();
-              for (var e = 0; e < ae.length; e++) {
-                  var i = ae[e].shiftIndex;
-                  if (void 0 !== i && e >= i && e < _) {
-                      var r = i;
-                      r < t && (ae[r].viewData.tags.positionPrevious = ae[e].position.clone(),
-                      ae[r].position.set(ae[r].position.x, ae[e].position.y, ae[e].position.z),
-                      ae[r].lightSprite.material.opacity = ae[e].lightSprite.material.opacity,
-                      ae[r].glowSprite.material.opacity = ae[e].glowSprite.material.opacity,
-                      ae[r].lightSprite.previousScale = ae[e].lightSprite.scale.clone(),
-                      ae[r].glowSprite.previousScale = ae[e].glowSprite.scale.clone(),
-                      ae[r].clickSphere.previousScale = ae[e].clickSphere.scale.clone())
-                  } else
-                      ae[e].lightSprite.previousScale = ae[e].lightSprite.scale.clone(),
-                      ae[e].glowSprite.previousScale = ae[e].glowSprite.scale.clone(),
-                      ae[e].clickSphere.previousScale = ae[e].clickSphere.scale.clone();
-                  ae[e].shiftIndex = void 0
-              }
-              for (e = 0; e < p.allItems.length; e++) {
-                  var o = p.allItems[e].basicInfo.id
-                    , s = a.objects.item[o];
-                  -1 == g.indexOf(o) ? (s.viewData.tags.activeTagConnections = [f[f.length - 1].data.id],
-                  g.push(o),
-                  v.push(o)) : s.viewData.tags.activeTagConnections.push(f[f.length - 1].data.id),
-                  s.isInteractive = !0
-              }
-              for (e = 0; e < v.length; e++)
-                  for (var l = 0; l < T.length; l++)
-                      if (v[e] == T[l]) {
-                          T.splice(l, 1);
-                          break
-                      }
-              a.calculateBuckets(),
-              a.calculateActivePositions(!0),
-              a.repelItemsToAdd(),
-              a.removeItemLines(),
-              a.setLabels(),
-              ae[f.length - 1].isNew = !0,
-              z = [];
-              for (e = 0; e < f.length; e++)
-                  z.push(f[e].data.id);
-              a.animateContent(),
-              a.adjustCameraDistance()
-          }
-          ))
-      }
-      ))
-  }
-  ,
-  ye.prototype.removeTag = function(e, t) {
-      function i() {
-          f[e].position.clone().clone().sub(centerAnchor.position);
-          for (var i = f[e], s = C[e], l = 0; l < s.length; l++) {
-              var h = s[l];
-              0 != ne[h].length && a.removeItemLinesConnectedTo(ae[e])
-          }
-          a.removeTagCenterLine(i),
-          a.sceneObject.remove(i);
-          var c = f[e].data.id;
-          for (l = 0; l < i.allItems.length; l++) {
-              var u = i.allItems[l].basicInfo.id
-                , p = (w = a.objects.item[u]).viewData.tags.activeTagConnections;
-              if (p.splice(p.indexOf(c), 1),
-              0 == p.length) {
-                  var d = g.indexOf(u);
-                  g.splice(d, 1),
-                  T.push(u),
-                  w.viewData.tags.positionActive = w.position.clone(),
-                  w.viewData.tags.bucketConnection = -1,
-                  w.isInteractive = !1
-              }
-          }
-          if (null != ae[e].lightSprite) {
-              var m = new THREE.Object3D;
-              m.position.set(ae[e].position.x, ae[e].position.y, ae[e].position.z);
-              var E = ae[e].lightSprite.clone();
-              E.material = ae[e].lightSprite.material.clone();
-              var v = ae[e].glowSprite.clone();
-              v.material = ae[e].glowSprite.material.clone(),
-              m.lightSprite = E,
-              m.glowSprite = v,
-              m.add(E),
-              m.add(v);
-              var R = ae[e].position.clone().sub(centerAnchor.position).normalize().multiplyScalar(5e3).add(centerAnchor.position);
-              m.viewData = {
-                  tags: {
-                      positionPrevious: ae[e].position.clone(),
-                      positionTarget: R,
-                      previousLightSpriteOpacity: ae[e].lightSprite.material.opacity,
-                      previousGlowSpriteOpacity: ae[e].glowSprite.material.opacity
-                  }
-              },
-              se.push(m),
-              a.sceneObject.add(m),
-              le[se.length - 1].distance = oe[e] * ge
-          }
-          if (t)
-              for (l = 0; l < _; l++)
-                  ae[l].viewData.tags.positionPrevious = ae[l].position.clone();
-          var x = f[e].position.clone();
-          if (f.splice(e, 1),
-          0 === f.length ? o() : n(),
-          t) {
-              for (l = 0; l < _; l++) {
-                  var H = void 0;
-                  l < r && l !== e && l > e && (H = l - 1),
-                  ae[l].shiftIndex = H
-              }
-              for (l = 0; l < ae.length; l++) {
-                  if (void 0 !== (H = ae[l].shiftIndex) && l >= H && l < _) {
-                      var b = H;
-                      ae[b].viewData.tags.positionPrevious = ae[l].position.clone(),
-                      ae[b].position.set(ae[b].position.x, ae[l].position.y, ae[l].position.z),
-                      ae[b].lightSprite.material.opacity = ae[l].lightSprite.material.opacity,
-                      ae[b].glowSprite.material.opacity = ae[l].glowSprite.material.opacity,
-                      ae[b].lightSprite.previousScale = ae[l].lightSprite.scale.clone(),
-                      ae[b].glowSprite.previousScale = ae[l].glowSprite.scale.clone(),
-                      ae[b].clickSphere.previousScale = ae[l].clickSphere.scale.clone()
-                  } else
-                      ae[l].lightSprite.previousScale = ae[l].lightSprite.scale.clone(),
-                      ae[l].glowSprite.previousScale = ae[l].glowSprite.scale.clone(),
-                      ae[l].clickSphere.previousScale = ae[l].clickSphere.scale.clone();
-                  ae[l].shiftIndex = void 0
-              }
-              a.removeTagAdders();
-              for (l = 0; l < f.length; l++)
-                  f[l].selfIndex = l;
-              y = g.slice();
-              for (l = 0; l < y.length; l++) {
-                  var w;
-                  (w = a.objects.item[y[l]]).viewData.tags.positionPrev = w.position.clone()
-              }
-              switch (f.length) {
-              case 1:
-                  f[0].position.set(centerAnchor.position.x, centerAnchor.position.y, centerAnchor.position.z);
-                  break;
-              case 2:
-                  var q = x.clone().sub(centerAnchor.position)
-                    , M = f[0].position.clone().sub(centerAnchor.position).cross(q);
-                  M.normalize();
-                  var S = f[1].position.clone().sub(centerAnchor.position).cross(q);
-                  S.normalize();
-                  var L = f[0].position.clone().sub(centerAnchor.position)
-                    , A = f[1].position.clone().sub(centerAnchor.position)
-                    , k = .25 * GeomUtils.angleBetweenVecs(L, A)
-                    , D = new THREE.Quaternion
-                    , P = new THREE.Quaternion;
-                  D.setFromAxisAngle(M, k),
-                  P.setFromAxisAngle(S, k),
-                  L.applyQuaternion(D),
-                  A.applyQuaternion(P),
-                  L.add(centerAnchor.position),
-                  A.add(centerAnchor.position),
-                  f[0].position.set(L.x, L.y, L.z),
-                  f[1].position.set(A.x, A.y, A.z);
-                  break;
-              case 3:
-                  var I = x.clone().sub(centerAnchor.position);
-                  for (l = 0; l < f.length; l++) {
-                      var V = I.clone().normalize()
-                        , O = f[l].position.clone().sub(centerAnchor.position).normalize()
-                        , F = V.cross(O);
-                      F.normalize();
-                      var z = new THREE.Quaternion;
-                      z.setFromAxisAngle(F, .5 * Math.PI);
-                      var U = I.clone();
-                      U.applyQuaternion(z),
-                      U.add(centerAnchor.position),
-                      f[l].position.set(U.x, U.y, U.z)
-                  }
-              }
-              a.calculateBuckets(),
-              a.calculateActivePositions(!1),
-              a.removeItemLines(),
-              a.setLabels(),
-              a.animateContent(),
-              a.adjustCameraDistance()
-          }
-      }
-      var r = f.length;
-      t ? this.fadeOutAll(i) : i()
-  }
-  ,
-  ye.prototype.addTagAdders = function() {
-      switch (f.length) {
-      case 1:
-          this.addAdder([f[0]]);
-          break;
-      case 2:
-          this.addAdder([f[0]]),
-          this.addAdder([f[1]]),
-          this.addAdder([f[0], f[1]]);
-          break;
-      case 3:
-          this.addAdder([f[0]]),
-          this.addAdder([f[1]]),
-          this.addAdder([f[2]]),
-          this.addAdder([f[0], f[1]]),
-          this.addAdder([f[1], f[2]]),
-          this.addAdder([f[2], f[0]]),
-          this.addAdder([f[0], f[1], f[2]]);
-          break;
-      case 4:
-          this.addAdder([f[0]]),
-          this.addAdder([f[1]]),
-          this.addAdder([f[2]]),
-          this.addAdder([f[3]]),
-          this.addAdder([f[0], f[1]]),
-          this.addAdder([f[1], f[2]]),
-          this.addAdder([f[2], f[0]]),
-          this.addAdder([f[0], f[3]]),
-          this.addAdder([f[1], f[3]]),
-          this.addAdder([f[2], f[3]]),
-          this.addAdder([f[0], f[1], f[2]]),
-          this.addAdder([f[3], f[0], f[1]]),
-          this.addAdder([f[3], f[1], f[2]]),
-          this.addAdder([f[3], f[2], f[0]])
-      }
-  }
-  ,
-  ye.prototype.addAdder = function(e) {
-      var t = new TagAddNode(this,e)
-        , i = 400
-        , r = this.getBoundingRadius() + i;
-      if (1 == f.length)
-          t.position.set(centerAnchor.position.x, centerAnchor.position.y, centerAnchor.position.z),
-          t.position.x += r;
-      else if (2 == f.length && 2 == e.length) {
-          t.position.set(centerAnchor.position.x, centerAnchor.position.y, centerAnchor.position.z);
-          var n = f[1].position.clone().sub(f[0].position).normalize()
-            , o = this.quaternionBetweenVecs(new THREE.Vector3(1,0,0), n)
-            , a = new THREE.Vector3(0,.66 * r,0);
-          a.applyQuaternion(o),
-          t.position.add(a)
-      } else if (3 == f.length && 3 == e.length) {
-          t.position.set(centerAnchor.position.x, centerAnchor.position.y, centerAnchor.position.z);
-          var s = f[0].position.clone().sub(centerAnchor.position)
-            , l = f[1].position.clone().sub(centerAnchor.position);
-          (n = s.cross(l)).normalize().multiplyScalar(-r + i),
-          t.position.add(n);
-          var h = new TagAddNode(this,e);
-          h.position.set(centerAnchor.position.x, centerAnchor.position.y, centerAnchor.position.z),
-          h.position.sub(n),
-          h.setIndex(he.length),
-          he.push(h),
-          this.sceneObject.add(h)
-      } else {
-          n = new THREE.Vector3;
-          for (var c = 0; c < e.length; c++) {
-              var u = e[c].position.clone().sub(centerAnchor.position);
-              n.add(u)
-          }
-          n.divideScalar(e.length),
-          n.normalize();
-          var p = n.multiplyScalar(r).add(centerAnchor.position);
-          t.position.set(p.x, p.y, p.z)
-      }
-      t.setIndex(he.length),
-      he.push(t),
-      this.sceneObject.add(t);
-      for (c = 0; c < he.length; c++) {
-          he[c].position.clone().sub(centerAnchor.position).normalize().multiplyScalar(1e4).add(centerAnchor.position),
-          he[c].lookAt(centerAnchor.position)
-      }
-  }
-  ,
-  ye.prototype.removeTagAdders = function() {
-      ce = -1;
-      for (var e = he.length - 1; e >= 0; e--)
-          this.sceneObject.remove(he[e]),
-          he.splice(e, 1)
-  }
-  ,
-  ye.prototype.addAllTagCenterLines = function() {
-      for (var e = 0; e < f.length; e++)
-          this.addTagCenterLine(f[e])
-  }
-  ,
-  ye.prototype.removeAllTagCenterLines = function() {
-      for (var e = 0; e < f.length; e++)
-          this.removeTagCenterLine(f[e])
-  }
-  ,
-  ye.prototype.addTagCenterLine = function(t) {
-      var i = new THREE.Geometry;
-      i.vertices.push(centerAnchor.position),
-      i.vertices.push(t.position),
-      i.dynamic = !0;
-      var r = e();
-      t.centerLine = new THREE.Line(i,r),
-      t.centerLine.maxOpacity = Z,
-      t.centerLine.src1 = centerAnchor,
-      t.centerLine.src2 = t,
-      j.add(t.centerLine)
-  }
-  ,
-  ye.prototype.removeTagCenterLine = function(e) {
-      j.remove(e.centerLine),
-      delete e.centerLine
-  }
-  ,
-  ye.prototype.removeAllTagCenterLines = function() {
-      for (var e = 0; e < _; e++)
-          null != f[e] && this.removeTagCenterLine(f[e])
-  }
-  ,
-  ye.prototype.addAllInbetweenLines = function() {
-      for (var e = 4; e < ae.length; e++)
-          0 != ne[e].length && this.addInbetweenLines(e)
-  }
-  ,
-  ye.prototype.removeAllInbetweenLines = function() {
-      for (var e = 4; e < ae.length; e++)
-          this.removeInbetweenLines(e)
-  }
-  ,
-  ye.prototype.addInbetweenLines = function(t) {
-      for (var i = S[t], r = 0; r < i.length; r++) {
-          var n = i[r];
-          if (null == ae[t].inbetweenLines[n] && null != f[n]) {
-              var o = new THREE.Geometry;
-              o.vertices.push(new THREE.Vector3),
-              o.vertices.push(new THREE.Vector3),
-              o.dynamic = !0;
-              var a = e()
-                , s = new THREE.Line(o,a);
-              s.maxOpacity = K,
-              s.src1 = ae[t],
-              s.src2 = ae[n],
-              ae[t].inbetweenLines[n] = s,
-              G.add(s)
-          }
-      }
-  }
-  ,
-  ye.prototype.updateInbetweenLinePositions = function() {
-      for (var e = 0; e < G.children.length; e++) {
-          var t = G.children[e]
-            , i = t.geometry.vertices
-            , r = t.src1.position.clone()
-            , n = t.src2.position.clone()
-            , o = oe[t.src1.selfIndex]
-            , a = oe[t.src2.selfIndex];
-          0 !== o && (o += Q),
-          0 !== a && (a += Q);
-          var s = n.clone().sub(r).normalize()
-            , l = r.clone().sub(n).normalize();
-          r.add(s.clone().multiplyScalar(o)),
-          n.add(l.clone().multiplyScalar(a));
-          for (var h = 0; h < i.length; h++)
-              t.geometry.vertices[h] = lerpVec3(r, n, h / (i.length - 1));
-          t.geometry.verticesNeedUpdate = !0
-      }
-  }
-  ,
-  ye.prototype.removeInbetweenLines = function(e) {
-      for (var t in ae[e].inbetweenLines)
-          null != ae[e].inbetweenLines[t] && (G.remove(ae[e].inbetweenLines[t]),
-          delete ae[e].inbetweenLines[t])
-  }
-  ,
-  ye.prototype.updateCenterLinePositions = function() {
-      for (var e = 0; e < j.children.length; e++) {
-          var t, i = j.children[e], r = i.geometry.vertices, n = i.src1.position.clone(), o = i.src2.position.clone();
-          t = 0 !== ne[14].length ? oe[14] + Q : 0 !== ne[10].length && 3 === f.length ? oe[10] + Q : 0 !== ne[4].length && 2 === f.length ? oe[4] + Q : 0;
-          var a = i.src2.selfIndex
-            , s = oe[a];
-          0 !== s && (s += Q);
-          var l = o.clone().sub(n).normalize()
-            , h = n.clone().sub(o).normalize();
-          n.add(l.clone().multiplyScalar(t)),
-          o.add(h.clone().multiplyScalar(s));
-          for (var c = 0; c < r.length; c++)
-              i.geometry.vertices[c] = lerpVec3(n, o, c / (r.length - 1));
-          i.geometry.verticesNeedUpdate = !0
-      }
-  }
-  ,
-  ye.prototype.updateCursorLinePositions = function(e) {
-      for (var t = [], i = 0; i < B.length; i++)
-          if (null != he[e].srcTags[i]) {
-              var r = he[e].srcTags[i];
-              this.hoverOnSphere(r.selfIndex);
-              var n = r.position.clone()
-                , o = he[e].position.clone()
-                , a = oe[r.selfIndex] + Q + 1
-                , s = o.clone().sub(n).normalize();
-              n.add(s.clone().multiplyScalar(a));
-              var l = .5 * he[e].getScalar()
-                , h = o.clone().sub(centerAnchor.position).normalize().multiplyScalar(l);
-              o.sub(h);
-              for (var c = B[i].geometry.vertices, u = 0; u < c.length; u++)
-                  c[u] = lerpVec3(n, o, u / (c.length - 1));
-              B[i].geometry.verticesNeedUpdate = !0
-          } else
-              t.push(i);
-      return t
-  }
-  ,
-  ye.prototype.repelItems = function(e, t) {
-      var i = this.objects.item[e]
-        , r = this.objects.item[t]
-        , n = i.viewData.tags.repulsions
-        , o = r.viewData.tags.repulsions;
-      null == n[t] && null == o[e] && (o[e] = n[t] = c.makeAttraction(i.viewData.tags.particle, r.viewData.tags.particle, U, 1))
-  }
-  ,
-  ye.prototype.repelItemToBucket = function(e, t) {
-      var i = this.objects.item[e]
-        , r = ae[t]
-        , n = r.viewData.tags.repulsions;
-      null == n[e] && (n[e] = c.makeAttraction(i.viewData.tags.particle, r.viewData.tags.particle, U, 1))
-  }
-  ,
-  ye.prototype.removeItemRepulsion = function(e, t) {
-      var i = this.objects.item[e]
-        , r = this.objects.item[t]
-        , n = i.viewData.tags.repulsions
-        , o = r.viewData.tags.repulsions;
-      null != n[t] && null != o[e] && (c.attractions.remove(n[t]),
-      delete n[t],
-      delete o[e])
-  }
-  ,
-  ye.prototype.removeItemBucketRepulsion = function(e, t) {
-      this.objects.item[e];
-      var i = ae[t].viewData.tags.repulsions;
-      null != i[e] && (c.attractions.remove(i[e]),
-      delete i[e])
-  }
-  ,
-  ye.prototype.lineToItem = function(e, t) {
-      var i = this.objects.item[t]
-        , r = i.position.clone().sub(e.position).normalize().multiplyScalar(2)
-        , n = new THREE.Geometry;
-      n.vertices.push(e.position.clone()),
-      n.vertices.push(i.position.clone().add(r));
-      var o = new THREE.LineBasicMaterial({
-          color: 16777215,
-          linewidth: 2,
-          opacity: 0,
-          transparent: !0,
-          blending: THREE.AdditiveBlending,
-          fog: !1
-      })
-        , a = new THREE.Line(n,o);
-      a.maxOpacity = .3,
-      N.add(a),
-      void 0 === e.itemLines[t] && (e.itemLines[t] = a),
-      a.src1 = e,
-      a.src2 = i
-  }
-  ,
-  ye.prototype.calculateActivePositions = function(e) {
-      for (var t = 0; t < ne.length; t++)
-          if (t < _ || 0 != ne[t].length) {
-              var i;
-              switch (t) {
-              case 0:
-              case 1:
-              case 2:
-              case 3:
-                  null != f[t] && (i = f[t].position);
-                  break;
-              case 4:
-              case 5:
-              case 6:
-              case 7:
-              case 8:
-              case 9:
-              case 10:
-              case 11:
-              case 12:
-              case 13:
-                  if (10 == t && 3 == f.length)
-                      i = centerAnchor.position.clone();
-                  else {
-                      for (var r = new THREE.Vector3, n = 0; n < S[t].length; n++) {
-                          var o = f[S[t][n]].position.clone().sub(centerAnchor.position);
-                          r.add(o)
-                      }
-                      r.divideScalar(S[t].length),
-                      r.add(centerAnchor.position),
-                      i = r,
-                      f.length > 2 && i.sub(centerAnchor.position).normalize().multiplyScalar(M).add(centerAnchor.position)
-                  }
-                  break;
-              case 14:
-                  i = centerAnchor.position.clone()
-              }
-              e && t == f.length - 1 && (ae[t].viewData.tags.positionPrevious = ue),
-              ae[t].viewData.tags.positionTarget = i;
-              var a = GeomUtils.pointsOnSphere(ne[t].length, oe[t]);
-              for (n = 0; n < ne[t].length; n++) {
-                  var s = ne[t][n]
-                    , l = this.objects.item[s];
-                  1 == ne[t].length && a[n].applyEuler(new THREE.Euler(0,.5 * -Math.PI,0)),
-                  l.viewData.tags.positionActive = a[n].add(i),
-                  l.viewData.tags.bucketConnection = t
-              }
-              if (ae[t].light.distance = null != i ? oe[t] * ge : 1,
-              null != i) {
-                  var h = ae[t].light;
-                  h.intensity = h.maxIntensity,
-                  0 == oe[t] ? h.distance = 1 : h.distance = oe[t] * ge
-              }
-          } else
-              ae[t].light.distance = 1
-  }
-  ,
-  ye.prototype.animateContent = function() {
-      this.removeAllTagCenterLines(),
-      this.removeAllInbetweenLines(),
-      this.addAllTagCenterLines(),
-      this.addAllInbetweenLines(),
-      this.hideAddStuff(),
-      this.hideItemLines(),
-      this.hideDiagramLines(),
-      this.hideInbetweenNodes(),
-      this.setRotationTargets(),
-      this.expandRepulsionsToActive(),
-      this.animating = !0,
-      this.uiEnabled = !1,
-      !1;
-      for (var e = 0; e < T.length; e++) {
-          var t = a.objects.item[T[e]];
-          t.forceRotateToCamera = !0,
-          t.enableRotateToCamera = !0,
-          t.rotateToTarget = !1
-      }
-      sceneManager.usePhysics = !0;
-      var i = 0;
-      for (e = 0; e < oe.length; e++)
-          i < oe[e] && (i = oe[e]);
-      s = M + i + 1400,
-      this.camControls.setZoomLimits(s, l);
-      var r = .025;
-      if (ve)
-          for (e = 0; e < _; e++)
-              0 !== ne[e].length && (ae[e].isNew = !0);
-      for (e = 0; e < _; e++)
-          e >= f.length && (ae[e].viewData.tags.positionTarget = void 0);
-      k.stop(),
-      k = new TWEEN.Tween({
-          t: 0
-      }).to({
-          t: 1
-      }, P).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
-          if (this.t <= r)
-              for (var e = map(this.t, 0, r, 0, 1), t = lerp(0, U, e), i = 0; i < c.attractions.length; i++)
-                  c.attractions[i].constant = t;
-          else if (this.t >= 1 - r)
-              for (e = map(this.t, 1 - r, 1, 0, 1),
-              t = lerp(U, 0, e),
-              i = 0; i < c.attractions.length; i++)
-                  c.attractions[i].constant = t;
-          for (i = 0; i < g.length; i++) {
-              (n = a.objects.item[g[i]]).viewData.tags.destination = lerpVec3(n.viewData.tags.positionPrev, n.viewData.tags.positionActive, this.t)
-          }
-          for (i = 0; i < T.length; i++) {
-              var n;
-              (n = a.objects.item[T[i]]).viewData.tags.destination = lerpVec3(n.viewData.tags.positionActive, n.viewData.tags.positionRest, this.t)
-          }
-          for (i = 0; i < ae.length; i++) {
-              if (i < _ && void 0 !== ae[i].viewData.tags.positionTarget) {
-                  var o = lerpVec3(ae[i].viewData.tags.positionPrevious, ae[i].viewData.tags.positionTarget, this.t);
-                  ae[i].position.set(o.x, o.y, o.z),
-                  ae[i].viewData.tags.particle.position.x = ae[i].position.x,
-                  ae[i].viewData.tags.particle.position.y = ae[i].position.y,
-                  ae[i].viewData.tags.particle.position.z = ae[i].position.z,
-                  ae[i].isNew && (ae[i].lightSprite.material.opacity = this.t * pe,
-                  ae[i].glowSprite.material.opacity = this.t * de,
-                  ae[i].light.intensity = this.t * ae[i].light.maxIntensity)
-              }
-              if (i < _ && void 0 !== ae[i].viewData.tags.positionTarget || i >= _) {
-                  var s = lerpVec3(ae[i].lightSprite.previousScale, ae[i].lightSprite.targetScale, this.t)
-                    , l = lerpVec3(ae[i].glowSprite.previousScale, ae[i].glowSprite.targetScale, this.t)
-                    , h = lerpVec3(ae[i].clickSphere.previousScale, ae[i].clickSphere.targetScale, this.t);
-                  ae[i].lightSprite.scale.set(s.x, s.y, s.z),
-                  ae[i].glowSprite.scale.set(l.x, l.y, l.z),
-                  ae[i].clickSphere.scale.set(h.x, h.y, h.z)
-              } else
-                  ae[i].lightSprite.scale.set(1e-5, 1e-5, 1e-5),
-                  ae[i].glowSprite.scale.set(1e-5, 1e-5, 1e-5),
-                  ae[i].clickSphere.scale.set(1e-5, 1e-5, 1e-5),
-                  ae[i].lightSprite.material.opacity = 0,
-                  ae[i].glowSprite.material.opacity = 0,
-                  ae[i].intensity = 0
-          }
-          for (i = 0; i < se.length; i++) {
-              o = lerpVec3(se[i].viewData.tags.positionPrevious, se[i].viewData.tags.positionTarget, this.t);
-              le[i].position.set(o.x, o.y, o.z),
-              se[i].position.set(o.x, o.y, o.z),
-              le[i].intensity = 1 - this.t,
-              se[i].lightSprite.material.opacity = lerp(se[i].viewData.tags.previousLightSpriteOpacity, 0, this.t),
-              se[i].glowSprite.material.opacity = lerp(se[i].viewData.tags.previousGlowSpriteOpacity, 0, this.t)
-          }
-      }
-      )).onComplete((function() {
-          ve = !1,
-          a.showItemLines(),
-          a.showDiagramLines(),
-          a.showInbetweenNodes(),
-          a.reduceRepulsionsToBuckets();
-          for (var e = 0; e < _; e++)
-              ae[e].isNew = !1;
-          for (e = 0; e < T.length; e++) {
-              var t = T[e]
-                , i = a.objects.item[t];
-              c.removeParticleForces(i.viewData.tags.particle),
-              i.viewData.tags.repulsions = {},
-              i.viewData.tags.activeTagConnections = []
-          }
-          for (e = 0; e < ae.length; e++) {
-              var r = ae[e].viewData.tags.particle;
-              c.removeParticleForces(r),
-              ae[e].viewData.tags.replusions = {}
-          }
-          0 == f.length ? a.openTagsDialog() : (a.updateInbetweenNodePositions(),
-          a.fadeInAll()),
-          a.clearLastHover();
-          for (e = 0; e < le.length; e++)
-              le[e].intensity = 0,
-              le[e].distance = 1;
-          for (e = 0; e < se.length; e++)
-              a.sceneObject.remove(se[e]);
-          se = [],
-          v = [],
-          T = [],
-          y = [],
-          a.removeTagAdders(),
-          a.addTagAdders(),
-          sceneManager.usePhysics = !1,
-          a.updateCenterLinePositions(),
-          a.updateInbetweenLinePositions(),
-          a.showAllLabels(),
-          a.camControls.setAutoRotate(!0),
-          a.animating = !1,
-          a.uiEnabled = !0,
-          !0,
-          ui.enableHelpLink(),
-          a.firstTime && (a.firstTime = !1)
-      }
-      )).start()
-  }
-  ,
-  ye.prototype.calculateBuckets = function() {
-      ne = new Array(15);
-      for (var e = 0; e < ne.length; e++)
-          ne[e] = new Array;
-      for (e = 0; e < g.length; e++) {
-          var t = g[e]
-            , i = this.objects.item[t].viewData.tags.activeTagConnections
-            , r = !1;
-          e: for (var n in S)
-              if (i.length == S[n].length) {
-                  for (var o = !0, a = 0; a < S[n].length; a++) {
-                      var s = S[n][a];
-                      t = f[s].data.id;
-                      if (-1 == i.indexOf(t)) {
-                          o = !1;
-                          break
-                      }
-                  }
-                  if (o) {
-                      ne[n].push(g[e]),
-                      r = !0;
-                      break e
-                  }
-              }
-          r || console.log("didn'nt find bucket for " + t + "!")
-      }
-      oe = new Array(15);
-      var l = 50;
-      for (e = 0; e < ne.length; e++) {
-          if (0 != ne[e].length) {
-              var h = itemField.sizeScalar * itemField.sizeScalar * .2 * ne[e].length;
-              oe[e] = Math.sqrt(h / 4 * Math.PI),
-              oe[e] < l && (oe[e] = l)
-          } else
-              oe[e] = 0;
-          e < _ && null != f[e] && (f[e].radius = oe[e])
-      }
-      var c = l;
-      for (e = 0; e < oe.length; e++)
-          oe[e] > c && (c = oe[e]);
-      M = Math.max(2.5 * c, 400);
-      for (e = 0; e < f.length; e++)
-          f[e].position.sub(centerAnchor.position).normalize().multiplyScalar(M).add(centerAnchor.position);
-      for (e = 0; e < ae.length; e++)
-          if (0 != ne[e].length) {
-              var u = oe[e] * W
-                , p = oe[e] * X
-                , d = oe[e] + Q;
-              ae[e].lightSprite.targetScale = new THREE.Vector3(u,u,u),
-              ae[e].glowSprite.targetScale = new THREE.Vector3(p,p,p),
-              ae[e].clickSphere.targetScale = new THREE.Vector3(d,d,d)
-          } else {
-              var m = new THREE.Vector3(1e-5,1e-5,1e-5);
-              ae[e].lightSprite.targetScale = m,
-              ae[e].glowSprite.targetScale = m,
-              ae[e].clickSphere.targetScale = m
-          }
-  }
-  ,
-  ye.prototype.clear = function() {
-      for (var e = 0; e < f.length; e++)
-          this.removeTag(e)
-  }
-  ,
-  ye.prototype.generateUniqueRandomInts = function(e, t) {
-      for (var i = []; i.length < e; ) {
-          for (var r = Math.ceil(Math.random() * t), n = !1, o = 0; o < i.length; o++)
-              if (i[o] == r) {
-                  n = !0;
-                  break
-              }
-          n || (i[i.length] = r)
-      }
-      return i
-  }
-  ,
-  ye.prototype.showAddStuff = function(e) {
-      if (B[0].material.opacity != Y)
-          for (var t = 0; t < B.length; t++)
-              (null == e || -1 == e.indexOf(t)) && (B[t].visible = !0,
-              B[t].material.opacity = Y)
-  }
-  ,
-  ye.prototype.hideAddStuff = function() {
-      if (0 != B[0].material.opacity)
-          for (var e = 0; e < B.length; e++)
-              B[e].visible = !1,
-              B[e].material.opacity = 0
-  }
-  ,
-  ye.prototype.getPointSprite = function() {
-      var e = new THREE.SpriteMaterial({
-          map: w,
-          blending: THREE.AdditiveBlending,
-          transparent: !0,
-          opacity: Ee
-      })
-        , t = new THREE.Sprite(e);
-      return t.visible = !1,
-      t.scale.set(te, te, te),
-      t.maxOpacity = Ee,
-      t.name = "point sprite",
-      t
-  }
-  ,
-  ye.prototype.quickTestSphere = function(e) {
-      var t = new THREE.SphereGeometry(e,20,20)
-        , i = new THREE.MeshNormalMaterial;
-      return new THREE.Mesh(t,i)
-  }
-  ,
-  ye.prototype.angleFromCenter = function(e) {
-      var t = e.clone().sub(centerAnchor.position)
-        , i = Math.atan2(t.z, t.x);
-      return i -= A
-  }
-  ,
-  ye.prototype.getRandomTags = function(e, t) {
-      for (var i = [], r = 0; r < e; r++)
-          for (var n = !1; !n; ) {
-              var o = ~~(Math.random() * (p.length - 1));
-              -1 == i.indexOf(o) && (i.push(o),
-              n = !0)
-          }
-      var a = [];
-      for (r = 0; r < i.length; r++)
-          a.push(p[i[r]]);
-      return t(a),
-      a
-  }
-  ,
-  ye.prototype.getSuggestedTags = function(e, t, i) {
-      for (var r = [], n = 0; n < e.length; n++)
-          r.push(e[n].data.id);
-      api.getTagsSimilar({
-          ids: r,
-          detail: "id_only"
-      }, (function(e) {
-          e = e.slice(0, t);
-          for (var r = [], n = 0; n < e.length; n++) {
-              var o = e[n]
-                , a = api.tagList[o];
-              r.push(a)
-          }
-          i(r)
-      }
-      ))
-  }
-  ,
-  ye.prototype.getTagNodeIndex = function(e) {
-      for (var t = 0; t < f.length; t++)
-          if (e == f[t])
-              return t;
-      return -1
-  }
-  ,
-  ye.prototype.repelItemsToAdd = function() {
-      for (var e = 0; e < v.length; e++) {
-          for (var t = 0; t < g.length; t++)
-              v[e] != g[t] && this.repelItems(v[e], g[t]);
-          for (t = 0; t < ae.length; t++)
-              null == f[t] && 0 == ne[t].length || this.repelItemToBucket(v[e], t)
-      }
-  }
-  ,
-  ye.prototype.reduceRepulsionsToBuckets = function() {
-      for (var e = 0; e < ne.length; e++)
-          for (var t = 0; t < ne[e].length; t++) {
-              for (var i = ne[e][t], r = 0; r < ne.length; r++)
-                  if (e != r)
-                      for (var n = 0; n < ne[r].length; n++) {
-                          var o = ne[r][n];
-                          this.removeItemRepulsion(i, o)
-                      }
-              for (r = 0; r < ae.length; r++)
-                  null == f[r] && 0 == ne[r].length || this.removeItemBucketRepulsion(i, r)
-          }
-  }
-  ,
-  ye.prototype.expandRepulsionsToActive = function() {
-      for (var e = 0; e < ne.length; e++)
-          for (var t = 0; t < ne[e].length; t++) {
-              for (var i = ne[e][t], r = 0; r < ne.length; r++)
-                  if (e != r)
-                      for (var n = 0; n < ne[r].length; n++) {
-                          var o = ne[r][n];
-                          this.repelItems(i, o)
-                      }
-              for (r = 0; r < ae.length; r++)
-                  null == f[r] && 0 == ne[r].length || this.repelItemToBucket(i, r)
-          }
-  }
-  ,
-  ye.prototype.setRotationTargets = function() {
-      for (var e = 0; e < ne.length; e++)
-          for (var t = 0; t < ne[e].length; t++) {
-              var i = ne[e][t]
-                , r = this.objects.item[i];
-              r.forceRotateToCamera = !1,
-              r.enableRotateToCamera = !1,
-              r.rotateToTarget = !0,
-              r.rotationTarget = ae[e].position
-          }
-  }
-  ,
-  ye.prototype.addItemLines = function() {
-      for (var e = 0; e < ne.length; e++)
-          if (0 != ne[e].length)
-              for (var t = 0; t < ne[e].length; t++) {
-                  var i = ne[e][t];
-                  a.lineToItem(ae[e], i, oe[e])
-              }
-  }
-  ,
-  ye.prototype.removeItemLines = function() {
-      for (var e = 0; e < ne.length; e++)
-          this.removeItemLinesConnectedTo(ae[e]),
-          ae[e].itemLines = {};
-      for (e = N.children.length - 1; e >= 0; e--) {
-          var t = N.children[e];
-          N.remove(t)
-      }
-  }
-  ,
-  ye.prototype.removeItemLinesConnectedTo = function(e) {
-      for (var t = N.children.length - 1; t >= 0; t--) {
-          var i = N.children[t];
-          i.src1 != e && i.src2 != e || N.remove(i)
-      }
-  }
-  ,
-  ye.prototype.removeRepulsionsConnectedTo = function(e) {
-      var t = e.viewData.tags.repulsions;
-      for (var i in t) {
-          delete e.viewData.tags.repulsions[i];
-          var r = e.basicInfo.id;
-          delete this.objects.item[i].viewData.tags.repulsions[r],
-          c.removeParticleAttractions(t[i])
-      }
-  }
-  ,
-  ye.prototype.getActiveCylindricalBounds = function() {
-      var e = this.getActiveRectBounds()
-        , t = centerAnchor.position.clone();
-      t.y = 0;
-      var i = e.max.clone();
-      i.y = 0;
-      var r = t.distanceTo(i)
-        , n = lerpVec3(e.min, e.max, .5);
-      return {
-          radius: r,
-          height: e.max.y - e.min.y,
-          center: n
-      }
-  }
-  ,
-  ye.prototype.getBoundingRadius = function() {
-      for (var e = 0, t = 0; t < oe.length; t++)
-          e = Math.max(e, oe[t]);
-      var i = 0;
-      for (t = 0; t < f.length; t++) {
-          var r = f[t].position.distanceTo(centerAnchor.position) + e;
-          r > i && (i = r)
-      }
-      return i
-  }
-  ,
-  ye.prototype.getActiveRectBounds = function() {
-      for (var e = {
-          min: new THREE.Vector3(9999999999,9999999999,9999999999),
-          max: new THREE.Vector3(-9999999999,-9999999999,-9999999999)
-      }, t = 0; t < g.length; t++) {
-          var i = this.objects.item[g[t]].viewData.tags.positionActive;
-          i.x < e.min.x && (e.min.x = i.x),
-          i.x > e.max.x && (e.max.x = i.x),
-          i.y < e.min.y && (e.min.y = i.y),
-          i.y > e.max.y && (e.max.y = i.y),
-          i.z < e.min.z && (e.min.z = i.z),
-          i.z > e.max.z && (e.max.z = i.z)
-      }
-      for (t = 0; t < f.length; t++) {
-          var r = f[t].position;
-          r.x < e.min.x && (e.min.x = r.x),
-          r.x > e.max.x && (e.max.x = r.x),
-          r.y < e.min.y && (e.min.y = r.y),
-          r.y > e.max.y && (e.max.y = r.y),
-          r.z < e.min.z && (e.min.z = r.z),
-          r.z > e.max.z && (e.max.z = r.z)
-      }
-      return e
-  }
-  ,
-  ye.prototype.adjustCameraDistance = function() {
-      if (0 != g.length) {
-          var e, t, i = f.length / _ - 1 / _;
-          t = lerp(s, l, i),
-          e = new THREE.Vector3(0,0,t).add(centerAnchor.position),
-          this.camControls.animateSlerp({
-              pos: e,
-              duration: P
-          })
-      }
-  }
-  ,
-  ye.prototype.hoverOnAdder = function(e) {
-      if (!this.animating && !this.camControls.dragging) {
-          this.camControls.setAutoRotate(!1),
-          this.hideAllAdders(e);
-          for (var t = this.updateCursorLinePositions(e), i = [], r = 0; r < he[e].srcTags.length; r++) {
-              var n = he[e].srcTags[r].selfIndex;
-              i.push(n),
-              ae[n].spriteLabel.forceShow = !0,
-              ae[n].spriteX.forceShow = !0
-          }
-          for (var o = [], a = 0; a < ae.length; a++) {
-              var s = !0;
-              if (0 != ne[a].length || null != f[a]) {
-                  for (S[a],
-                  r = 0; r < i.length; r++) {
-                      if (a === i[r]) {
-                          s = !1;
-                          break
-                      }
-                  }
-                  s && o.push(a)
-              }
-          }
-          0 != o.length && this.fadeDownBucketNodes(o),
-          this.showAddStuff(t),
-          he[e].hoverOn()
-      }
-  }
-  ,
-  ye.prototype.hoverOffAdder = function(e) {
-      if (!this.animating && (this.camControls.setAutoRotate(!0),
-      this.showAllAdders(),
-      void 0 !== he[e])) {
-          this.hideAddStuff();
-          for (var t = 0; t < he[e].srcTags.length; t++) {
-              var i = he[e].srcTags[t];
-              this.hoverOffSphere(i.selfIndex)
-          }
-          for (var r = [], n = 0; n < he[e].srcTags.length; n++) {
-              var o = he[e].srcTags[n].selfIndex;
-              r.push(o),
-              ae[o].spriteLabel.forceShow = !1,
-              ae[o].spriteX.forceShow = !1
-          }
-          var a = [];
-          for (t = 0; t < ae.length; t++) {
-              var s = !0;
-              if (0 != ne[t].length || null != f[t]) {
-                  for (S[t],
-                  n = 0; n < r.length; n++) {
-                      if (t === r[n]) {
-                          s = !1;
-                          break
-                      }
-                  }
-                  s && a.push(t)
-              }
-          }
-          0 != a.length && this.fadeUpBucketNodes(a),
-          he[e].hoverOff()
-      }
-  }
-  ,
-  ye.prototype.hoverOnSphere = function(e) {
-      if (!this.animating && !this.camControls.dragging && "out" == this.state) {
-          ae[e].glowTween.stop();
-          var t = ae[e].glowSprite.material.opacity;
-          t != fe && (ae[e].glowTween = new TWEEN.Tween({
-              o: t
-          }).to({
-              o: fe
-          }, F).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
-              ae[e].glowSprite.material.opacity = this.o;
-              var i = 3 * oe[e];
-              i = map(this.o, t, fe, i, i + 100),
-              ae[e].glowSprite.scale.set(i, i, i)
-          }
-          )).start()),
-          ae[e].spriteLabel.forceShow = !0,
-          void 0 !== ae[e].spriteX && (ae[e].spriteX.forceShow = !0);
-          for (var i = 0; i < f.length; i++)
-              ae[i].spriteLabel.enabled = !1,
-              ae[i].spriteX.enabled = !1;
-          $("body").css("cursor", "pointer"),
-          !1,
-          x = e
-      }
-  }
-  ,
-  ye.prototype.ensureHoverOffSphere = function() {
-      null != x && (ae[x].glowSprite.material.opacity != de && this.hoverOffSphere(x, !0))
-  }
-  ,
-  ye.prototype.hoverOffSphere = function(e, t) {
-      if (t || this.uiEnabled && !this.animating && !this.camControls.dragging && "out" === this.state) {
-          ae[e].glowTween.stop();
-          var i = ae[e].glowSprite.material.opacity;
-          i != de && (ae[e].glowTween = new TWEEN.Tween({
-              o: i
-          }).to({
-              o: de
-          }, F).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
-              ae[e].glowSprite.material.opacity = this.o;
-              var t = 3 * oe[e];
-              t = map(this.o, i, de, t + 100, t),
-              ae[e].glowSprite.scale.set(t, t, t)
-          }
-          )).start()),
-          ae[e].spriteLabel.forceShow = !1,
-          void 0 !== ae[e].spriteX && (ae[e].spriteX.forceShow = !1);
-          for (var r = 0; r < f.length; r++)
-              ae[r].spriteLabel.enabled = !0,
-              ae[r].spriteX.enabled = !0;
-          $("body").css("cursor", "default"),
-          !0,
-          x = null
-      }
-  }
-  ,
-  ye.prototype.fadeDownBucketNodes = function(e) {
-      if (this.uiEnabled)
-          for (var t = 0; t < e.length; t++) {
-              (l = e[t]) < _ && (ae[l].spriteLabel.enabled = !1,
-              ae[l].spriteX.enabled = !1)
-          }
-      var i = [];
-      for (t = 0; t < G.children.length; t++) {
-          var r = G.children[t].src1.selfIndex
-            , n = G.children[t].src2.selfIndex;
-          -1 === e.indexOf(r) && -1 === e.indexOf(n) || i.push(t)
-      }
-      var o = ae[e[0]].glowSprite.material.opacity
-        , a = ae[e[0]].lightSprite.material.opacity
-        , s = ae[e[0]].clickSphere.material.opacity;
-      if (o > me) {
-          for (t = 0; t < e.length; t++) {
-              var l = e[t];
-              ae[l].glowTween.stop()
-          }
-          D.stop(),
-          D = new TWEEN.Tween({
-              o: 1
-          }).to({
-              o: 0
-          }, F).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
-              for (var t = 0; t < e.length; t++) {
-                  var r = e[t]
-                    , n = ae[r];
-                  n.glowSprite.material.opacity = map(this.o, 1, 0, o, 0),
-                  n.lightSprite.material.opacity = map(this.o, 1, 0, a, 0),
-                  n.clickSphere.material.opacity = map(this.o, 1, 0, s, 0);
-                  var l = this.o * J;
-                  for (var h in n.itemLines)
-                      n.itemLines[h].material.opacity = l;
-                  void 0 !== f[r] && (f[r].point.material.opacity = this.o),
-                  n.light.intensity = this.o * n.light.maxIntensity
-              }
-              var c = this.o * K;
-              for (t = 0; t < i.length; t++) {
-                  r = i[t];
-                  G.children[r].material.opacity = c
-              }
-              var u = this.o * Z;
-              for (t = 0; t < j.children.length; t++)
-                  j.children[t].material.opacity = u
-          }
-          )).onComplete((function() {
-              G.visible = !1,
-              j.visible = !1
-          }
-          )).start()
-      }
-  }
-  ,
-  ye.prototype.fadeUpAllBucketNodes = function() {
-      for (var e = [], t = 0; t < ae.length; t++)
-          0 === ae[t].glowSprite.material.opacity && 0 !== ae[t].clickSphere.material.opacity && e.push(t);
-      0 != e.length && this.fadeUpBucketNodes(e)
-  }
-  ,
-  ye.prototype.fadeUpBucketNodes = function(e) {
-      G.visible = !0,
-      j.visible = !0;
-      for (var t = 0; t < j.children.length; t++)
-          j.children[t].material.opacity = Z;
-      if (this.uiEnabled)
-          for (t = 0; t < e.length; t++) {
-              (l = e[t]) < _ && (ae[l].spriteLabel.enabled = !0,
-              ae[l].spriteX.enabled = !0)
-          }
-      var i = [];
-      for (t = 0; t < G.children.length; t++) {
-          var r = G.children[t].src1.selfIndex
-            , n = G.children[t].src2.selfIndex;
-          -1 === e.indexOf(r) && -1 === e.indexOf(n) || i.push(t)
-      }
-      var o = ae[e[0]].glowSprite.material.opacity
-        , a = ae[e[0]].lightSprite.material.opacity
-        , s = ae[e[0]].clickSphere.material.opacity;
-      if (o < de) {
-          for (t = 0; t < e.length; t++) {
-              var l = e[t];
-              ae[l].glowTween.stop()
-          }
-          D.stop(),
-          D = new TWEEN.Tween({
-              o: 0
-          }).to({
-              o: 1
-          }, F).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
-              for (var t = 0; t < e.length; t++) {
-                  var r = e[t]
-                    , n = ae[r];
-                  n.glowSprite.material.opacity = map(this.o, 0, 1, o, de),
-                  n.lightSprite.material.opacity = map(this.o, 0, 1, a, pe),
-                  n.clickSphere.material.opacity = map(this.o, 0, 1, s, ee);
-                  var l = this.o * J;
-                  for (var h in n.itemLines)
-                      n.itemLines[h].material.opacity = l;
-                  void 0 !== f[r] && (f[r].point.material.opacity = this.o),
-                  n.light.intensity = this.o * n.light.maxIntensity
-              }
-              var c = this.o * K;
-              for (t = 0; t < i.length; t++) {
-                  r = i[t];
-                  G.children[r].material.opacity = c
-              }
-              var u = this.o * Z;
-              for (t = 0; t < j.children.length; t++)
-                  j.children[t].material.opacity = u
-          }
-          )).start()
-      }
-  }
-  ,
-  ye.prototype.moveFromDetailToIn = function() {
-      this.uiEnabled = !0,
-      $("#nav-back").unbind("click").click((function() {
-          a.uiEnabled && a.closeSphere(R)
-      }
-      )).show(),
-      $(".bucket-title").stop().fadeIn("fast"),
-      this.state = "in"
-  }
-  ,
-  ye.prototype.setTagsFromWithin = function(e) {
-      console.log('setTagsFromWithin');
-      this.uiEnabled = !1,
-      this.closeSphere(R, (function() {
-          a.setTags(e)
-      }
-      ))
-  }
-  ,
-  ye.prototype.clickAdder = function(e) {
-      ce = e,
-      ue = he[e].position.clone(),
-      E = [];
-      for (var t = 0; t < f.length; t++) {
-          for (var i = !1, r = 0; r < he[e].srcTags.length; r++) {
-              if (t === he[e].srcTags[r].selfIndex) {
-                  i = !0;
-                  break
-              }
-          }
-          i || E.push(t)
-      }
-      var n = he[e];
-      this.openTagsDialog(n.srcTags)
-  }
-  ,
-  ye.prototype.clickBucketLabel = function(e) {
-      0 !== ne[e].length && (void 0 !== ae[e].spriteX && (ae[e].spriteX.enabled = !1),
-      this.openSphere(e))
-  }
-  ,
-  ye.prototype.clickBucketClose = function(e) {
-      ae[e].spriteX.enabled = !1,
-      this.removeTag(e, !0)
-  }
-  ,
-  ye.prototype.hoverOnBucketLabel = function(e) {
-      this.hoverOnSphere(e)
-  }
-  ,
-  ye.prototype.hoverOffBucketLabel = function(e) {
-      this.hoverOffSphere(e)
-  }
-  ,
-  ye.prototype.hoverOnBucketClose = function() {
-      $("body").css("cursor", "pointer")
-  }
-  ,
-  ye.prototype.hoverOffBucketClose = function() {
-      $("body").css("cursor", "default")
-  }
-  ,
-  ye.prototype.openSphere = function(e) {
-      "out" === this.state && (this.uiEnabled = !1,
-      this.animating = !0,
-      ui.disableHelpLink(),
-      this.state = "in",
-      this.camControls.setAutoRotate(!1),
-      this.fadeOutNode(e),
-      this.fadeOutAll((function() {
-          R = e,
-          ae[e].clickSphere.scale.set(1e-4, 1e-4, 1e-4),
-          ae[e].spriteLabel.enabled = !1,
-          void 0 !== ae[e].spriteX && (ae[e].spriteX.enabled = !1);
-          for (var t = 0; t < ae.length; t++)
-              if (t != e) {
-                  ae[t].viewData.tags.positionPrevious = ae[t].position.clone();
-                  var r = ae[t].position.clone().sub(ae[e].position).normalize().multiplyScalar(4e3).add(ae[e].position);
-                  ae[t].viewData.tags.positionTarget = r;
-                  for (var n = 0; n < ne[t].length; n++) {
-                      var o = a.objects.item[ne[t][n]]
-                        , s = o.viewData.tags.destination.clone().sub(ae[t].position);
-                      o.viewData.tags.positionPrevious = o.position.clone(),
-                      o.viewData.tags.positionTarget = s.add(r)
-                  }
-              }
-          a.bucketScrollUpVector = new THREE.Vector3(0,1,0).applyQuaternion(sceneManager.getCamera().quaternion);
-          var l = a.camControls.getLookVector()
-            , h = l.clone().cross(a.bucketScrollUpVector);
-          h.normalize(),
-          a.bucketScrollUpQuaternion = sceneManager.getCamera().quaternion.clone();
-          var u = new THREE.Quaternion;
-          u.setFromAxisAngle(h, .5 * -Math.PI),
-          a.bucketScrollUpQuaternion.multiply(u);
-          var p = []
-            , d = 4
-            , f = Math.min(ne[e].length, d)
-            , m = Math.ceil(ne[e].length / f)
-            , E = 170
-            , g = 1.2 * E
-            , v = (f - 1) * E
-            , y = 0
-            , T = 0;
-          for (t = 0; t < ne[e].length; t++) {
-              var x = ne[e][t]
-                , H = a.objects.item[x];
-              y = ~~(t / f),
-              T = t % f,
-              (_ = new THREE.Vector3).x = T * E - v / 2,
-              _.y = -y * g,
-              _.z = -100,
-              m > 1 && (_.y += .5 * g);
-              var b = sceneManager.getCamera().quaternion.clone();
-              _.applyQuaternion(b),
-              _.add(ae[e].position),
-              H.viewData.tags.positionPrevious = H.position.clone(),
-              p.push(_),
-              H.viewData.tags.previousQuaternion = H.quaternion.clone(),
-              H.viewData.tags.targetQuaternion = b,
-              H.rotateToTarget = !1
-          }
-          a.bucketScrollHeight = y * g,
-          m > 1 && (a.bucketScrollHeight -= g),
-          a.bucketScrollPos = 0;
-          var w = api.orderIdsByType(ne[e], ["Artwork", "Exhibition", "Book", "Essay"]);
-          for (t = 0; t < w.length; t++) {
-              x = w[t];
-              (H = a.objects.item[x]).viewData.tags.positionTarget = p[t],
-              p.length > 1 && H.thumbWidth > H.thumbHeight && (H.viewData.tags.positionTarget.y -= (H.thumbWidth - H.thumbHeight) / 2)
-          }
-          sceneManager.usePhysics = !0;
-          var q = .1
-            , M = -4e3;
-          new TWEEN.Tween({
-              t: 0
-          }).to({
-              t: 1
-          }, I).easing(TWEEN.Easing.Quartic.InOut).onUpdate((function() {
-              if (this.t <= q)
-                  for (var t = map(this.t, 0, q, 0, 1), i = lerp(0, M, t), r = 0; r < c.attractions.length; r++)
-                      c.attractions[r].constant = i;
-              else if (this.t >= 1 - q)
-                  for (t = map(this.t, 1 - q, 1, 0, 1),
-                  i = lerp(M, 0, t),
-                  r = 0; r < c.attractions.length; r++)
-                      c.attractions[r].constant = i;
-              for (r = 0; r < ae.length; r++)
-                  if (r != e) {
-                      var n = lerpVec3(ae[r].viewData.tags.positionPrevious, ae[r].viewData.tags.positionTarget, this.t);
-                      ae[r].position.set(n.x, n.y, n.z),
-                      ae[r].viewData.tags.particle.position.x = n.x,
-                      ae[r].viewData.tags.particle.position.y = n.y,
-                      ae[r].viewData.tags.particle.position.z = n.z
-                  }
-              for (r = 0; r < ne[e].length; r++) {
-                  var o = ne[e][r];
-                  (l = a.objects.item[o]).viewData.tags.destination = lerpVec3(l.viewData.tags.positionPrevious, l.viewData.tags.positionTarget, this.t),
-                  THREE.Quaternion.slerp(l.viewData.tags.previousQuaternion, l.viewData.tags.targetQuaternion, l.targetQuaternion, this.t)
-              }
-              for (r = 0; r < ne.length; r++)
-                  if (r != e)
-                      for (var s = 0; s < ne[r].length; s++) {
-                          var l;
-                          (l = a.objects.item[ne[r][s]]).viewData.tags.destination = lerpVec3(l.viewData.tags.positionPrevious, l.viewData.tags.positionTarget, this.t),
-                          l.rotationTarget = ae[r].position,
-                          l.forceRotateToCamera = !1,
-                          l.enableRotateToCamera = !1,
-                          l.rotateToTarget = !0
-                      }
-          }
-          )).onComplete((function() {
-              if ($("#nav-back").stop().fadeIn("fast").unbind("click").click((function() {
-                  a.uiEnabled && a.closeSphere(R)
-              }
-              )),
-              ne[e].length > 1) {
-                  var t = i(ae[e].names);
-                  $("#ui #local").append('<div class="bucket-title">' + t + "</div>")
-              } else {
-                  var r = a.objects.item[ne[e][0]];
-                  function n() {
-                      sceneManager.setPaused(!0);
-                      var e = [];
-                      if ($("#ajax-content .tag-grid .tag a").each((function() {
-                          var t = $(this).attr("href").match(/tag\/(.*?)\//)[1];
-                          e.push(t)
-                      }
-                      )),
-                      0 !== e.length) {
-                          var t = vis.getVisByName("drift");
-                          void 0 !== t && t.addItemTagsToHistory(e)
-                      }
-                  }
-                  function o() {
-                      sceneManager.setPaused(!1),
-                      r.parentVis.uiEnabled = !0,
-                      $("#nav-back").unbind("click").click((function() {
-                          a.uiEnabled && a.closeSphere(R)
-                      }
-                      )).show().trigger("click")
-                  }
-                  ui.addToPath(r.basicInfo, "item"),
-                  ui.openItemDetails(r.basicInfo, n, o),
-                  a.state = "detail"
-              }
-              sceneManager.usePhysics = !1,
-              setTimeout((function() {
-                  a.animating = !1,
-                  a.uiEnabled = !0
-              }
-              ), 800)
-          }
-          )).start(),
-          a.camControls.lastOutPosition = sceneManager.getCamera().position.clone();
-          var _ = ae[e].position.clone()
-            , S = sceneManager.getDistanceForRectSize(v, 50);
-          _.add(l.negate().multiplyScalar(S)),
-          a.camControls.animate({
-              pos: _,
-              duration: I,
-              callback: function() {
-                  a.camControls.setScrollMode(!0);
-                  var e = sceneManager.getCamera();
-                  a.camControls.prevInPosition = new THREE.Vector3(e.position.x,e.position.y,e.position.z)
-              }
-          })
-      }
-      ), !1))
-  }
-  ,
-  ye.prototype.closeSphere = function(e, t) {
-      "in" == this.state && $(".bucket-title").stop().fadeOut("fast", (function() {
-          $(this).remove()
-      }
-      )),
-      this.camControls.setAutoRotate(!0);
-      for (var i = 0; i < ne[e].length; i++) {
-          var r = ne[e][i];
-          this.objects.item[r].rotateToTarget = !0
-      }
-      sceneManager.usePhysics = !0;
-      var n = .1
-        , o = -4e3;
-      this.animating = !0,
-      this.uiEnabled = !1,
-      new TWEEN.Tween({
-          t: 0
-      }).to({
-          t: 1
-      }, I).easing(TWEEN.Easing.Quartic.InOut).onUpdate((function() {
-          if (this.t <= n)
-              for (var t = map(this.t, 0, n, 0, 1), i = lerp(0, o, t), r = 0; r < c.attractions.length; r++)
-                  c.attractions[r].constant = i;
-          else if (this.t >= 1 - n)
-              for (t = map(this.t, 1 - n, 1, 0, 1),
-              i = lerp(o, 0, t),
-              r = 0; r < c.attractions.length; r++)
-                  c.attractions[r].constant = i;
-          for (r = 0; r < ae.length; r++)
-              if (r != e) {
-                  var s = lerpVec3(ae[r].viewData.tags.positionTarget, ae[r].viewData.tags.positionPrevious, this.t);
-                  ae[r].position.set(s.x, s.y, s.z),
-                  ae[r].viewData.tags.particle.position.x = s.x,
-                  ae[r].viewData.tags.particle.position.y = s.y,
-                  ae[r].viewData.tags.particle.position.z = s.z
-              }
-          for (r = 0; r < ne[e].length; r++) {
-              var l = ne[e][r];
-              (u = a.objects.item[l]).viewData.tags.destination = lerpVec3(u.viewData.tags.positionTarget, u.viewData.tags.positionPrevious, this.t),
-              THREE.Quaternion.slerp(u.viewData.tags.targetQuaternion, u.viewData.tags.previousQuaternion, u.targetQuaternion, this.t)
-          }
-          for (r = 0; r < ne.length; r++)
-              if (r != e)
-                  for (var h = 0; h < ne[r].length; h++) {
-                      var u;
-                      (u = a.objects.item[ne[r][h]]).viewData.tags.destination = lerpVec3(u.viewData.tags.positionTarget, u.viewData.tags.positionPrevious, this.t),
-                      u.rotationTarget = ae[r].position
-                  }
-      }
-      )).onComplete((function() {
-          sceneManager.usePhysics = !1,
-          $("#nav-back").unbind("click").click((function() {
-              a.uiEnabled && ($(this).stop().fadeOut("fast"),
-              ui.openView("drift"))
-          }
-          )),
-          a.animating = !1,
-          a.uiEnabled = !0,
-          !0,
-          ui.enableHelpLink(),
-          a.state = "out";
-          var i = oe[e] + 60;
-          ae[e].clickSphere.scale.set(i, i, i),
-          e < _ && (ae[e].spriteLabel.enabled = !0,
-          ae[e].spriteX.enabled = !0),
-          a.fadeInAll((function() {}
-          ), !1),
-          a.fadeInTag(R),
-          void 0 !== t && t()
-      }
-      )).start(),
-      this.camControls.animate({
-          pos: this.camControls.lastOutPosition,
-          duration: I,
-          callback: function() {
-              a.camControls.setScrollMode(!1)
-          }
-      })
-  }
-  ,
-  ye.prototype.showClickSpheres = function() {
-      for (var e = 0; e < ae.length; e++)
-          0 != ne[e].length && (ae[e].clickSphere.visible = !0)
-  }
-  ,
-  ye.prototype.hideClickSpheres = function() {
-      for (var e = 0; e < ae.length; e++)
-          0 != ne[e].length && (ae[e].clickSphere.visible = !1)
-  }
-  ,
-  ye.prototype.hideItemLines = function() {
-      for (var e = 0; e < N.children.length; e++)
-          N.children[e].visible = !1
-  }
-  ,
-  ye.prototype.showItemLines = function() {
-      for (var e = 0; e < N.children.length; e++)
-          N.children[e].visible = !0
-  }
-  ,
-  ye.prototype.hideDiagramLines = function() {
-      centerAnchor.point.visible = !1,
-      centerAnchor.point.scale.set(0, 0, 0);
-      for (var e = 0; e < f.length; e++)
-          f[e].point.visible = !1;
-      for (e = 0; e < j.children.length; e++)
-          j.children[e].visible = !1;
-      for (e = 0; e < G.children.length; e++)
-          G.children[e].visible = !1
-  }
-  ,
-  ye.prototype.showDiagramLines = function() {
-      G.visible = !0,
-      j.visible = !0,
-      centerAnchor.point.visible = !0,
-      centerAnchor.point.scale.set(te, te, te),
-      centerAnchor.point.material.opacity = 0;
-      for (var e = 0; e < f.length; e++)
-          f[e].point.visible = !0,
-          f[e].point.material.opacity = 0;
-      for (e = 0; e < j.children.length; e++)
-          j.children[e].visible = !0,
-          j.children[e].material.opacity = 0;
-      for (e = 0; e < G.children.length; e++)
-          G.children[e].visible = !0,
-          G.children[e].material.opacity = 0
-  }
-  ,
-  ye.prototype.hideInbetweenNodes = function() {
-      for (var e = 4; e < ae.length; e++)
-          ae[e].lightSprite.visible = !1,
-          ae[e].glowSprite.visible = !1
-  }
-  ,
-  ye.prototype.showInbetweenNodes = function() {
-      for (var e = 4; e < ae.length; e++)
-          0 != ne[e].length && (ae[e].lightSprite.visible = !0,
-          ae[e].lightSprite.material.opacity = 0,
-          ae[e].glowSprite.visible = !0,
-          ae[e].glowSprite.material.opacity = 0)
-  }
-  ,
-  ye.prototype.updateInbetweenNodePositions = function() {
-      for (var e = 3; e < ae.length; e++)
-          if (0 != ne[e].length) {
-              var t = ae[e].viewData.tags.positionTarget;
-              ae[e].position.set(t.x, t.y, t.z),
-              ae[e].viewData.tags.particle.position.x = t.x,
-              ae[e].viewData.tags.particle.position.y = t.y,
-              ae[e].viewData.tags.particle.position.z = t.z
-          }
-  }
-  ,
-  ye.prototype.setLabels = function() {
-      for (var e = 0; e < ae.length; e++)
-          this.removeBucketLabel(e),
-          e < _ ? void 0 !== f[e] && this.addBucketLabel(e) : 0 != ne[e].length && this.addBucketLabel(e);
-      this.updateLabels()
-  }
-  ,
-  ye.prototype.updateLabels = function() {
-      centerAnchor.position.distanceTo(sceneManager.getCamera().position);
-      var e = new THREE.Vector3(0,1,0);
-      e.applyQuaternion(sceneManager.getCamera().quaternion);
-      var t = new THREE.Vector3(1,0,0);
-      t.applyQuaternion(sceneManager.getCamera().quaternion);
-      for (var i = sceneManager.getCamera().position.clone().sub(centerAnchor.position), r = sceneManager.getCamera().quaternion, n = 0; n < ae.length; n++)
-          if ((n < _ || 0 != ne[n].length) && null != ae[n].spriteLabel) {
-              var o = 115
-                , a = 5
-                , s = ae[n].spriteLabel
-                , l = e.clone().multiplyScalar(oe[n] + o);
-              s.position.set(l.x, l.y, l.z),
-              s.quaternion.set(r.x, r.y, r.z, r.w);
-              var h = s.width + a
-                , c = (s.height,
-              ae[n].position.clone().add(s.position))
-                , u = sceneManager.getRectWorldSize(c, h, 1)
-                , p = u.w / s.width;
-              if (s.scale.set(p, p, 1),
-              null != ae[n].spriteX) {
-                  var d = ae[n].spriteX
-                    , m = sceneManager.getRectWorldSize(c, 13, 1)
-                    , E = t.clone().multiplyScalar(u.w / 2 + m.w).add(s.position);
-                  d.position.set(E.x, E.y, E.z),
-                  d.quaternion.set(r.x, r.y, r.z, r.w),
-                  d.scale.set(p, p, 1)
-              }
-              var g = .31;
-              if (ae[n].spriteLabel.forceShow)
-                  ae[n].spriteLabel.textMesh.material.opacity < ie && (ae[n].spriteLabel.textMesh.material.opacity = lerp(ae[n].spriteLabel.textMesh.material.opacity, ie, g));
-              else if (ae[n].spriteLabel.enabled) {
-                  var v = ae[n].position.clone().sub(centerAnchor.position);
-                  GeomUtils.angleBetweenVecs(i, v) > re ? ae[n].spriteLabel.textMesh.material.opacity > 0 && (ae[n].spriteLabel.textMesh.material.opacity = lerp(ae[n].spriteLabel.textMesh.material.opacity, 0, g)) : ae[n].spriteLabel.textMesh.material.opacity < ie && (ae[n].spriteLabel.textMesh.material.opacity = lerp(ae[n].spriteLabel.textMesh.material.opacity, ie, g))
-              } else
-                  ae[n].spriteLabel.textMesh.material.opacity > 0 && (ae[n].spriteLabel.textMesh.material.opacity = lerp(ae[n].spriteLabel.textMesh.material.opacity, 0, g));
-              n < f.length && (ae[n].spriteX.textMesh.material.opacity = ae[n].spriteLabel.textMesh.material.opacity)
-          }
-  }
-  ,
-  ye.prototype.addBucketLabel = function(e) {
-      var i = 9
-        , r = "#000000"
-        , n = void 0
-        , o = [0, 0];
-      if (e < _)
-          ae[e].names = [f[e].data.name],
-          ae[e].spriteLabel = this.createLabel(ae[e].names, i, r, n, o),
-          ae[e].spriteLabel.textMesh.material.opacity = 0,
-          ae[e].spriteLabel.clickMesh.index = e,
-          ae[e].spriteLabel.clickMesh.type = "BNL",
-          ae[e].spriteLabel.enabled = !1,
-          ae[e].spriteLabel.forceShow = !1,
-          ae[e].add(ae[e].spriteLabel),
-          ae[e].spriteX = this.createLabel(["\xd7"], i, r, n, [5, 5]),
-          ae[e].spriteX.textMesh.material.opacity = 0,
-          ae[e].spriteX.clickMesh.index = e,
-          ae[e].spriteX.clickMesh.type = "BNX",
-          ae[e].spriteX.enabled = !1,
-          ae[e].spriteX.forceShow = !1,
-          ae[e].add(ae[e].spriteX);
-      else {
-          for (var a = S[e], s = [], l = 0; l < a.length; l++)
-              s.push(f[a[l]].data.name);
-          ae[e].names = s;
-          var h = t(s);
-          ae[e].spriteLabel = this.createLabel(h, i, r, n),
-          ae[e].spriteLabel.textMesh.material.opacity = 0,
-          ae[e].spriteLabel.enabled = !1,
-          ae[e].spriteLabel.forceShow = !1,
-          ae[e].add(ae[e].spriteLabel)
-      }
-  }
-  ,
-  ye.prototype.removeBucketLabel = function(e) {
-      null != ae[e].spriteLabel && (ae[e].remove(ae[e].spriteLabel),
-      delete ae[e].spriteLabel,
-      null != ae[e].spriteX && (ae[e].remove(ae[e].spriteX),
-      delete ae[e].spriteX))
-  }
-  ,
-  ye.prototype.showAllLabels = function() {
-      for (var e = 0; e < _; e++)
-          null != ae[e].spriteLabel && (ae[e].spriteLabel.enabled = !0,
-          ae[e].spriteLabel.forceShow = !1,
-          ae[e].spriteX.enabled = !0,
-          ae[e].spriteX.forceShow = !1)
-  }
-  ,
-  ye.prototype.hideAllAdders = function(e) {
-      for (var t = 0; t < he.length; t++)
-          t !== e && he[t].hide()
-  }
-  ,
-  ye.prototype.showAllAdders = function(e) {
-      for (var t = 0; t < he.length; t++)
-          t !== e && he[t].show()
-  }
-  ,
-  ye.prototype.hideAllLabels = function() {
-      for (var e = 0; e < ae.length; e++)
-          null != ae[e].spriteLabel && (ae[e].spriteLabel.enabled = !1,
-          ae[e].spriteLabel.forceShow = !1,
-          void 0 !== ae[e].spriteX && (ae[e].spriteX.enabled = !1,
-          ae[e].spriteX.forceShow = !1))
-  }
-  ,
-  ye.prototype.itemClickCallback = function() {
-      var e = this;
-      if (this.parentVis.uiEnabled && "in" === this.parentVis.state) {
-          function t() {
-              sceneManager.setPaused(!0);
-              var e = [];
-              if ($("#ajax-content .tag-grid .tag a").each((function() {
-                  var t = $(this).attr("href").match(/tag\/(.*?)\//)[1];
-                  e.push(t)
-              }
-              )),
-              0 !== e.length) {
-                  var t = vis.getVisByName("drift");
-                  void 0 !== t && t.addItemTagsToHistory(e)
-              }
-          }
-          function i() {
-              sceneManager.setPaused(!1),
-              e.parentVis.uiEnabled = !0,
-              $("#nav-back").unbind("click").click((function() {
-                  a.uiEnabled && a.closeSphere(R)
-              }
-              )).show(),
-              ne[R].length > 1 ? e.parentVis.moveFromDetailToIn() : $("#nav-back").trigger("click")
-          }
-          $(".bucket-title").stop().fadeOut("fast"),
-          ui.addToPath(e.basicInfo, "item"),
-          ui.openItemDetails(e.basicInfo, t, i),
-          this.parentVis.state = "detail"
-      }
-  }
-  ,
-  ye.prototype.fadeOutNode = function(e, t) {
-      new TWEEN.Tween({
-          o: 1
-      }).to({
-          o: 0
-      }, O).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
-          ae[e].lightSprite.material.opacity = this.o * pe,
-          ae[e].glowSprite.material.opacity = this.o * de;
-          var t = ae[e].light;
-          t.intensity = this.o * t.maxIntensity
-      }
-      )).onComplete((function() {
-          null != t && (t(),
-          ae[e].lightSprite.visible = !1,
-          ae[e].glowSprite.visible = !1)
-      }
-      )).start()
-  }
-  ,
-  ye.prototype.fadeInTag = function(e, t) {
-      ae[e].lightSprite.visible = !0,
-      ae[e].glowSprite.visible = !0;
-      new TWEEN.Tween({
-          o: 0
-      }).to({
-          o: 1
-      }, O).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
-          ae[e].lightSprite.material.opacity = this.o * pe,
-          ae[e].glowSprite.material.opacity = this.o * de;
-          var t = ae[e].light;
-          t.intensity = this.o * t.maxIntensity
-      }
-      )).onComplete((function() {
-          null != t && t()
-      }
-      )).start()
-  }
-  ,
-  ye.prototype.fadeOutAll = function(e, t) {
-      this.hideAllLabels(),
-      this.sceneObject.traverse((function(e) {
-          e.material && (e.material.transparent = !0)
-      }
-      ));
-      for (var i = 0; i < ae.length; i++)
-          ae[i].light.lastIntensity = ae[i].light.intensity,
-          ae[i].lightSprite.lastOpacity = ae[i].lightSprite.material.opacity,
-          ae[i].glowSprite.lastOpacity = ae[i].glowSprite.material.opacity,
-          ae[i].clickSphere.lastOpacity = ae[i].clickSphere.material.opacity;
-      for (i = 0; i < N.children.length; i++)
-          N.children[i].lastOpacity = N.children[i].material.opacity;
-      new TWEEN.Tween({
-          o: 1
-      }).to({
-          o: 0
-      }, O).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
-          centerAnchor.point.material.opacity = this.o * Ee;
-          for (var e = 0; e < f.length; e++)
-              f[e].point.material.opacity = this.o * Ee;
-          for (e = 0; e < j.children.length; e++)
-              j.children[e].material.opacity = map(this.o, 0, 1, 0, j.children[e].maxOpacity);
-          for (e = 0; e < G.children.length; e++)
-              G.children[e].material.opacity = map(this.o, 0, 1, 0, G.children[e].maxOpacity);
-          for (e = 0; e < ae.length; e++)
-              0 != ne[e].length && ((e > 3 || t) && 0 !== ae[e].lightSprite.material.opacity && (ae[e].lightSprite.material.opacity = this.o * ae[e].lightSprite.lastOpacity,
-              ae[e].glowSprite.material.opacity = this.o * ae[e].glowSprite.lastOpacity,
-              ae[e].light.intensity = this.o * ae[e].light.lastIntensity),
-              ae[e].clickSphere.material.opacity = this.o * ae[e].clickSphere.lastOpacity);
-          for (e = 0; e < N.children.length; e++)
-              N.children[e].material.opacity = this.o * N.children[e].lastOpacity;
-          for (e = 0; e < he.length; e++)
-              he[e].setOpacity(this.o)
-      }
-      )).onComplete((function() {
-          a.hideAllAdders(),
-          a.hideItemLines(),
-          a.hideDiagramLines(),
-          a.hideInbetweenNodes(),
-          a.hideClickSpheres(),
-          null != e && e()
-      }
-      )).start()
-  }
-  ,
-  ye.prototype.fadeInAll = function(e, t) {
-      this.showItemLines(),
-      this.showDiagramLines(),
-      this.showInbetweenNodes(),
-      a.showClickSpheres(),
-      this.sceneObject.traverse((function(e) {
-          e.material && (e.material.transparent = !0)
-      }
-      ));
-      new TWEEN.Tween({
-          o: 0
-      }).to({
-          o: 1
-      }, O).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
-          centerAnchor.point.material.opacity = this.o * Ee;
-          for (var e = 0; e < f.length; e++)
-              f[e].point.material.opacity = this.o * Ee;
-          for (e = 0; e < j.children.length; e++)
-              j.children[e].material.opacity = map(this.o, 0, 1, 0, j.children[e].maxOpacity);
-          for (e = 0; e < G.children.length; e++)
-              G.children[e].material.opacity = map(this.o, 0, 1, 0, G.children[e].maxOpacity);
-          for (e = 0; e < ae.length; e++)
-              0 != ne[e].length && ((e > 3 || t) && (ae[e].lightSprite.material.opacity = this.o * pe,
-              ae[e].glowSprite.material.opacity = this.o * de,
-              ae[e].light.intensity = this.o * ae[e].light.maxIntensity),
-              ae[e].clickSphere.material.opacity = this.o * ee);
-          for (e = 0; e < N.children.length; e++)
-              N.children[e].material.opacity = this.o * N.children[e].maxOpacity;
-          for (e = 0; e < he.length; e++)
-              he[e].setOpacity(this.o)
-      }
-      )).onComplete((function() {
-          a.showAllAdders(),
-          a.showAllLabels(),
-          null != e && e()
-      }
-      )).start()
-  }
-  ,
-  ye.prototype.createLabel = function(e, t, i, r, n) {
-      void 0 === n && (n = [0, 0]);
-      for (var o, a = {
-          size: t,
-          curveSegments: 2,
-          font: "circular",
-          bevelEnabled: !1,
-          amount: 1
-      }, s = [], l = 0; l < e.length; l++) {
-          var h = THREE.FontUtils.generateShapes(e[l], a)
-            , c = new THREE.ExtrudeGeometry(h,a);
-          c.computeBoundingBox(),
-          s.push({
-              x: -.5 * (c.boundingBox.max.x - c.boundingBox.min.x),
-              y: l * (t + .4 * t)
-          });
-          for (var u = 0; u < c.vertices.length; u++)
-              c.vertices[u].x += s[l].x,
-              c.vertices[u].y += s[l].y;
-          0 === l ? o = c : o.merge(c)
-      }
-      o.computeBoundingBox();
-      var p = new THREE.Mesh(o,new THREE.MeshBasicMaterial({
-          color: 0,
-          fog: !1,
-          transparent: !0,
-          opacity: 1,
-          depthWrite: !1,
-          depthTest: !1
-      }));
-      p.renderOrder = 2e3;
-      var d = new THREE.Object3D;
-      return d.textMesh = p,
-      d.add(p),
-      d.width = o.boundingBox.max.x - o.boundingBox.min.x,
-      d.height = o.boundingBox.max.y - o.boundingBox.min.y,
-      d.clickMesh = new THREE.BoundingBoxHelper(d.textMesh,16777215),
-      d.clickMesh.material.depthTest = !1,
-      d.clickMesh.renderOrder = 1,
-      d.clickMesh.material.transparent = !0,
-      d.clickMesh.material.opacity = 0,
-      d.clickMesh.lastOpacity = 0,
-      d.clickMesh.update(),
-      d.add(d.clickMesh),
-      d
-  }
-  ,
-  ye.prototype.updateLightMaterials = function() {
-      for (var e in this.objects.item) {
-          var t = this.objects.item[e];
-          null != t.highResMesh && (t.highResMesh.material.needsUpdate = !0)
-      }
-      itemField.getThumbMesh().material.needsUpdate = !0
-  }
-  ,
-  ye.prototype.getTexture = function(e) {
-      switch (e) {
-      case "lightSprite":
-          return H;
-      case "glow":
-          return b;
-      case "point":
-          return w;
-      default:
-          return null
-      }
-  }
-  ,
-  ye.prototype.quaternionBetweenVecs = function(e, t) {
-      var i = new THREE.Vector3;
-      i.crossVectors(e, t),
-      i.normalize(),
-      0 == i.x && 0 == i.y && 0 == i.z && (i = t);
-      var r = GeomUtils.angleBetweenVecs(e, t)
-        , n = new THREE.Quaternion;
-      return n.setFromAxisAngle(i, r),
-      n.normalize(),
-      n
-  }
-  ,
-  ye.prototype.getCenter = function() {
-      return centerAnchor.position
-  }
-  ,
-  ye.prototype.openInitAbout = function() {
-      ve && a.firstTime && ($("#bg-widget-curtain").hide(),
-      ui.showHelpLink(),
-      ui.showAboutLink(),
-      ui.openAbout(),
-      a.firstTime = !1,
-      a.uiEnabled = !0),
-      ui.showNav()
-  }
-  ,
-  ye
+            }
+            var b = {
+                ids: e,
+                detail: "id_only"
+            };
+            // ui.startLoader(),
+            var t = api.tagsObjects;
+                for (var i = 0; i < e.length; i++) {
+                    for (var r = e[i], o = u[r], s = [], l = 0; l < t[r].length; l++) {
+                        var h = t[r][l]
+                          , c = a.objects.item[h];
+                        void 0 !== c && s.push(c)
+                    }
+                    f[i].fill(o, s)
+                }
+                // n();
+                for (i = 0; i < e.length; i++) {
+                    var p = f[i];
+                    for (l = 0; l < p.allItems.length; l++) {
+                        var d = p.allItems[l].basicInfo.id
+                          , m = a.objects.item[d];
+                        -1 == g.indexOf(d) ? (m.viewData.tags.activeTagConnections = [f[i].data.id],
+                        g.push(d),
+                        v.push(d)) : m.viewData.tags.activeTagConnections.push(f[i].data.id),
+                        m.isInteractive = !0
+                    }
+                    for (l = 0; l < v.length; l++)
+                        for (var E = 0; E < T.length; E++)
+                            if (v[l] == T[E]) {
+                                T.splice(E, 1);
+                                break
+                            }
+                }
+                a.calculateBuckets(),
+                a.calculateActivePositions(!0),
+                a.repelItemsToAdd(),
+                a.removeItemLines(),
+                a.setLabels(),
+                ae[f.length - 1].isNew = !0,
+                z = [];
+                for (i = 0; i < f.length; i++)
+                    z.push(f[i].data.id);
+                a.animateContent(),
+                a.adjustCameraDistance()
+        }
+        ))
+    }
+    ,
+    ye.prototype.addTag = function(e) {
+        var t = f.length;
+        this.uiEnabled = !1,
+        this.fadeOutAll((function() {
+            for (var i = 0; i < _; i++)
+                ae[i].viewData.tags.positionPrevious = ae[i].position.clone();
+            for (i = 0; i < _; i++)
+                if (f.length > i) {
+                    for (var r = !1, o = 0; o < E.length; o++)
+                        if (i === E[o]) {
+                            r = !0;
+                            break
+                        }
+                    if (!r) {
+                        var s = 0;
+                        for (o = 0; o < E.length; o++)
+                            i > E[o] && s++;
+                        ae[i].shiftIndex = i - s
+                    }
+                }
+            var l;
+            if (0 == f.length)
+                0;
+            else if (M,
+            0 != E.length)
+                for (i = E.length - 1; i >= 0; i--)
+                    a.removeTag(E[i]);
+            y = g.slice();
+            for (i = 0; i < y.length; i++) {
+                var h = a.objects.item[y[i]];
+                h.viewData.tags.positionPrev = h.position.clone()
+            }
+            0 == f.length ? (H = centerAnchor.position.clone(),
+            l = new THREE.Vector3) : H = (l = he[ce].position.clone().sub(centerAnchor.position).normalize().multiplyScalar(M)).clone().add(centerAnchor.position);
+            var c, p = new TagNode(a,null), d = u[e];
+            switch (p.viewData = {
+                tags: {}
+            },
+            p.position.set(H.x, H.y, H.z),
+            2 == f.length ? c = .666666666 * Math.PI : 3 == f.length && (c = 109.5 * Math.PI / 180),
+            f.length) {
+            case 1:
+                (H = l.clone()).negate().add(centerAnchor.position),
+                f[0].position.set(H.x, H.y, H.z);
+                break;
+            case 2:
+            case 3:
+                for (i = 0; i < f.length; i++) {
+                    var m = l.clone().normalize()
+                      , R = f[i].position.clone().sub(centerAnchor.position).normalize()
+                      , x = m.cross(R);
+                    x.normalize();
+                    var H, b = new THREE.Quaternion;
+                    b.setFromAxisAngle(x, c),
+                    (H = l.clone()).applyQuaternion(b),
+                    H.add(centerAnchor.position),
+                    f[i].position.set(H.x, H.y, H.z)
+                }
+            }
+            f.push(p),
+            a.sceneObject.add(p);
+            for (i = 0; i < f.length; i++)
+                f[i].selfIndex = i;
+            ui.startLoader(),
+            p.fill(d, null, (function() {
+                ui.stopLoader(),
+                n();
+                for (var e = 0; e < ae.length; e++) {
+                    var i = ae[e].shiftIndex;
+                    if (void 0 !== i && e >= i && e < _) {
+                        var r = i;
+                        r < t && (ae[r].viewData.tags.positionPrevious = ae[e].position.clone(),
+                        ae[r].position.set(ae[r].position.x, ae[e].position.y, ae[e].position.z),
+                        ae[r].lightSprite.material.opacity = ae[e].lightSprite.material.opacity,
+                        ae[r].glowSprite.material.opacity = ae[e].glowSprite.material.opacity,
+                        ae[r].lightSprite.previousScale = ae[e].lightSprite.scale.clone(),
+                        ae[r].glowSprite.previousScale = ae[e].glowSprite.scale.clone(),
+                        ae[r].clickSphere.previousScale = ae[e].clickSphere.scale.clone())
+                    } else
+                        ae[e].lightSprite.previousScale = ae[e].lightSprite.scale.clone(),
+                        ae[e].glowSprite.previousScale = ae[e].glowSprite.scale.clone(),
+                        ae[e].clickSphere.previousScale = ae[e].clickSphere.scale.clone();
+                    ae[e].shiftIndex = void 0
+                }
+                for (e = 0; e < p.allItems.length; e++) {
+                    var o = p.allItems[e].basicInfo.id
+                      , s = a.objects.item[o];
+                    -1 == g.indexOf(o) ? (s.viewData.tags.activeTagConnections = [f[f.length - 1].data.id],
+                    g.push(o),
+                    v.push(o)) : s.viewData.tags.activeTagConnections.push(f[f.length - 1].data.id),
+                    s.isInteractive = !0
+                }
+                for (e = 0; e < v.length; e++)
+                    for (var l = 0; l < T.length; l++)
+                        if (v[e] == T[l]) {
+                            T.splice(l, 1);
+                            break
+                        }
+                a.calculateBuckets(),
+                a.calculateActivePositions(!0),
+                a.repelItemsToAdd(),
+                a.removeItemLines(),
+                a.setLabels(),
+                ae[f.length - 1].isNew = !0,
+                z = [];
+                for (e = 0; e < f.length; e++)
+                    z.push(f[e].data.id);
+                a.animateContent(),
+                a.adjustCameraDistance()
+            }
+            ))
+        }
+        ))
+    }
+    ,
+    ye.prototype.removeTag = function(e, t) {
+        $("#back").trigger("click");
+        return;
+        function i() {
+            f[e].position.clone().clone().sub(centerAnchor.position);
+            for (var i = f[e], s = C[e], l = 0; l < s.length; l++) {
+                var h = s[l];
+                0 != ne[h].length && a.removeItemLinesConnectedTo(ae[e])
+            }
+            a.removeTagCenterLine(i),
+            a.sceneObject.remove(i);
+            var c = f[e].data.id;
+            for (l = 0; l < i.allItems.length; l++) {
+                var u = i.allItems[l].basicInfo.id
+                  , p = (w = a.objects.item[u]).viewData.tags.activeTagConnections;
+                if (p.splice(p.indexOf(c), 1),
+                0 == p.length) {
+                    var d = g.indexOf(u);
+                    g.splice(d, 1),
+                    T.push(u),
+                    w.viewData.tags.positionActive = w.position.clone(),
+                    w.viewData.tags.bucketConnection = -1,
+                    w.isInteractive = !1
+                }
+            }
+            if (null != ae[e].lightSprite) {
+                var m = new THREE.Object3D;
+                m.position.set(ae[e].position.x, ae[e].position.y, ae[e].position.z);
+                var E = ae[e].lightSprite.clone();
+                E.material = ae[e].lightSprite.material.clone();
+                var v = ae[e].glowSprite.clone();
+                v.material = ae[e].glowSprite.material.clone(),
+                m.lightSprite = E,
+                m.glowSprite = v,
+                m.add(E),
+                m.add(v);
+                var R = ae[e].position.clone().sub(centerAnchor.position).normalize().multiplyScalar(5e3).add(centerAnchor.position);
+                m.viewData = {
+                    tags: {
+                        positionPrevious: ae[e].position.clone(),
+                        positionTarget: R,
+                        previousLightSpriteOpacity: ae[e].lightSprite.material.opacity,
+                        previousGlowSpriteOpacity: ae[e].glowSprite.material.opacity
+                    }
+                },
+                se.push(m),
+                a.sceneObject.add(m),
+                le[se.length - 1].distance = oe[e] * ge
+            }
+            if (t)
+                for (l = 0; l < _; l++)
+                    ae[l].viewData.tags.positionPrevious = ae[l].position.clone();
+            var x = f[e].position.clone();
+            if (f.splice(e, 1),
+            0 === f.length ? o() : n(),
+            t) {
+                for (l = 0; l < _; l++) {
+                    var H = void 0;
+                    l < r && l !== e && l > e && (H = l - 1),
+                    ae[l].shiftIndex = H
+                }
+                for (l = 0; l < ae.length; l++) {
+                    if (void 0 !== (H = ae[l].shiftIndex) && l >= H && l < _) {
+                        var b = H;
+                        ae[b].viewData.tags.positionPrevious = ae[l].position.clone(),
+                        ae[b].position.set(ae[b].position.x, ae[l].position.y, ae[l].position.z),
+                        ae[b].lightSprite.material.opacity = ae[l].lightSprite.material.opacity,
+                        ae[b].glowSprite.material.opacity = ae[l].glowSprite.material.opacity,
+                        ae[b].lightSprite.previousScale = ae[l].lightSprite.scale.clone(),
+                        ae[b].glowSprite.previousScale = ae[l].glowSprite.scale.clone(),
+                        ae[b].clickSphere.previousScale = ae[l].clickSphere.scale.clone()
+                    } else
+                        ae[l].lightSprite.previousScale = ae[l].lightSprite.scale.clone(),
+                        ae[l].glowSprite.previousScale = ae[l].glowSprite.scale.clone(),
+                        ae[l].clickSphere.previousScale = ae[l].clickSphere.scale.clone();
+                    ae[l].shiftIndex = void 0
+                }
+                a.removeTagAdders();
+                for (l = 0; l < f.length; l++)
+                    f[l].selfIndex = l;
+                y = g.slice();
+                for (l = 0; l < y.length; l++) {
+                    var w;
+                    (w = a.objects.item[y[l]]).viewData.tags.positionPrev = w.position.clone()
+                }
+                switch (f.length) {
+                case 1:
+                    f[0].position.set(centerAnchor.position.x, centerAnchor.position.y, centerAnchor.position.z);
+                    break;
+                case 2:
+                    var q = x.clone().sub(centerAnchor.position)
+                      , M = f[0].position.clone().sub(centerAnchor.position).cross(q);
+                    M.normalize();
+                    var S = f[1].position.clone().sub(centerAnchor.position).cross(q);
+                    S.normalize();
+                    var L = f[0].position.clone().sub(centerAnchor.position)
+                      , A = f[1].position.clone().sub(centerAnchor.position)
+                      , k = .25 * GeomUtils.angleBetweenVecs(L, A)
+                      , D = new THREE.Quaternion
+                      , P = new THREE.Quaternion;
+                    D.setFromAxisAngle(M, k),
+                    P.setFromAxisAngle(S, k),
+                    L.applyQuaternion(D),
+                    A.applyQuaternion(P),
+                    L.add(centerAnchor.position),
+                    A.add(centerAnchor.position),
+                    f[0].position.set(L.x, L.y, L.z),
+                    f[1].position.set(A.x, A.y, A.z);
+                    break;
+                case 3:
+                    var I = x.clone().sub(centerAnchor.position);
+                    for (l = 0; l < f.length; l++) {
+                        var V = I.clone().normalize()
+                          , O = f[l].position.clone().sub(centerAnchor.position).normalize()
+                          , F = V.cross(O);
+                        F.normalize();
+                        var z = new THREE.Quaternion;
+                        z.setFromAxisAngle(F, .5 * Math.PI);
+                        var U = I.clone();
+                        U.applyQuaternion(z),
+                        U.add(centerAnchor.position),
+                        f[l].position.set(U.x, U.y, U.z)
+                    }
+                }
+                a.calculateBuckets(),
+                a.calculateActivePositions(!1),
+                a.removeItemLines(),
+                a.setLabels(),
+                a.animateContent(),
+                a.adjustCameraDistance()
+            }
+        }
+        var r = f.length;
+        t ? this.fadeOutAll(i) : i()
+    }
+    ,
+    ye.prototype.addTagAdders = function() {
+        switch (f.length) {
+        case 1:
+            this.addAdder([f[0]]);
+            break;
+        case 2:
+            this.addAdder([f[0]]),
+            this.addAdder([f[1]]),
+            this.addAdder([f[0], f[1]]);
+            break;
+        case 3:
+            this.addAdder([f[0]]),
+            this.addAdder([f[1]]),
+            this.addAdder([f[2]]),
+            this.addAdder([f[0], f[1]]),
+            this.addAdder([f[1], f[2]]),
+            this.addAdder([f[2], f[0]]),
+            this.addAdder([f[0], f[1], f[2]]);
+            break;
+        case 4:
+            this.addAdder([f[0]]),
+            this.addAdder([f[1]]),
+            this.addAdder([f[2]]),
+            this.addAdder([f[3]]),
+            this.addAdder([f[0], f[1]]),
+            this.addAdder([f[1], f[2]]),
+            this.addAdder([f[2], f[0]]),
+            this.addAdder([f[0], f[3]]),
+            this.addAdder([f[1], f[3]]),
+            this.addAdder([f[2], f[3]]),
+            this.addAdder([f[0], f[1], f[2]]),
+            this.addAdder([f[3], f[0], f[1]]),
+            this.addAdder([f[3], f[1], f[2]]),
+            this.addAdder([f[3], f[2], f[0]])
+        }
+    }
+    ,
+    ye.prototype.addAdder = function(e) {
+        var t = new TagAddNode(this,e)
+          , i = 400
+          , r = this.getBoundingRadius() + i;
+        if (1 == f.length)
+            t.position.set(centerAnchor.position.x, centerAnchor.position.y, centerAnchor.position.z),
+            t.position.x += r;
+        else if (2 == f.length && 2 == e.length) {
+            t.position.set(centerAnchor.position.x, centerAnchor.position.y, centerAnchor.position.z);
+            var n = f[1].position.clone().sub(f[0].position).normalize()
+              , o = this.quaternionBetweenVecs(new THREE.Vector3(1,0,0), n)
+              , a = new THREE.Vector3(0,.66 * r,0);
+            a.applyQuaternion(o),
+            t.position.add(a)
+        } else if (3 == f.length && 3 == e.length) {
+            t.position.set(centerAnchor.position.x, centerAnchor.position.y, centerAnchor.position.z);
+            var s = f[0].position.clone().sub(centerAnchor.position)
+              , l = f[1].position.clone().sub(centerAnchor.position);
+            (n = s.cross(l)).normalize().multiplyScalar(-r + i),
+            t.position.add(n);
+            var h = new TagAddNode(this,e);
+            h.position.set(centerAnchor.position.x, centerAnchor.position.y, centerAnchor.position.z),
+            h.position.sub(n),
+            h.setIndex(he.length),
+            he.push(h),
+            this.sceneObject.add(h)
+        } else {
+            n = new THREE.Vector3;
+            for (var c = 0; c < e.length; c++) {
+                var u = e[c].position.clone().sub(centerAnchor.position);
+                n.add(u)
+            }
+            n.divideScalar(e.length),
+            n.normalize();
+            var p = n.multiplyScalar(r).add(centerAnchor.position);
+            t.position.set(p.x, p.y, p.z)
+        }
+        t.setIndex(he.length),
+        he.push(t),
+        this.sceneObject.add(t);
+        for (c = 0; c < he.length; c++) {
+            he[c].position.clone().sub(centerAnchor.position).normalize().multiplyScalar(1e4).add(centerAnchor.position),
+            he[c].lookAt(centerAnchor.position)
+        }
+    }
+    ,
+    ye.prototype.removeTagAdders = function() {
+        ce = -1;
+        for (var e = he.length - 1; e >= 0; e--)
+            this.sceneObject.remove(he[e]),
+            he.splice(e, 1)
+    }
+    ,
+    ye.prototype.addAllTagCenterLines = function() {
+        for (var e = 0; e < f.length; e++)
+            this.addTagCenterLine(f[e])
+    }
+    ,
+    ye.prototype.removeAllTagCenterLines = function() {
+        for (var e = 0; e < f.length; e++)
+            this.removeTagCenterLine(f[e])
+    }
+    ,
+    ye.prototype.addTagCenterLine = function(t) {
+        var i = new THREE.Geometry;
+        i.vertices.push(centerAnchor.position),
+        i.vertices.push(t.position),
+        i.dynamic = !0;
+        var r = e();
+        t.centerLine = new THREE.Line(i,r),
+        t.centerLine.maxOpacity = Z,
+        t.centerLine.src1 = centerAnchor,
+        t.centerLine.src2 = t,
+        j.add(t.centerLine)
+    }
+    ,
+    ye.prototype.removeTagCenterLine = function(e) {
+        j.remove(e.centerLine),
+        delete e.centerLine
+    }
+    ,
+    ye.prototype.removeAllTagCenterLines = function() {
+        for (var e = 0; e < _; e++)
+            null != f[e] && this.removeTagCenterLine(f[e])
+    }
+    ,
+    ye.prototype.addAllInbetweenLines = function() {
+        for (var e = 4; e < ae.length; e++)
+            0 != ne[e].length && this.addInbetweenLines(e)
+    }
+    ,
+    ye.prototype.removeAllInbetweenLines = function() {
+        for (var e = 4; e < ae.length; e++)
+            this.removeInbetweenLines(e)
+    }
+    ,
+    ye.prototype.addInbetweenLines = function(t) {
+        for (var i = S[t], r = 0; r < i.length; r++) {
+            var n = i[r];
+            if (null == ae[t].inbetweenLines[n] && null != f[n]) {
+                var o = new THREE.Geometry;
+                o.vertices.push(new THREE.Vector3),
+                o.vertices.push(new THREE.Vector3),
+                o.dynamic = !0;
+                var a = e()
+                  , s = new THREE.Line(o,a);
+                s.maxOpacity = K,
+                s.src1 = ae[t],
+                s.src2 = ae[n],
+                ae[t].inbetweenLines[n] = s,
+                G.add(s)
+            }
+        }
+    }
+    ,
+    ye.prototype.updateInbetweenLinePositions = function() {
+        for (var e = 0; e < G.children.length; e++) {
+            var t = G.children[e]
+              , i = t.geometry.vertices
+              , r = t.src1.position.clone()
+              , n = t.src2.position.clone()
+              , o = oe[t.src1.selfIndex]
+              , a = oe[t.src2.selfIndex];
+            0 !== o && (o += Q),
+            0 !== a && (a += Q);
+            var s = n.clone().sub(r).normalize()
+              , l = r.clone().sub(n).normalize();
+            r.add(s.clone().multiplyScalar(o)),
+            n.add(l.clone().multiplyScalar(a));
+            for (var h = 0; h < i.length; h++)
+                t.geometry.vertices[h] = lerpVec3(r, n, h / (i.length - 1));
+            t.geometry.verticesNeedUpdate = !0
+        }
+    }
+    ,
+    ye.prototype.removeInbetweenLines = function(e) {
+        for (var t in ae[e].inbetweenLines)
+            null != ae[e].inbetweenLines[t] && (G.remove(ae[e].inbetweenLines[t]),
+            delete ae[e].inbetweenLines[t])
+    }
+    ,
+    ye.prototype.updateCenterLinePositions = function() {
+        for (var e = 0; e < j.children.length; e++) {
+            var t, i = j.children[e], r = i.geometry.vertices, n = i.src1.position.clone(), o = i.src2.position.clone();
+            t = 0 !== ne[14].length ? oe[14] + Q : 0 !== ne[10].length && 3 === f.length ? oe[10] + Q : 0 !== ne[4].length && 2 === f.length ? oe[4] + Q : 0;
+            var a = i.src2.selfIndex
+              , s = oe[a];
+            0 !== s && (s += Q);
+            var l = o.clone().sub(n).normalize()
+              , h = n.clone().sub(o).normalize();
+            n.add(l.clone().multiplyScalar(t)),
+            o.add(h.clone().multiplyScalar(s));
+            for (var c = 0; c < r.length; c++)
+                i.geometry.vertices[c] = lerpVec3(n, o, c / (r.length - 1));
+            i.geometry.verticesNeedUpdate = !0
+        }
+    }
+    ,
+    ye.prototype.updateCursorLinePositions = function(e) {
+        for (var t = [], i = 0; i < B.length; i++)
+            if (null != he[e].srcTags[i]) {
+                var r = he[e].srcTags[i];
+                this.hoverOnSphere(r.selfIndex);
+                var n = r.position.clone()
+                  , o = he[e].position.clone()
+                  , a = oe[r.selfIndex] + Q + 1
+                  , s = o.clone().sub(n).normalize();
+                n.add(s.clone().multiplyScalar(a));
+                var l = .5 * he[e].getScalar()
+                  , h = o.clone().sub(centerAnchor.position).normalize().multiplyScalar(l);
+                o.sub(h);
+                for (var c = B[i].geometry.vertices, u = 0; u < c.length; u++)
+                    c[u] = lerpVec3(n, o, u / (c.length - 1));
+                B[i].geometry.verticesNeedUpdate = !0
+            } else
+                t.push(i);
+        return t
+    }
+    ,
+    ye.prototype.repelItems = function(e, t) {
+        var i = this.objects.item[e]
+          , r = this.objects.item[t]
+          , n = i.viewData.tags.repulsions
+          , o = r.viewData.tags.repulsions;
+        null == n[t] && null == o[e] && (o[e] = n[t] = c.makeAttraction(i.viewData.tags.particle, r.viewData.tags.particle, U, 1))
+    }
+    ,
+    ye.prototype.repelItemToBucket = function(e, t) {
+        var i = this.objects.item[e]
+          , r = ae[t]
+          , n = r.viewData.tags.repulsions;
+        null == n[e] && (n[e] = c.makeAttraction(i.viewData.tags.particle, r.viewData.tags.particle, U, 1))
+    }
+    ,
+    ye.prototype.removeItemRepulsion = function(e, t) {
+        var i = this.objects.item[e]
+          , r = this.objects.item[t]
+          , n = i.viewData.tags.repulsions
+          , o = r.viewData.tags.repulsions;
+        null != n[t] && null != o[e] && (c.attractions.remove(n[t]),
+        delete n[t],
+        delete o[e])
+    }
+    ,
+    ye.prototype.removeItemBucketRepulsion = function(e, t) {
+        this.objects.item[e];
+        var i = ae[t].viewData.tags.repulsions;
+        null != i[e] && (c.attractions.remove(i[e]),
+        delete i[e])
+    }
+    ,
+    ye.prototype.lineToItem = function(e, t) {
+        var i = this.objects.item[t]
+          , r = i.position.clone().sub(e.position).normalize().multiplyScalar(2)
+          , n = new THREE.Geometry;
+        n.vertices.push(e.position.clone()),
+        n.vertices.push(i.position.clone().add(r));
+        var o = new THREE.LineBasicMaterial({
+            color: 16777215,
+            linewidth: 2,
+            opacity: 0,
+            transparent: !0,
+            blending: THREE.AdditiveBlending,
+            fog: !1
+        })
+          , a = new THREE.Line(n,o);
+        a.maxOpacity = .3,
+        N.add(a),
+        void 0 === e.itemLines[t] && (e.itemLines[t] = a),
+        a.src1 = e,
+        a.src2 = i
+    }
+    ,
+    ye.prototype.calculateActivePositions = function(e) {
+        for (var t = 0; t < ne.length; t++)
+            if (t < _ || 0 != ne[t].length) {
+                var i;
+                switch (t) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    null != f[t] && (i = f[t].position);
+                    break;
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                    if (10 == t && 3 == f.length)
+                        i = centerAnchor.position.clone();
+                    else {
+                        for (var r = new THREE.Vector3, n = 0; n < S[t].length; n++) {
+                            var o = f[S[t][n]].position.clone().sub(centerAnchor.position);
+                            r.add(o)
+                        }
+                        r.divideScalar(S[t].length),
+                        r.add(centerAnchor.position),
+                        i = r,
+                        f.length > 2 && i.sub(centerAnchor.position).normalize().multiplyScalar(M).add(centerAnchor.position)
+                    }
+                    break;
+                case 14:
+                    i = centerAnchor.position.clone()
+                }
+                e && t == f.length - 1 && (ae[t].viewData.tags.positionPrevious = ue),
+                ae[t].viewData.tags.positionTarget = i;
+                var a = GeomUtils.pointsOnSphere(ne[t].length, oe[t]);
+                for (n = 0; n < ne[t].length; n++) {
+                    var s = ne[t][n]
+                      , l = this.objects.item[s];
+                    1 == ne[t].length && a[n].applyEuler(new THREE.Euler(0,.5 * -Math.PI,0)),
+                    l.viewData.tags.positionActive = a[n].add(i),
+                    l.viewData.tags.bucketConnection = t
+                }
+                if (ae[t].light.distance = null != i ? oe[t] * ge : 1,
+                null != i) {
+                    var h = ae[t].light;
+                    h.intensity = h.maxIntensity,
+                    0 == oe[t] ? h.distance = 1 : h.distance = oe[t] * ge
+                }
+            } else
+                ae[t].light.distance = 1
+    }
+    ,
+    ye.prototype.animateContent = function() {
+        this.removeAllTagCenterLines(),
+        this.removeAllInbetweenLines(),
+        this.addAllTagCenterLines(),
+        this.addAllInbetweenLines(),
+        this.hideAddStuff(),
+        this.hideItemLines(),
+        this.hideDiagramLines(),
+        this.hideInbetweenNodes(),
+        this.setRotationTargets(),
+        this.expandRepulsionsToActive(),
+        this.animating = !0,
+        this.uiEnabled = !1,
+        !1;
+        for (var e = 0; e < T.length; e++) {
+            var t = a.objects.item[T[e]];
+            t.forceRotateToCamera = !0,
+            t.enableRotateToCamera = !0,
+            t.rotateToTarget = !1
+        }
+        sceneManager.usePhysics = !0;
+        var i = 0;
+        for (e = 0; e < oe.length; e++)
+            i < oe[e] && (i = oe[e]);
+        s = M + i + 1400,
+        this.camControls.setZoomLimits(s, l);
+        var r = .025;
+        if (ve)
+            for (e = 0; e < _; e++)
+                0 !== ne[e].length && (ae[e].isNew = !0);
+        for (e = 0; e < _; e++)
+            e >= f.length && (ae[e].viewData.tags.positionTarget = void 0);
+        k.stop(),
+        k = new TWEEN.Tween({
+            t: 0
+        }).to({
+            t: 1
+        }, P).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
+            if (this.t <= r)
+                for (var e = map(this.t, 0, r, 0, 1), t = lerp(0, U, e), i = 0; i < c.attractions.length; i++)
+                    c.attractions[i].constant = t;
+            else if (this.t >= 1 - r)
+                for (e = map(this.t, 1 - r, 1, 0, 1),
+                t = lerp(U, 0, e),
+                i = 0; i < c.attractions.length; i++)
+                    c.attractions[i].constant = t;
+            for (i = 0; i < g.length; i++) {
+                (n = a.objects.item[g[i]]).viewData.tags.destination = lerpVec3(n.viewData.tags.positionPrev, n.viewData.tags.positionActive, this.t)
+            }
+            for (i = 0; i < T.length; i++) {
+                var n;
+                (n = a.objects.item[T[i]]).viewData.tags.destination = lerpVec3(n.viewData.tags.positionActive, n.viewData.tags.positionRest, this.t)
+            }
+            for (i = 0; i < ae.length; i++) {
+                if (i < _ && void 0 !== ae[i].viewData.tags.positionTarget) {
+                    var o = lerpVec3(ae[i].viewData.tags.positionPrevious, ae[i].viewData.tags.positionTarget, this.t);
+                    ae[i].position.set(o.x, o.y, o.z),
+                    ae[i].viewData.tags.particle.position.x = ae[i].position.x,
+                    ae[i].viewData.tags.particle.position.y = ae[i].position.y,
+                    ae[i].viewData.tags.particle.position.z = ae[i].position.z,
+                    ae[i].isNew && (ae[i].lightSprite.material.opacity = this.t * pe,
+                    ae[i].glowSprite.material.opacity = this.t * de,
+                    ae[i].light.intensity = this.t * ae[i].light.maxIntensity)
+                }
+                if (i < _ && void 0 !== ae[i].viewData.tags.positionTarget || i >= _) {
+                    var s = lerpVec3(ae[i].lightSprite.previousScale, ae[i].lightSprite.targetScale, this.t)
+                      , l = lerpVec3(ae[i].glowSprite.previousScale, ae[i].glowSprite.targetScale, this.t)
+                      , h = lerpVec3(ae[i].clickSphere.previousScale, ae[i].clickSphere.targetScale, this.t);
+                    ae[i].lightSprite.scale.set(s.x, s.y, s.z),
+                    ae[i].glowSprite.scale.set(l.x, l.y, l.z),
+                    ae[i].clickSphere.scale.set(h.x, h.y, h.z)
+                } else
+                    ae[i].lightSprite.scale.set(1e-5, 1e-5, 1e-5),
+                    ae[i].glowSprite.scale.set(1e-5, 1e-5, 1e-5),
+                    ae[i].clickSphere.scale.set(1e-5, 1e-5, 1e-5),
+                    ae[i].lightSprite.material.opacity = 0,
+                    ae[i].glowSprite.material.opacity = 0,
+                    ae[i].intensity = 0
+            }
+            for (i = 0; i < se.length; i++) {
+                o = lerpVec3(se[i].viewData.tags.positionPrevious, se[i].viewData.tags.positionTarget, this.t);
+                le[i].position.set(o.x, o.y, o.z),
+                se[i].position.set(o.x, o.y, o.z),
+                le[i].intensity = 1 - this.t,
+                se[i].lightSprite.material.opacity = lerp(se[i].viewData.tags.previousLightSpriteOpacity, 0, this.t),
+                se[i].glowSprite.material.opacity = lerp(se[i].viewData.tags.previousGlowSpriteOpacity, 0, this.t)
+            }
+        }
+        )).onComplete((function() {
+            ve = !1,
+            a.showItemLines(),
+            a.showDiagramLines(),
+            a.showInbetweenNodes(),
+            a.reduceRepulsionsToBuckets();
+            for (var e = 0; e < _; e++)
+                ae[e].isNew = !1;
+            for (e = 0; e < T.length; e++) {
+                var t = T[e]
+                  , i = a.objects.item[t];
+                c.removeParticleForces(i.viewData.tags.particle),
+                i.viewData.tags.repulsions = {},
+                i.viewData.tags.activeTagConnections = []
+            }
+            for (e = 0; e < ae.length; e++) {
+                var r = ae[e].viewData.tags.particle;
+                c.removeParticleForces(r),
+                ae[e].viewData.tags.replusions = {}
+            }
+            0 == f.length ? a.openTagsDialog() : (a.updateInbetweenNodePositions(),
+            a.fadeInAll()),
+            a.clearLastHover();
+            for (e = 0; e < le.length; e++)
+                le[e].intensity = 0,
+                le[e].distance = 1;
+            for (e = 0; e < se.length; e++)
+                a.sceneObject.remove(se[e]);
+            se = [],
+            v = [],
+            T = [],
+            y = [],
+            a.removeTagAdders(),
+            a.addTagAdders(),
+            sceneManager.usePhysics = !1,
+            a.updateCenterLinePositions(),
+            a.updateInbetweenLinePositions(),
+            a.showAllLabels(),
+            a.camControls.setAutoRotate(!0),
+            a.animating = !1,
+            a.uiEnabled = !0,
+            !0,
+            // ui.enableHelpLink(),
+            a.firstTime && (a.firstTime = !1)
+        }
+        )).start()
+    }
+    ,
+    ye.prototype.calculateBuckets = function() {
+        ne = new Array(15);
+        for (var e = 0; e < ne.length; e++)
+            ne[e] = new Array;
+        for (e = 0; e < g.length; e++) {
+            var t = g[e]
+              , i = this.objects.item[t].viewData.tags.activeTagConnections
+              , r = !1;
+            e: for (var n in S)
+                if (i.length == S[n].length) {
+                    for (var o = !0, a = 0; a < S[n].length; a++) {
+                        var s = S[n][a];
+                        t = f[s].data.id;
+                        if (-1 == i.indexOf(t)) {
+                            o = !1;
+                            break
+                        }
+                    }
+                    if (o) {
+                        ne[n].push(g[e]),
+                        r = !0;
+                        break e
+                    }
+                }
+            r || console.log("didn'nt find bucket for " + t + "!")
+        }
+        oe = new Array(15);
+        var l = 50;
+        for (e = 0; e < ne.length; e++) {
+            if (0 != ne[e].length) {
+                var h = itemField.sizeScalar * itemField.sizeScalar * .2 * ne[e].length;
+                oe[e] = Math.sqrt(h / 4 * Math.PI),
+                oe[e] < l && (oe[e] = l)
+            } else
+                oe[e] = 0;
+            e < _ && null != f[e] && (f[e].radius = oe[e])
+        }
+        var c = l;
+        for (e = 0; e < oe.length; e++)
+            oe[e] > c && (c = oe[e]);
+        M = Math.max(2.5 * c, 400);
+        for (e = 0; e < f.length; e++)
+            f[e].position.sub(centerAnchor.position).normalize().multiplyScalar(M).add(centerAnchor.position);
+        for (e = 0; e < ae.length; e++)
+            if (0 != ne[e].length) {
+                var u = oe[e] * W
+                  , p = oe[e] * X
+                  , d = oe[e] + Q;
+                ae[e].lightSprite.targetScale = new THREE.Vector3(u,u,u),
+                ae[e].glowSprite.targetScale = new THREE.Vector3(p,p,p),
+                ae[e].clickSphere.targetScale = new THREE.Vector3(d,d,d)
+            } else {
+                var m = new THREE.Vector3(1e-5,1e-5,1e-5);
+                ae[e].lightSprite.targetScale = m,
+                ae[e].glowSprite.targetScale = m,
+                ae[e].clickSphere.targetScale = m
+            }
+    }
+    ,
+    ye.prototype.clear = function() {
+        for (var e = 0; e < f.length; e++)
+            this.removeTag(e)
+    }
+    ,
+    ye.prototype.generateUniqueRandomInts = function(e, t) {
+        for (var i = []; i.length < e; ) {
+            for (var r = Math.ceil(Math.random() * t), n = !1, o = 0; o < i.length; o++)
+                if (i[o] == r) {
+                    n = !0;
+                    break
+                }
+            n || (i[i.length] = r)
+        }
+        return i
+    }
+    ,
+    ye.prototype.showAddStuff = function(e) {
+        if (B[0].material.opacity != Y)
+            for (var t = 0; t < B.length; t++)
+                (null == e || -1 == e.indexOf(t)) && (B[t].visible = !0,
+                B[t].material.opacity = Y)
+    }
+    ,
+    ye.prototype.hideAddStuff = function() {
+        if (0 != B[0].material.opacity)
+            for (var e = 0; e < B.length; e++)
+                B[e].visible = !1,
+                B[e].material.opacity = 0
+    }
+    ,
+    ye.prototype.getPointSprite = function() {
+        var e = new THREE.SpriteMaterial({
+            map: w,
+            blending: THREE.AdditiveBlending,
+            transparent: !0,
+            opacity: Ee
+        })
+          , t = new THREE.Sprite(e);
+        return t.visible = !1,
+        t.scale.set(te, te, te),
+        t.maxOpacity = Ee,
+        t.name = "point sprite",
+        t
+    }
+    ,
+    ye.prototype.quickTestSphere = function(e) {
+        var t = new THREE.SphereGeometry(e,20,20)
+          , i = new THREE.MeshNormalMaterial;
+        return new THREE.Mesh(t,i)
+    }
+    ,
+    ye.prototype.angleFromCenter = function(e) {
+        var t = e.clone().sub(centerAnchor.position)
+          , i = Math.atan2(t.z, t.x);
+        return i -= A
+    }
+    ,
+    ye.prototype.getRandomTags = function(e, t) {
+        for (var i = [], r = 0; r < e; r++)
+            for (var n = !1; !n; ) {
+                var o = ~~(Math.random() * (p.length - 1));
+                -1 == i.indexOf(o) && (i.push(o),
+                n = !0)
+            }
+        var a = [];
+        for (r = 0; r < i.length; r++)
+            a.push(p[i[r]]);
+        return t(a),
+        a
+    }
+    ,
+    ye.prototype.getSuggestedTags = function(e, t, i) {
+        for (var r = [], n = 0; n < e.length; n++)
+            r.push(e[n].data.id);
+        api.getTagsSimilar({
+            ids: r,
+            detail: "id_only"
+        }, (function(e) {
+            e = e.slice(0, t);
+            for (var r = [], n = 0; n < e.length; n++) {
+                var o = e[n]
+                  , a = api.tagList[o];
+                r.push(a)
+            }
+            i(r)
+        }
+        ))
+    }
+    ,
+    ye.prototype.getTagNodeIndex = function(e) {
+        for (var t = 0; t < f.length; t++)
+            if (e == f[t])
+                return t;
+        return -1
+    }
+    ,
+    ye.prototype.repelItemsToAdd = function() {
+        for (var e = 0; e < v.length; e++) {
+            for (var t = 0; t < g.length; t++)
+                v[e] != g[t] && this.repelItems(v[e], g[t]);
+            for (t = 0; t < ae.length; t++)
+                null == f[t] && 0 == ne[t].length || this.repelItemToBucket(v[e], t)
+        }
+    }
+    ,
+    ye.prototype.reduceRepulsionsToBuckets = function() {
+        for (var e = 0; e < ne.length; e++)
+            for (var t = 0; t < ne[e].length; t++) {
+                for (var i = ne[e][t], r = 0; r < ne.length; r++)
+                    if (e != r)
+                        for (var n = 0; n < ne[r].length; n++) {
+                            var o = ne[r][n];
+                            this.removeItemRepulsion(i, o)
+                        }
+                for (r = 0; r < ae.length; r++)
+                    null == f[r] && 0 == ne[r].length || this.removeItemBucketRepulsion(i, r)
+            }
+    }
+    ,
+    ye.prototype.expandRepulsionsToActive = function() {
+        for (var e = 0; e < ne.length; e++)
+            for (var t = 0; t < ne[e].length; t++) {
+                for (var i = ne[e][t], r = 0; r < ne.length; r++)
+                    if (e != r)
+                        for (var n = 0; n < ne[r].length; n++) {
+                            var o = ne[r][n];
+                            this.repelItems(i, o)
+                        }
+                for (r = 0; r < ae.length; r++)
+                    null == f[r] && 0 == ne[r].length || this.repelItemToBucket(i, r)
+            }
+    }
+    ,
+    ye.prototype.setRotationTargets = function() {
+        for (var e = 0; e < ne.length; e++)
+            for (var t = 0; t < ne[e].length; t++) {
+                var i = ne[e][t]
+                  , r = this.objects.item[i];
+                r.forceRotateToCamera = !1,
+                r.enableRotateToCamera = !1,
+                r.rotateToTarget = !0,
+                r.rotationTarget = ae[e].position
+            }
+    }
+    ,
+    ye.prototype.addItemLines = function() {
+        for (var e = 0; e < ne.length; e++)
+            if (0 != ne[e].length)
+                for (var t = 0; t < ne[e].length; t++) {
+                    var i = ne[e][t];
+                    a.lineToItem(ae[e], i, oe[e])
+                }
+    }
+    ,
+    ye.prototype.removeItemLines = function() {
+        for (var e = 0; e < ne.length; e++)
+            this.removeItemLinesConnectedTo(ae[e]),
+            ae[e].itemLines = {};
+        for (e = N.children.length - 1; e >= 0; e--) {
+            var t = N.children[e];
+            N.remove(t)
+        }
+    }
+    ,
+    ye.prototype.removeItemLinesConnectedTo = function(e) {
+        for (var t = N.children.length - 1; t >= 0; t--) {
+            var i = N.children[t];
+            i.src1 != e && i.src2 != e || N.remove(i)
+        }
+    }
+    ,
+    ye.prototype.removeRepulsionsConnectedTo = function(e) {
+        var t = e.viewData.tags.repulsions;
+        for (var i in t) {
+            delete e.viewData.tags.repulsions[i];
+            var r = e.basicInfo.id;
+            delete this.objects.item[i].viewData.tags.repulsions[r],
+            c.removeParticleAttractions(t[i])
+        }
+    }
+    ,
+    ye.prototype.getActiveCylindricalBounds = function() {
+        var e = this.getActiveRectBounds()
+          , t = centerAnchor.position.clone();
+        t.y = 0;
+        var i = e.max.clone();
+        i.y = 0;
+        var r = t.distanceTo(i)
+          , n = lerpVec3(e.min, e.max, .5);
+        return {
+            radius: r,
+            height: e.max.y - e.min.y,
+            center: n
+        }
+    }
+    ,
+    ye.prototype.getBoundingRadius = function() {
+        for (var e = 0, t = 0; t < oe.length; t++)
+            e = Math.max(e, oe[t]);
+        var i = 0;
+        for (t = 0; t < f.length; t++) {
+            var r = f[t].position.distanceTo(centerAnchor.position) + e;
+            r > i && (i = r)
+        }
+        return i
+    }
+    ,
+    ye.prototype.getActiveRectBounds = function() {
+        for (var e = {
+            min: new THREE.Vector3(9999999999,9999999999,9999999999),
+            max: new THREE.Vector3(-9999999999,-9999999999,-9999999999)
+        }, t = 0; t < g.length; t++) {
+            var i = this.objects.item[g[t]].viewData.tags.positionActive;
+            i.x < e.min.x && (e.min.x = i.x),
+            i.x > e.max.x && (e.max.x = i.x),
+            i.y < e.min.y && (e.min.y = i.y),
+            i.y > e.max.y && (e.max.y = i.y),
+            i.z < e.min.z && (e.min.z = i.z),
+            i.z > e.max.z && (e.max.z = i.z)
+        }
+        for (t = 0; t < f.length; t++) {
+            var r = f[t].position;
+            r.x < e.min.x && (e.min.x = r.x),
+            r.x > e.max.x && (e.max.x = r.x),
+            r.y < e.min.y && (e.min.y = r.y),
+            r.y > e.max.y && (e.max.y = r.y),
+            r.z < e.min.z && (e.min.z = r.z),
+            r.z > e.max.z && (e.max.z = r.z)
+        }
+        return e
+    }
+    ,
+    ye.prototype.adjustCameraDistance = function() {
+        if (0 != g.length) {
+            var e, t, i = f.length / _ - 1 / _;
+            t = lerp(s, l, i),
+            e = new THREE.Vector3(0,0,t).add(centerAnchor.position),
+            this.camControls.animateSlerp({
+                pos: e,
+                duration: P
+            })
+        }
+    }
+    ,
+    ye.prototype.hoverOnAdder = function(e) {
+        if (!this.animating && !this.camControls.dragging) {
+            this.camControls.setAutoRotate(!1),
+            this.hideAllAdders(e);
+            for (var t = this.updateCursorLinePositions(e), i = [], r = 0; r < he[e].srcTags.length; r++) {
+                var n = he[e].srcTags[r].selfIndex;
+                i.push(n),
+                ae[n].spriteLabel.forceShow = !0,
+                ae[n].spriteX.forceShow = !0
+            }
+            for (var o = [], a = 0; a < ae.length; a++) {
+                var s = !0;
+                if (0 != ne[a].length || null != f[a]) {
+                    for (S[a],
+                    r = 0; r < i.length; r++) {
+                        if (a === i[r]) {
+                            s = !1;
+                            break
+                        }
+                    }
+                    s && o.push(a)
+                }
+            }
+            0 != o.length && this.fadeDownBucketNodes(o),
+            this.showAddStuff(t),
+            he[e].hoverOn()
+        }
+    }
+    ,
+    ye.prototype.hoverOffAdder = function(e) {
+        if (!this.animating && (this.camControls.setAutoRotate(!0),
+        this.showAllAdders(),
+        void 0 !== he[e])) {
+            this.hideAddStuff();
+            for (var t = 0; t < he[e].srcTags.length; t++) {
+                var i = he[e].srcTags[t];
+                this.hoverOffSphere(i.selfIndex)
+            }
+            for (var r = [], n = 0; n < he[e].srcTags.length; n++) {
+                var o = he[e].srcTags[n].selfIndex;
+                r.push(o),
+                ae[o].spriteLabel.forceShow = !1,
+                ae[o].spriteX.forceShow = !1
+            }
+            var a = [];
+            for (t = 0; t < ae.length; t++) {
+                var s = !0;
+                if (0 != ne[t].length || null != f[t]) {
+                    for (S[t],
+                    n = 0; n < r.length; n++) {
+                        if (t === r[n]) {
+                            s = !1;
+                            break
+                        }
+                    }
+                    s && a.push(t)
+                }
+            }
+            0 != a.length && this.fadeUpBucketNodes(a),
+            he[e].hoverOff()
+        }
+    }
+    ,
+    ye.prototype.hoverOnSphere = function(e) {
+        if (!this.animating && !this.camControls.dragging && "out" == this.state) {
+            ae[e].glowTween.stop();
+            var t = ae[e].glowSprite.material.opacity;
+            t != fe && (ae[e].glowTween = new TWEEN.Tween({
+                o: t
+            }).to({
+                o: fe
+            }, F).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
+                ae[e].glowSprite.material.opacity = this.o;
+                var i = 3 * oe[e];
+                i = map(this.o, t, fe, i, i + 100),
+                ae[e].glowSprite.scale.set(i, i, i)
+            }
+            )).start()),
+            ae[e].spriteLabel.forceShow = !0,
+            void 0 !== ae[e].spriteX && (ae[e].spriteX.forceShow = !0);
+            for (var i = 0; i < f.length; i++)
+                ae[i].spriteLabel.enabled = !1,
+                ae[i].spriteX.enabled = !1;
+            $("body").css("cursor", "pointer"),
+            !1,
+            x = e
+        }
+    }
+    ,
+    ye.prototype.ensureHoverOffSphere = function() {
+        null != x && (ae[x].glowSprite.material.opacity != de && this.hoverOffSphere(x, !0))
+    }
+    ,
+    ye.prototype.hoverOffSphere = function(e, t) {
+        if (t || this.uiEnabled && !this.animating && !this.camControls.dragging && "out" === this.state) {
+            ae[e].glowTween.stop();
+            var i = ae[e].glowSprite.material.opacity;
+            i != de && (ae[e].glowTween = new TWEEN.Tween({
+                o: i
+            }).to({
+                o: de
+            }, F).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
+                ae[e].glowSprite.material.opacity = this.o;
+                var t = 3 * oe[e];
+                t = map(this.o, i, de, t + 100, t),
+                ae[e].glowSprite.scale.set(t, t, t)
+            }
+            )).start()),
+            ae[e].spriteLabel.forceShow = !1,
+            void 0 !== ae[e].spriteX && (ae[e].spriteX.forceShow = !1);
+            for (var r = 0; r < f.length; r++)
+                ae[r].spriteLabel.enabled = !0,
+                ae[r].spriteX.enabled = !0;
+            $("body").css("cursor", "default"),
+            !0,
+            x = null
+        }
+    }
+    ,
+    ye.prototype.fadeDownBucketNodes = function(e) {
+        if (this.uiEnabled)
+            for (var t = 0; t < e.length; t++) {
+                (l = e[t]) < _ && (ae[l].spriteLabel.enabled = !1,
+                ae[l].spriteX.enabled = !1)
+            }
+        var i = [];
+        for (t = 0; t < G.children.length; t++) {
+            var r = G.children[t].src1.selfIndex
+              , n = G.children[t].src2.selfIndex;
+            -1 === e.indexOf(r) && -1 === e.indexOf(n) || i.push(t)
+        }
+        var o = ae[e[0]].glowSprite.material.opacity
+          , a = ae[e[0]].lightSprite.material.opacity
+          , s = ae[e[0]].clickSphere.material.opacity;
+        if (o > me) {
+            for (t = 0; t < e.length; t++) {
+                var l = e[t];
+                ae[l].glowTween.stop()
+            }
+            D.stop(),
+            D = new TWEEN.Tween({
+                o: 1
+            }).to({
+                o: 0
+            }, F).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
+                for (var t = 0; t < e.length; t++) {
+                    var r = e[t]
+                      , n = ae[r];
+                    n.glowSprite.material.opacity = map(this.o, 1, 0, o, 0),
+                    n.lightSprite.material.opacity = map(this.o, 1, 0, a, 0),
+                    n.clickSphere.material.opacity = map(this.o, 1, 0, s, 0);
+                    var l = this.o * J;
+                    for (var h in n.itemLines)
+                        n.itemLines[h].material.opacity = l;
+                    void 0 !== f[r] && (f[r].point.material.opacity = this.o),
+                    n.light.intensity = this.o * n.light.maxIntensity
+                }
+                var c = this.o * K;
+                for (t = 0; t < i.length; t++) {
+                    r = i[t];
+                    G.children[r].material.opacity = c
+                }
+                var u = this.o * Z;
+                for (t = 0; t < j.children.length; t++)
+                    j.children[t].material.opacity = u
+            }
+            )).onComplete((function() {
+                G.visible = !1,
+                j.visible = !1
+            }
+            )).start()
+        }
+    }
+    ,
+    ye.prototype.fadeUpAllBucketNodes = function() {
+        for (var e = [], t = 0; t < ae.length; t++)
+            0 === ae[t].glowSprite.material.opacity && 0 !== ae[t].clickSphere.material.opacity && e.push(t);
+        0 != e.length && this.fadeUpBucketNodes(e)
+    }
+    ,
+    ye.prototype.fadeUpBucketNodes = function(e) {
+        G.visible = !0,
+        j.visible = !0;
+        for (var t = 0; t < j.children.length; t++)
+            j.children[t].material.opacity = Z;
+        if (this.uiEnabled)
+            for (t = 0; t < e.length; t++) {
+                (l = e[t]) < _ && (ae[l].spriteLabel.enabled = !0,
+                ae[l].spriteX.enabled = !0)
+            }
+        var i = [];
+        for (t = 0; t < G.children.length; t++) {
+            var r = G.children[t].src1.selfIndex
+              , n = G.children[t].src2.selfIndex;
+            -1 === e.indexOf(r) && -1 === e.indexOf(n) || i.push(t)
+        }
+        var o = ae[e[0]].glowSprite.material.opacity
+          , a = ae[e[0]].lightSprite.material.opacity
+          , s = ae[e[0]].clickSphere.material.opacity;
+        if (o < de) {
+            for (t = 0; t < e.length; t++) {
+                var l = e[t];
+                ae[l].glowTween.stop()
+            }
+            D.stop(),
+            D = new TWEEN.Tween({
+                o: 0
+            }).to({
+                o: 1
+            }, F).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
+                for (var t = 0; t < e.length; t++) {
+                    var r = e[t]
+                      , n = ae[r];
+                    n.glowSprite.material.opacity = map(this.o, 0, 1, o, de),
+                    n.lightSprite.material.opacity = map(this.o, 0, 1, a, pe),
+                    n.clickSphere.material.opacity = map(this.o, 0, 1, s, ee);
+                    var l = this.o * J;
+                    for (var h in n.itemLines)
+                        n.itemLines[h].material.opacity = l;
+                    void 0 !== f[r] && (f[r].point.material.opacity = this.o),
+                    n.light.intensity = this.o * n.light.maxIntensity
+                }
+                var c = this.o * K;
+                for (t = 0; t < i.length; t++) {
+                    r = i[t];
+                    G.children[r].material.opacity = c
+                }
+                var u = this.o * Z;
+                for (t = 0; t < j.children.length; t++)
+                    j.children[t].material.opacity = u
+            }
+            )).start()
+        }
+    }
+    ,
+    ye.prototype.moveFromDetailToIn = function() {
+        this.uiEnabled = !0,
+        $("#back").unbind("click").click((function() {
+            a.uiEnabled && a.closeSphere(R)
+        }
+        )).show(),
+        $(".bucket-title").stop().fadeIn("fast"),
+        this.state = "in"
+    }
+    ,
+    ye.prototype.setTagsFromWithin = function(e) {
+        this.uiEnabled = !1,
+        this.closeSphere(R, (function() {
+            a.setTags(e)
+        }
+        ))
+    }
+    ,
+    ye.prototype.clickAdder = function(e) {
+        ce = e,
+        ue = he[e].position.clone(),
+        E = [];
+        for (var t = 0; t < f.length; t++) {
+            for (var i = !1, r = 0; r < he[e].srcTags.length; r++) {
+                if (t === he[e].srcTags[r].selfIndex) {
+                    i = !0;
+                    break
+                }
+            }
+            i || E.push(t)
+        }
+        var n = he[e];
+        this.openTagsDialog(n.srcTags)
+    }
+    ,
+    ye.prototype.clickBucketLabel = function(e) {
+        0 !== ne[e].length && (void 0 !== ae[e].spriteX && (ae[e].spriteX.enabled = !1),
+        this.openSphere(e))
+    }
+    ,
+    ye.prototype.clickBucketClose = function(e) {
+        ae[e].spriteX.enabled = !1,
+        this.removeTag(e, !0)
+    }
+    ,
+    ye.prototype.hoverOnBucketLabel = function(e) {
+        this.hoverOnSphere(e)
+    }
+    ,
+    ye.prototype.hoverOffBucketLabel = function(e) {
+        this.hoverOffSphere(e)
+    }
+    ,
+    ye.prototype.hoverOnBucketClose = function() {
+        $("body").css("cursor", "pointer")
+    }
+    ,
+    ye.prototype.hoverOffBucketClose = function() {
+        $("body").css("cursor", "default")
+    }
+    ,
+    // 开启列表图片
+    ye.prototype.openSphere = function(e) {
+        "out" === this.state && (this.uiEnabled = !1,
+        this.animating = !0,
+        // ui.disableHelpLink(),
+        this.state = "in",
+        this.camControls.setAutoRotate(!1),
+        this.fadeOutNode(e),
+        this.fadeOutAll((function() {
+            R = e,
+            ae[e].clickSphere.scale.set(1e-4, 1e-4, 1e-4),
+            ae[e].spriteLabel.enabled = !1,
+            void 0 !== ae[e].spriteX && (ae[e].spriteX.enabled = !1);
+            for (var t = 0; t < ae.length; t++)
+                if (t != e) {
+                    ae[t].viewData.tags.positionPrevious = ae[t].position.clone();
+                    var r = ae[t].position.clone().sub(ae[e].position).normalize().multiplyScalar(4e3).add(ae[e].position);
+                    ae[t].viewData.tags.positionTarget = r;
+                    for (var n = 0; n < ne[t].length; n++) {
+                        var o = a.objects.item[ne[t][n]]
+                          , s = o.viewData.tags.destination.clone().sub(ae[t].position);
+                        o.viewData.tags.positionPrevious = o.position.clone(),
+                        o.viewData.tags.positionTarget = s.add(r)
+                    }
+                }
+            a.bucketScrollUpVector = new THREE.Vector3(0,1,0).applyQuaternion(sceneManager.getCamera().quaternion);
+            var l = a.camControls.getLookVector()
+              , h = l.clone().cross(a.bucketScrollUpVector);
+            h.normalize(),
+            a.bucketScrollUpQuaternion = sceneManager.getCamera().quaternion.clone();
+            var u = new THREE.Quaternion;
+            u.setFromAxisAngle(h, .5 * -Math.PI),
+            a.bucketScrollUpQuaternion.multiply(u);
+            var p = []
+              , d = 4
+              , f = Math.min(ne[e].length, d)
+              , m = Math.ceil(ne[e].length / f)
+              , E = 170
+              , g = 1.2 * E
+              , v = (f - 1) * E
+              , y = 0
+              , T = 0;
+            for (t = 0; t < ne[e].length; t++) {
+                var x = ne[e][t]
+                  , H = a.objects.item[x];
+                y = ~~(t / f),
+                T = t % f,
+                (_ = new THREE.Vector3).x = T * E - v / 2,
+                _.y = -y * g,
+                _.z = -100,
+                m > 1 && (_.y += .5 * g);
+                var b = sceneManager.getCamera().quaternion.clone();
+                _.applyQuaternion(b),
+                _.add(ae[e].position),
+                H.viewData.tags.positionPrevious = H.position.clone(),
+                p.push(_),
+                H.viewData.tags.previousQuaternion = H.quaternion.clone(),
+                H.viewData.tags.targetQuaternion = b,
+                H.rotateToTarget = !1
+            }
+            a.bucketScrollHeight = y * g,
+            m > 1 && (a.bucketScrollHeight -= g),
+            a.bucketScrollPos = 0;
+            // var w = api.orderIdsByType(ne[e], ["Artwork", "Exhibition", "Book", "Essay"]);
+            var w = ne[e];
+            for (t = 0; t < w.length; t++) {
+                x = w[t];
+                (H = a.objects.item[x]).viewData.tags.positionTarget = p[t],
+                p.length > 1 && H.thumbWidth > H.thumbHeight && (H.viewData.tags.positionTarget.y -= (H.thumbWidth - H.thumbHeight) / 2)
+            }
+            sceneManager.usePhysics = !0;
+            var q = .1
+              , M = -4e3;
+            new TWEEN.Tween({
+                t: 0
+            }).to({
+                t: 1
+            }, I).easing(TWEEN.Easing.Quartic.InOut).onUpdate((function() {
+                if (this.t <= q)
+                    for (var t = map(this.t, 0, q, 0, 1), i = lerp(0, M, t), r = 0; r < c.attractions.length; r++)
+                        c.attractions[r].constant = i;
+                else if (this.t >= 1 - q)
+                    for (t = map(this.t, 1 - q, 1, 0, 1),
+                    i = lerp(M, 0, t),
+                    r = 0; r < c.attractions.length; r++)
+                        c.attractions[r].constant = i;
+                for (r = 0; r < ae.length; r++)
+                    if (r != e) {
+                        var n = lerpVec3(ae[r].viewData.tags.positionPrevious, ae[r].viewData.tags.positionTarget, this.t);
+                        ae[r].position.set(n.x, n.y, n.z),
+                        ae[r].viewData.tags.particle.position.x = n.x,
+                        ae[r].viewData.tags.particle.position.y = n.y,
+                        ae[r].viewData.tags.particle.position.z = n.z
+                    }
+                for (r = 0; r < ne[e].length; r++) {
+                    var o = ne[e][r];
+                    (l = a.objects.item[o]).viewData.tags.destination = lerpVec3(l.viewData.tags.positionPrevious, l.viewData.tags.positionTarget, this.t),
+                    THREE.Quaternion.slerp(l.viewData.tags.previousQuaternion, l.viewData.tags.targetQuaternion, l.targetQuaternion, this.t)
+                }
+                for (r = 0; r < ne.length; r++)
+                    if (r != e)
+                        for (var s = 0; s < ne[r].length; s++) {
+                            var l;
+                            (l = a.objects.item[ne[r][s]]).viewData.tags.destination = lerpVec3(l.viewData.tags.positionPrevious, l.viewData.tags.positionTarget, this.t),
+                            l.rotationTarget = ae[r].position,
+                            l.forceRotateToCamera = !1,
+                            l.enableRotateToCamera = !1,
+                            l.rotateToTarget = !0
+                        }
+            }
+            )).onComplete((function() {
+                console.log(',<<<<<<<<<');
+                back.add(function () {
+                    console.log('R', R)
+                    a.uiEnabled && a.closeSphere(R);
+                });
+                if (ne[e].length > 1) {
+                    var t = i(ae[e].names);
+                    $("#ui #local").append('<div class="bucket-title">' + t + "</div>")
+                } else {
+                    var r = a.objects.item[ne[e][0]];
+                    function n() {
+                        sceneManager.setPaused(!0);
+                        var e = [];
+                        if ($("#ajax-content .tag-grid .tag a").each((function() {
+                            var t = $(this).attr("href").match(/tag\/(.*?)\//)[1];
+                            e.push(t)
+                        }
+                        )),
+                        0 !== e.length) {
+                            var t = vis.getVisByName("drift");
+                            void 0 !== t && t.addItemTagsToHistory(e)
+                        }
+                    }
+                    function o() {
+                        sceneManager.setPaused(!1),
+                        r.parentVis.uiEnabled = !0;
+                        debugger;
+                        $("#back").unbind("click").click((function() {
+                            a.uiEnabled && a.closeSphere(R)
+                        }
+                        )).show().trigger("click")
+                    }
+                    ui.addToPath(r.basicInfo, "item"),
+                    ui.openItemDetails(r.basicInfo, n, o),
+                    a.state = "detail"
+                }
+                sceneManager.usePhysics = !1,
+                setTimeout((function() {
+                    a.animating = !1,
+                    a.uiEnabled = !0
+                }
+                ), 800)
+            }
+            )).start(),
+            a.camControls.lastOutPosition = sceneManager.getCamera().position.clone();
+            var _ = ae[e].position.clone()
+              , S = sceneManager.getDistanceForRectSize(v, 50);
+            _.add(l.negate().multiplyScalar(S)),
+            a.camControls.animate({
+                pos: _,
+                duration: I,
+                callback: function() {
+                    a.camControls.setScrollMode(!0);
+                    var e = sceneManager.getCamera();
+                    a.camControls.prevInPosition = new THREE.Vector3(e.position.x,e.position.y,e.position.z)
+                }
+            })
+        }
+        ), !1))
+    }
+    ,
+    // 关闭列表图片
+    ye.prototype.closeSphere = function(e, t) {
+        console.log('关闭', e, t);
+        "in" == this.state && $(".bucket-title").stop().fadeOut("fast", (function() {
+            $(this).remove()
+        }
+        )),
+        this.camControls.setAutoRotate(!0);
+        for (var i = 0; i < ne[e].length; i++) {
+            var r = ne[e][i];
+            this.objects.item[r].rotateToTarget = !0
+        }
+        sceneManager.usePhysics = !0;
+        var n = .1
+          , o = -4e3;
+        this.animating = !0,
+        this.uiEnabled = !1,
+        new TWEEN.Tween({
+            t: 0
+        }).to({
+            t: 1
+        }, I).easing(TWEEN.Easing.Quartic.InOut).onUpdate((function() {
+            if (this.t <= n)
+                for (var t = map(this.t, 0, n, 0, 1), i = lerp(0, o, t), r = 0; r < c.attractions.length; r++)
+                    c.attractions[r].constant = i;
+            else if (this.t >= 1 - n)
+                for (t = map(this.t, 1 - n, 1, 0, 1),
+                i = lerp(o, 0, t),
+                r = 0; r < c.attractions.length; r++)
+                    c.attractions[r].constant = i;
+            for (r = 0; r < ae.length; r++)
+                if (r != e) {
+                    var s = lerpVec3(ae[r].viewData.tags.positionTarget, ae[r].viewData.tags.positionPrevious, this.t);
+                    ae[r].position.set(s.x, s.y, s.z),
+                    ae[r].viewData.tags.particle.position.x = s.x,
+                    ae[r].viewData.tags.particle.position.y = s.y,
+                    ae[r].viewData.tags.particle.position.z = s.z
+                }
+            for (r = 0; r < ne[e].length; r++) {
+                var l = ne[e][r];
+                (u = a.objects.item[l]).viewData.tags.destination = lerpVec3(u.viewData.tags.positionTarget, u.viewData.tags.positionPrevious, this.t),
+                THREE.Quaternion.slerp(u.viewData.tags.targetQuaternion, u.viewData.tags.previousQuaternion, u.targetQuaternion, this.t)
+            }
+            for (r = 0; r < ne.length; r++)
+                if (r != e)
+                    for (var h = 0; h < ne[r].length; h++) {
+                        var u;
+                        (u = a.objects.item[ne[r][h]]).viewData.tags.destination = lerpVec3(u.viewData.tags.positionTarget, u.viewData.tags.positionPrevious, this.t),
+                        u.rotationTarget = ae[r].position
+                    }
+        }
+        )).onComplete((function() {
+            sceneManager.usePhysics = !1,
+            console.log(2222, a.uiEnabled);
+            // back.add(function () {
+            //     vis.setTo("drift");
+            //     // setTimeout(function() {
+            //     //     console.log('22222', '点击');
+            //     //     $("#back").trigger("click");
+            //     // }, 10000);
+            // }),
+            a.animating = !1,
+            a.uiEnabled = !0,
+            !0,
+            // ui.enableHelpLink(),
+            a.state = "out";
+            var i = oe[e] + 60;
+            ae[e].clickSphere.scale.set(i, i, i),
+            e < _ && (ae[e].spriteLabel.enabled = !0,
+            ae[e].spriteX.enabled = !0),
+            a.fadeInAll((function() {}
+            ), !1),
+            a.fadeInTag(R),
+            void 0 !== t && t()
+        }
+        )).start(),
+        this.camControls.animate({
+            pos: this.camControls.lastOutPosition,
+            duration: I,
+            callback: function() {
+                a.camControls.setScrollMode(!1)
+            }
+        })
+    }
+    ,
+    ye.prototype.showClickSpheres = function() {
+        for (var e = 0; e < ae.length; e++)
+            0 != ne[e].length && (ae[e].clickSphere.visible = !0)
+    }
+    ,
+    ye.prototype.hideClickSpheres = function() {
+        for (var e = 0; e < ae.length; e++)
+            0 != ne[e].length && (ae[e].clickSphere.visible = !1)
+    }
+    ,
+    ye.prototype.hideItemLines = function() {
+        for (var e = 0; e < N.children.length; e++)
+            N.children[e].visible = !1
+    }
+    ,
+    ye.prototype.showItemLines = function() {
+        for (var e = 0; e < N.children.length; e++)
+            N.children[e].visible = !0
+    }
+    ,
+    ye.prototype.hideDiagramLines = function() {
+        centerAnchor.point.visible = !1,
+        centerAnchor.point.scale.set(0, 0, 0);
+        for (var e = 0; e < f.length; e++)
+            f[e].point.visible = !1;
+        for (e = 0; e < j.children.length; e++)
+            j.children[e].visible = !1;
+        for (e = 0; e < G.children.length; e++)
+            G.children[e].visible = !1
+    }
+    ,
+    ye.prototype.showDiagramLines = function() {
+        G.visible = !0,
+        j.visible = !0,
+        centerAnchor.point.visible = !0,
+        centerAnchor.point.scale.set(te, te, te),
+        centerAnchor.point.material.opacity = 0;
+        for (var e = 0; e < f.length; e++)
+            f[e].point.visible = !0,
+            f[e].point.material.opacity = 0;
+        for (e = 0; e < j.children.length; e++)
+            j.children[e].visible = !0,
+            j.children[e].material.opacity = 0;
+        for (e = 0; e < G.children.length; e++)
+            G.children[e].visible = !0,
+            G.children[e].material.opacity = 0
+    }
+    ,
+    ye.prototype.hideInbetweenNodes = function() {
+        for (var e = 4; e < ae.length; e++)
+            ae[e].lightSprite.visible = !1,
+            ae[e].glowSprite.visible = !1
+    }
+    ,
+    ye.prototype.showInbetweenNodes = function() {
+        for (var e = 4; e < ae.length; e++)
+            0 != ne[e].length && (ae[e].lightSprite.visible = !0,
+            ae[e].lightSprite.material.opacity = 0,
+            ae[e].glowSprite.visible = !0,
+            ae[e].glowSprite.material.opacity = 0)
+    }
+    ,
+    ye.prototype.updateInbetweenNodePositions = function() {
+        for (var e = 3; e < ae.length; e++)
+            if (0 != ne[e].length) {
+                var t = ae[e].viewData.tags.positionTarget;
+                ae[e].position.set(t.x, t.y, t.z),
+                ae[e].viewData.tags.particle.position.x = t.x,
+                ae[e].viewData.tags.particle.position.y = t.y,
+                ae[e].viewData.tags.particle.position.z = t.z
+            }
+    }
+    ,
+    ye.prototype.setLabels = function() {
+        for (var e = 0; e < ae.length; e++)
+            this.removeBucketLabel(e),
+            e < _ ? void 0 !== f[e] && this.addBucketLabel(e) : 0 != ne[e].length && this.addBucketLabel(e);
+        this.updateLabels()
+    }
+    ,
+    ye.prototype.updateLabels = function() {
+        centerAnchor.position.distanceTo(sceneManager.getCamera().position);
+        var e = new THREE.Vector3(0,1,0);
+        e.applyQuaternion(sceneManager.getCamera().quaternion);
+        var t = new THREE.Vector3(1,0,0);
+        t.applyQuaternion(sceneManager.getCamera().quaternion);
+        for (var i = sceneManager.getCamera().position.clone().sub(centerAnchor.position), r = sceneManager.getCamera().quaternion, n = 0; n < ae.length; n++)
+            if ((n < _ || 0 != ne[n].length) && null != ae[n].spriteLabel) {
+                var o = 115
+                  , a = 5
+                  , s = ae[n].spriteLabel
+                  , l = e.clone().multiplyScalar(oe[n] + o);
+                s.position.set(l.x, l.y, l.z),
+                s.quaternion.set(r.x, r.y, r.z, r.w);
+                var h = s.width + a
+                  , c = (s.height,
+                ae[n].position.clone().add(s.position))
+                  , u = sceneManager.getRectWorldSize(c, h, 1)
+                  , p = u.w / s.width;
+                if (s.scale.set(p, p, 1),
+                null != ae[n].spriteX) {
+                    var d = ae[n].spriteX
+                      , m = sceneManager.getRectWorldSize(c, 13, 1)
+                      , E = t.clone().multiplyScalar(u.w / 2 + m.w).add(s.position);
+                    d.position.set(E.x, E.y, E.z),
+                    d.quaternion.set(r.x, r.y, r.z, r.w),
+                    d.scale.set(p, p, 1)
+                }
+                var g = .31;
+                if (ae[n].spriteLabel.forceShow)
+                    ae[n].spriteLabel.textMesh.material.opacity < ie && (ae[n].spriteLabel.textMesh.material.opacity = lerp(ae[n].spriteLabel.textMesh.material.opacity, ie, g));
+                else if (ae[n].spriteLabel.enabled) {
+                    var v = ae[n].position.clone().sub(centerAnchor.position);
+                    GeomUtils.angleBetweenVecs(i, v) > re ? ae[n].spriteLabel.textMesh.material.opacity > 0 && (ae[n].spriteLabel.textMesh.material.opacity = lerp(ae[n].spriteLabel.textMesh.material.opacity, 0, g)) : ae[n].spriteLabel.textMesh.material.opacity < ie && (ae[n].spriteLabel.textMesh.material.opacity = lerp(ae[n].spriteLabel.textMesh.material.opacity, ie, g))
+                } else
+                    ae[n].spriteLabel.textMesh.material.opacity > 0 && (ae[n].spriteLabel.textMesh.material.opacity = lerp(ae[n].spriteLabel.textMesh.material.opacity, 0, g));
+                n < f.length && (ae[n].spriteX.textMesh.material.opacity = ae[n].spriteLabel.textMesh.material.opacity)
+            }
+    }
+    ,
+    ye.prototype.addBucketLabel = function(e) {
+        var i = 9
+          , r = "#000000"
+          , n = void 0
+          , o = [0, 0];
+        if (e < _)
+            ae[e].names = [f[e].data.name],
+            ae[e].spriteLabel = this.createLabel(ae[e].names, i, r, n, o),
+            ae[e].spriteLabel.textMesh.material.opacity = 0,
+            ae[e].spriteLabel.clickMesh.index = e,
+            ae[e].spriteLabel.clickMesh.type = "BNL",
+            ae[e].spriteLabel.enabled = !1,
+            ae[e].spriteLabel.forceShow = !1,
+            ae[e].add(ae[e].spriteLabel),
+            ae[e].spriteX = this.createLabel(["\xd7"], i, r, n, [5, 5]),
+            ae[e].spriteX.textMesh.material.opacity = 0,
+            ae[e].spriteX.clickMesh.index = e,
+            ae[e].spriteX.clickMesh.type = "BNX",
+            ae[e].spriteX.enabled = !1,
+            ae[e].spriteX.forceShow = !1,
+            ae[e].add(ae[e].spriteX);
+        else {
+            for (var a = S[e], s = [], l = 0; l < a.length; l++)
+                s.push(f[a[l]].data.name);
+            ae[e].names = s;
+            var h = t(s);
+            ae[e].spriteLabel = this.createLabel(h, i, r, n),
+            ae[e].spriteLabel.textMesh.material.opacity = 0,
+            ae[e].spriteLabel.enabled = !1,
+            ae[e].spriteLabel.forceShow = !1,
+            ae[e].add(ae[e].spriteLabel)
+        }
+    }
+    ,
+    ye.prototype.removeBucketLabel = function(e) {
+        null != ae[e].spriteLabel && (ae[e].remove(ae[e].spriteLabel),
+        delete ae[e].spriteLabel,
+        null != ae[e].spriteX && (ae[e].remove(ae[e].spriteX),
+        delete ae[e].spriteX))
+    }
+    ,
+    ye.prototype.showAllLabels = function() {
+        for (var e = 0; e < _; e++)
+            null != ae[e].spriteLabel && (ae[e].spriteLabel.enabled = !0,
+            ae[e].spriteLabel.forceShow = !1,
+            ae[e].spriteX.enabled = !0,
+            ae[e].spriteX.forceShow = !1)
+    }
+    ,
+    ye.prototype.hideAllAdders = function(e) {
+        for (var t = 0; t < he.length; t++)
+            t !== e && he[t].hide()
+    }
+    ,
+    ye.prototype.showAllAdders = function(e) {
+        for (var t = 0; t < he.length; t++)
+            t !== e && he[t].show()
+    }
+    ,
+    ye.prototype.hideAllLabels = function() {
+        for (var e = 0; e < ae.length; e++)
+            null != ae[e].spriteLabel && (ae[e].spriteLabel.enabled = !1,
+            ae[e].spriteLabel.forceShow = !1,
+            void 0 !== ae[e].spriteX && (ae[e].spriteX.enabled = !1,
+            ae[e].spriteX.forceShow = !1))
+    }
+    ,
+    ye.prototype.itemClickCallback = function() {
+        return;
+        var e = this;
+        if (this.parentVis.uiEnabled && "in" === this.parentVis.state) {
+            function t() {
+                sceneManager.setPaused(!0);
+                var e = [];
+                if ($("#ajax-content .tag-grid .tag a").each((function() {
+                    var t = $(this).attr("href").match(/tag\/(.*?)\//)[1];
+                    e.push(t)
+                }
+                )),
+                0 !== e.length) {
+                    var t = vis.getVisByName("drift");
+                    void 0 !== t && t.addItemTagsToHistory(e)
+                }
+            }
+            function i() {
+                sceneManager.setPaused(!1),
+                e.parentVis.uiEnabled = !0,
+                $("#back").unbind("click").click((function() {
+                    a.uiEnabled && a.closeSphere(R)
+                }
+                )).show(),
+                ne[R].length > 1 ? e.parentVis.moveFromDetailToIn() : $("#back").trigger("click")
+            }
+            $(".bucket-title").stop().fadeOut("fast"),
+            ui.addToPath(e.basicInfo, "item"),
+            ui.openItemDetails(e.basicInfo, t, i),
+            this.parentVis.state = "detail"
+        }
+    }
+    ,
+    ye.prototype.fadeOutNode = function(e, t) {
+        new TWEEN.Tween({
+            o: 1
+        }).to({
+            o: 0
+        }, O).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
+            ae[e].lightSprite.material.opacity = this.o * pe,
+            ae[e].glowSprite.material.opacity = this.o * de;
+            var t = ae[e].light;
+            t.intensity = this.o * t.maxIntensity
+        }
+        )).onComplete((function() {
+            null != t && (t(),
+            ae[e].lightSprite.visible = !1,
+            ae[e].glowSprite.visible = !1)
+        }
+        )).start()
+    }
+    ,
+    ye.prototype.fadeInTag = function(e, t) {
+        ae[e].lightSprite.visible = !0,
+        ae[e].glowSprite.visible = !0;
+        new TWEEN.Tween({
+            o: 0
+        }).to({
+            o: 1
+        }, O).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
+            ae[e].lightSprite.material.opacity = this.o * pe,
+            ae[e].glowSprite.material.opacity = this.o * de;
+            var t = ae[e].light;
+            t.intensity = this.o * t.maxIntensity
+        }
+        )).onComplete((function() {
+            null != t && t()
+        }
+        )).start()
+    }
+    ,
+    ye.prototype.fadeOutAll = function(e, t) {
+        console.log('fadeOutAll', 11111);
+        this.hideAllLabels(),
+        this.sceneObject.traverse((function(e) {
+            e.material && (e.material.transparent = !0)
+        }
+        ));
+        for (var i = 0; i < ae.length; i++)
+            ae[i].light.lastIntensity = ae[i].light.intensity,
+            ae[i].lightSprite.lastOpacity = ae[i].lightSprite.material.opacity,
+            ae[i].glowSprite.lastOpacity = ae[i].glowSprite.material.opacity,
+            ae[i].clickSphere.lastOpacity = ae[i].clickSphere.material.opacity;
+        for (i = 0; i < N.children.length; i++)
+            N.children[i].lastOpacity = N.children[i].material.opacity;
+        new TWEEN.Tween({
+            o: 1
+        }).to({
+            o: 0
+        }, O).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
+            centerAnchor.point.material.opacity = this.o * Ee;
+            for (var e = 0; e < f.length; e++)
+                f[e].point.material.opacity = this.o * Ee;
+            for (e = 0; e < j.children.length; e++)
+                j.children[e].material.opacity = map(this.o, 0, 1, 0, j.children[e].maxOpacity);
+            for (e = 0; e < G.children.length; e++)
+                G.children[e].material.opacity = map(this.o, 0, 1, 0, G.children[e].maxOpacity);
+            for (e = 0; e < ae.length; e++)
+                0 != ne[e].length && ((e > 3 || t) && 0 !== ae[e].lightSprite.material.opacity && (ae[e].lightSprite.material.opacity = this.o * ae[e].lightSprite.lastOpacity,
+                ae[e].glowSprite.material.opacity = this.o * ae[e].glowSprite.lastOpacity,
+                ae[e].light.intensity = this.o * ae[e].light.lastIntensity),
+                ae[e].clickSphere.material.opacity = this.o * ae[e].clickSphere.lastOpacity);
+            for (e = 0; e < N.children.length; e++)
+                N.children[e].material.opacity = this.o * N.children[e].lastOpacity;
+            for (e = 0; e < he.length; e++)
+                he[e].setOpacity(this.o)
+        }
+        )).onComplete((function() {
+            a.hideAllAdders(),
+            a.hideItemLines(),
+            a.hideDiagramLines(),
+            a.hideInbetweenNodes(),
+            a.hideClickSpheres(),
+            null != e && e()
+        }
+        )).start()
+    }
+    ,
+    ye.prototype.fadeInAll = function(e, t) {
+        this.showItemLines(),
+        this.showDiagramLines(),
+        this.showInbetweenNodes(),
+        a.showClickSpheres(),
+        this.sceneObject.traverse((function(e) {
+            e.material && (e.material.transparent = !0)
+        }
+        ));
+        new TWEEN.Tween({
+            o: 0
+        }).to({
+            o: 1
+        }, O).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
+            centerAnchor.point.material.opacity = this.o * Ee;
+            for (var e = 0; e < f.length; e++)
+                f[e].point.material.opacity = this.o * Ee;
+            for (e = 0; e < j.children.length; e++)
+                j.children[e].material.opacity = map(this.o, 0, 1, 0, j.children[e].maxOpacity);
+            for (e = 0; e < G.children.length; e++)
+                G.children[e].material.opacity = map(this.o, 0, 1, 0, G.children[e].maxOpacity);
+            for (e = 0; e < ae.length; e++)
+                0 != ne[e].length && ((e > 3 || t) && (ae[e].lightSprite.material.opacity = this.o * pe,
+                ae[e].glowSprite.material.opacity = this.o * de,
+                ae[e].light.intensity = this.o * ae[e].light.maxIntensity),
+                ae[e].clickSphere.material.opacity = this.o * ee);
+            for (e = 0; e < N.children.length; e++)
+                N.children[e].material.opacity = this.o * N.children[e].maxOpacity;
+            for (e = 0; e < he.length; e++)
+                he[e].setOpacity(this.o)
+        }
+        )).onComplete((function() {
+            a.showAllAdders(),
+            a.showAllLabels(),
+            null != e && e()
+        }
+        )).start()
+    }
+    ,
+    ye.prototype.createLabel = function(e, t, i, r, n) {
+        void 0 === n && (n = [0, 0]);
+        for (var o, a = {
+            size: t,
+            curveSegments: 2,
+            font: "circular",
+            bevelEnabled: !1,
+            amount: 1
+        }, s = [], l = 0; l < e.length; l++) {
+            var h = THREE.FontUtils.generateShapes(e[l], a)
+              , c = new THREE.ExtrudeGeometry(h,a);
+            c.computeBoundingBox(),
+            s.push({
+                x: -.5 * (c.boundingBox.max.x - c.boundingBox.min.x),
+                y: l * (t + .4 * t)
+            });
+            for (var u = 0; u < c.vertices.length; u++)
+                c.vertices[u].x += s[l].x,
+                c.vertices[u].y += s[l].y;
+            0 === l ? o = c : o.merge(c)
+        }
+        o.computeBoundingBox();
+        var p = new THREE.Mesh(o,new THREE.MeshBasicMaterial({
+            color: 0,
+            fog: !1,
+            transparent: !0,
+            opacity: 1,
+            depthWrite: !1,
+            depthTest: !1
+        }));
+        p.renderOrder = 2e3;
+        var d = new THREE.Object3D;
+        return d.textMesh = p,
+        d.add(p),
+        d.width = o.boundingBox.max.x - o.boundingBox.min.x,
+        d.height = o.boundingBox.max.y - o.boundingBox.min.y,
+        d.clickMesh = new THREE.BoundingBoxHelper(d.textMesh,16777215),
+        d.clickMesh.material.depthTest = !1,
+        d.clickMesh.renderOrder = 1,
+        d.clickMesh.material.transparent = !0,
+        d.clickMesh.material.opacity = 0,
+        d.clickMesh.lastOpacity = 0,
+        d.clickMesh.update(),
+        d.add(d.clickMesh),
+        d
+    }
+    ,
+    ye.prototype.updateLightMaterials = function() {
+        for (var e in this.objects.item) {
+            var t = this.objects.item[e];
+            null != t.highResMesh && (t.highResMesh.material.needsUpdate = !0)
+        }
+        itemField.getThumbMesh().material.needsUpdate = !0
+    }
+    ,
+    ye.prototype.getTexture = function(e) {
+        switch (e) {
+        case "lightSprite":
+            return H;
+        case "glow":
+            return b;
+        case "point":
+            return w;
+        default:
+            return null
+        }
+    }
+    ,
+    ye.prototype.quaternionBetweenVecs = function(e, t) {
+        var i = new THREE.Vector3;
+        i.crossVectors(e, t),
+        i.normalize(),
+        0 == i.x && 0 == i.y && 0 == i.z && (i = t);
+        var r = GeomUtils.angleBetweenVecs(e, t)
+          , n = new THREE.Quaternion;
+        return n.setFromAxisAngle(i, r),
+        n.normalize(),
+        n
+    }
+    ,
+    ye.prototype.getCenter = function() {
+        return centerAnchor.position
+    }
+    ,
+    ye.prototype.openInitAbout = function() {
+        ve && a.firstTime && ($("#bg-widget-curtain").hide(),
+        // ui.showHelpLink(),
+        // ui.showAboutLink(),
+        // ui.openAbout(),
+        a.firstTime = !1,
+        a.uiEnabled = !0)
+        // ui.showNav()
+    }
+    ,
+    ye
 }()
-, SearchVis = function() {
-  var e, t, i, r, n, o = [], a = [], s = [], l = [], h = new TWEEN.Tween, c = 2e3, u = "results", p = new THREE.Quaternion, d = new THREE.Vector3, f = new THREE.Vector3, m = -2e4, E = !1, g = !1, v = function(t, i, r) {
-      IVis.call(this, t, i, r),
-      e = this,
-      this.name = "search",
-      this.camControls = new SearchCamControls(t.getCamera(),p),
-      physics = sceneManager.physics
-  };
-  return v.prototype = Object.create(IVis.prototype),
-  v.prototype.onInit = function(e) {
-      console.log('onInit', e)
-      if (this.preloadInfo = null != e ? e : void 0,
-      this.camControls.setAutoRotate(!1),
-      n = !0,
-      this.state = "in",
-      o = [],
-      a = [],
-      s = [],
-      l = [],
-      void 0 !== this.preloadInfo && this.preloadInfo.center)
-          d = this.preloadInfo.center.clone();
-      else {
-          var t = this.camControls.getLookVector();
-          t.y = 0,
-          t.normalize(),
-          d = sceneManager.getCamera().position.clone().add(t.multiplyScalar(1e3))
-      }
-      var i = itemField.sizeScalar * itemField.sizeScalar * 2 * propertyCount(this.objects.item);
-      backgroundSphereRadius = Math.sqrt(i / 4 * Math.PI),
-      maxZoom = backgroundSphereRadius - 2;
-      var r = this.camControls.getLookVector();
-      r.y = 0,
-      r.normalize();
-      var h = 1.5 * Math.PI - Math.atan2(r.z, r.x);
-      (p = new THREE.Quaternion).setFromAxisAngle(new THREE.Vector3(0,1,0), h),
-      console.log(this.camControls.init(p)),
-      this.camControls.init(p),
-      this.initItems(),
-      this.initCamOrientation(),
-      this.tweenFog(27e-5, this.transDuration),
-      this.bindBackButton()
-  }
-  ,
-  v.prototype.initItems = function() {
-      ui.closeSearchInput();
-      var e = [];
-      if (void 0 !== this.preloadInfo && void 0 !== this.preloadInfo.lastView)
-          switch (this.preloadInfo.lastView) {
-          case "drift":
-              for (var t in this.objects.item) {
-                  var i = (l = this.objects.item[t]).position.clone().sub(d)
-                    , r = i.clone().normalize();
-                  (n = i.add(r.multiplyScalar(backgroundSphereRadius))).add(d),
-                  e.push(n)
-              }
-              break;
-          case "tags":
-              sceneManager.getCamera().position;
-              for (var t in this.objects.item) {
-                  var n = (l = this.objects.item[t]).viewData.tags.positionRest.clone();
-                  e.push(n)
-              }
-          }
-      else {
-          var o = 2 * Math.PI / api.itemListArray.length
-            , a = 0
-            , s = 5e3;
-          for (var t in this.objects.item) {
-              var l = this.objects.item[t]
-                , c = o * a + .02 * Math.random()
-                , u = (n = new THREE.Vector3(backgroundSphereRadius + 1e3 + 4e3 * Math.random(),0,0),
-              (new THREE.Quaternion).setFromAxisAngle(new THREE.Vector3(0,1,0), c));
-              n.y += Math.random() * s - s / 2,
-              n.applyQuaternion(u),
-              e.push(n),
-              a++
-          }
-      }
-      matches = this.matchClosestPositions(e, sceneManager.getCamera().position);
-      for (var t in this.objects.item) {
-          (l = this.objects.item[t]).viewData.search = {},
-          l.viewData.search.positionPrev = l.position.clone();
-          var p = matches[t];
-          l.viewData.search.positionRest = p,
-          l.viewData.search.positionActive = new THREE.Vector3,
-          l.viewData.search.particle = physics.makeParticle(1, l.position.x, l.position.y, l.position.z),
-          l.viewData.search.repulsions = {},
-          l.viewData.search.bucketConnection = -1,
-          l.onClickCallback = this.itemClickCallback.bind(null, l),
-          l.forceRotateToCamera = !1,
-          l.enableRotateToCamera = !1,
-          l.rotateToTarget = !0;
-          var f = new THREE.Vector3(0,0,1);
-          f.applyQuaternion(l.quaternion).multiplyScalar(2e3).add(d);
-          var m = d.clone();
-          m.y = l.viewData.search.positionRest.y,
-          l.rotationTarget = f,
-          l.viewData.search.rotationTargetPrev = f,
-          l.viewData.search.rotationTargetDest = m,
-          l.isInteractive = !1
-      }
-      sceneManager.tweenSkyDomeState(sceneManager.SKYDOME_VIEW_COLORS.search, this.transDuration);
-      var E = this;
-      h = new TWEEN.Tween({
-          t: 0
-      }).to({
-          t: 1
-      }, this.transDuration).onUpdate((function() {
-          for (var e in E.objects.item) {
-              var t = E.objects.item[e]
-                , i = lerpVec3(t.viewData.search.positionPrev, t.viewData.search.positionRest, this.t);
-              t.position.set(i.x, i.y, i.z),
-              t.viewData.search.destination = i;
-              var r = lerpVec3(t.viewData.search.rotationTargetPrev, t.viewData.search.rotationTargetDest, this.t);
-              t.rotationTarget.set(r.x, r.y, r.z)
-          }
-      }
-      )).easing(TWEEN.Easing.Quartic.InOut).onComplete((function() {
-          if (ui.enableNav(),
-          null != E.preloadInfo)
-              if (null != E.preloadInfo.term && null != E.preloadInfo.data) {
-                  var e = E.preloadInfo.term
-                    , t = E.preloadInfo.data;
-                  E.getResults(e, t)
-              } else if (null != E.preloadInfo.itemIds) {
-                  var i = E.preloadInfo.itemIds;
-                  E.setItems(i, "item")
-              }
-      }
-      )).start()
-  }
-  ,
-  v.prototype.initCamOrientation = function() {
-      var e = sceneManager.getCamera().position.clone();
-      void 0 !== this.preloadInfo && void 0 !== this.preloadInfo.center && (e.y = d.y),
-      this.camControls.animate({
-          pos: e,
-          look: d,
-          duration: 2e3
-      })
-  }
-  ,
-  v.prototype.bindBackButton = function() {
-      $("#nav-back").unbind("click").click((function() {
-          if (e.uiEnabled) {
-              ui.closeSearchInput(),
-              ui.closeSearchLabel();
-              var t = vis.getLastVisName();
-              ui.openView(t, {
-                  loadLastTags: !0,
-                  lastView: "search",
-                  center: d.clone()
-              })
-          }
-      }
-      ))
-  }
-  ,
-  v.prototype.addTagResults = function(t, i) {
-      $("#tags-dialog").remove(),
-      $("#ui #local").append('<div id="tags-dialog" class="v-centered"><ul class="tags"></ul></div>');
-      var r = $("#tags-dialog");
-      if (r.hide(),
-      void 0 !== i && 0 != i.tags.length) {
-          for (var n = 0; n < i.tags.length; n++)
-              r.find("ul").append('<li id="' + i.tags[n].id + '" class="tag"><a href="#">' + i.tags[n].name + "</a></li>");
-          r.find(".tag").click((function(e) {
-              e.preventDefault();
-              var t = $(this).attr("id");
-              ui.openView("tags", {
-                  tagIds: [t],
-                  lastView: "search",
-                  center: d.clone()
-              })
-          }
-          )),
-          $(window).resize((function() {
-              r.is(":visible") && e.positionTags(!0)
-          }
-          )),
-          g && !E && (e.showTags(),
-          ui.openSearchLabel())
-      }
-  }
-  ,
-  v.prototype.getResults = function(e, r) {
-      r.items.length > 1 ? (this.state = "in",
-      ui.keepSearchLabel(!0),
-      ui.openSearchLabel()) : (ui.keepSearchLabel(!1),
-      ui.closeSearchLabel());
-      var n = $("#tags-dialog");
-      n.is(":visible") && n.fadeOut("fast", (function() {
-          $(this).remove()
-      }
-      )),
-      t = e,
-      i = r,
-      g = 0 !== r.tags.length,
-      E = 0 !== r.items.length;
-      for (var o = [], a = 0; a < r.items.length; a++) {
-          var s = r.items[a].id;
-          o.push(s)
-      }
-      this.setItems(o)
-  }
-  ,
-  v.prototype.setItems = function(e, t) {
-      "item" === t ? (u = "item",
-      ui.keepSearchLabel(!1),
-      ui.closeSearchLabel()) : u = "results",
-      this.clearResultsInfo(),
-      a = [],
-      s = [],
-      l = [];
-      for (var i = 0; i < e.length; i++) {
-          var n = e[i];
-          -1 != o.indexOf(n) ? (s.push(n),
-          this.objects.item[n].viewData.search.positionPrevious = this.objects.item[n].position.clone()) : (a.push(n),
-          this.objects.item[n].viewData.search.positionPrevious = this.objects.item[n].viewData.search.positionRest),
-          this.objects.item[n].isInteractive = !0
-      }
-      for (i = 0; i < o.length; i++) {
-          n = o[i];
-          -1 == e.indexOf(n) && (l.push(n),
-          this.objects.item[n].isInteractive = !0)
-      }
-      1 === (o = e).length && (this.hideBack(),
-      ui.keepSearchLabel(!1),
-      ui.disableSearchLabelInteraction(),
-      ui.closeSearchInput(),
-      ui.closeSearchLabel());
-      var h = 4
-        , c = Math.min(e.length, h)
-        , p = Math.ceil(e.length / c)
-        , f = 170
-        , m = 1.2 * f
-        , g = (c - 1) * f;
-      r = g;
-      var v = 0
-        , y = 0
-        , T = [];
-      for (i = 0; i < o.length; i++) {
-          v = ~~(i / c),
-          y = i % c;
-          var R = new THREE.Vector3;
-          R.x = y * f - g / 2,
-          R.y = -v * m,
-          R.z = -100,
-          p > 1 && (R.y += .5 * m);
-          var x = sceneManager.getCamera().quaternion.clone();
-          R.applyQuaternion(x),
-          R.add(d),
-          (b = this.objects.item[e[i]]).viewData.search.positionPrevious = b.position.clone(),
-          T.push(R),
-          b.viewData.search.previousQuaternion = b.quaternion.clone(),
-          b.viewData.search.targetQuaternion = x,
-          b.rotateToTarget = !1
-      }
-      var H = api.orderIdsByType(e, ["Artwork", "Exhibition", "Book", "Essay"]);
-      for (i = 0; i < H.length; i++) {
-          var b;
-          n = H[i];
-          (b = this.objects.item[n]).viewData.search.positionPrevious = b.position.clone(),
-          b.viewData.search.positionTarget = T[i],
-          T.length > 1 && b.thumbWidth > b.thumbHeight && (b.viewData.search.positionTarget.y -= (b.thumbWidth - b.thumbHeight) / 2)
-      }
-      E ? (this.scrollHeight = v * m,
-      p > 1 && (this.scrollHeight -= m)) : this.scrollHeight = 0,
-      this.scrollPos = 0,
-      this.repelItemsToAdd(),
-      this.animateContent(t)
-  }
-  ,
-  v.prototype.clearActiveLists = function() {
-      l = o.slice(),
-      o = [],
-      a = [],
-      s = []
-  }
-  ,
-  v.prototype.animateContent = function(n) {
-      this.hideBack(),
-      sceneManager.usePhysics = !0;
-      var p = .025;
-      h.stop(),
-      h = new TWEEN.Tween({
-          t: 0
-      }).to({
-          t: 1
-      }, c).easing(TWEEN.Easing.Quadratic.InOut).onUpdate((function() {
-          if (this.t <= p)
-              for (var t = map(this.t, 0, p, 0, 1), i = lerp(0, m, t), r = 0; r < physics.attractions.length; r++)
-                  physics.attractions[r].constant = i;
-          else if (this.t >= 1 - p)
-              for (t = map(this.t, 1 - p, 1, 0, 1),
-              i = lerp(m, 0, t),
-              r = 0; r < physics.attractions.length; r++)
-                  physics.attractions[r].constant = i;
-          for (r = 0; r < o.length; r++) {
-              var n = o[r];
-              (a = e.objects.item[n]).position = a.viewData.search.destination = lerpVec3(a.viewData.search.positionPrevious, a.viewData.search.positionTarget, this.t),
-              THREE.Quaternion.slerp(a.viewData.search.previousQuaternion, a.viewData.search.targetQuaternion, a.targetQuaternion, this.t)
-          }
-          for (r = 0; r < l.length; r++) {
-              var a;
-              (a = e.objects.item[l[r]]).viewData.search.destination = lerpVec3(a.viewData.search.positionTarget, a.viewData.search.positionRest, this.t)
-          }
-      }
-      )).onComplete((function() {
-          console.log(12313213213131312);
-          sceneManager.usePhysics = !1,
-          e.removeAllRepulsions(),
-          "clear" === n || e.addTagResults(t, i);
-          for (var r = 0; r < l.length; r++) {
-              var h = l[r]
-                , c = e.objects.item[h];
-              physics.removeParticleForces(c.viewData.search.particle),
-              c.viewData.search.repulsions = {}
-          }
-          if (a = [],
-          l = [],
-          s = [],
-          1 === o.length) {
-              var p = e.objects.item[o[0]];
-              u = "item",
-              e.hideBack(),
-              e.lastClickWasSame = !0,
-              e.lastClicked = {
-                  type: "item",
-                  id: o[0]
-              },
-              ui.addToPath(p.basicInfo, "item"),
-              setTimeout((function() {
-                  function e() {
-                      sceneManager.setPaused(!0),
-                      ui.disableSearchLabelInteraction();
-                      var e = [];
-                      if ($("#ajax-content .tag-grid .tag a").each((function() {
-                          var t = $(this).attr("href").match(/tag\/(.*?)\//)[1];
-                          e.push(t)
-                      }
-                      )),
-                      0 !== e.length) {
-                          var t = vis.getVisByName("drift");
-                          void 0 !== t && t.addItemTagsToHistory(e)
-                      }
-                  }
-                  function t() {
-                      sceneManager.setPaused(!1),
-                      p.parentVis.uiEnabled = !0,
-                      p.parentVis.bindBackButton(),
-                      setTimeout((function() {
-                          $("#nav-back").trigger("click")
-                      }
-                      ), 380)
-                  }
-                  ui.openItemDetails(p.basicInfo, e, t)
-              }
-              ), 1500),
-              e.state = "detail"
-          } else
-              u = "results",
-              setTimeout((function() {
-                  ui.keepSearchLabel(!0),
-                  ui.enableSearchLabelInteraction(),
-                  e.uiEnabled = !0
-              }
-              ), 500),
-              e.showBack(),
-              ui.enableSearch()
-      }
-      )).start(),
-      e.camControls.lastOutPosition = sceneManager.getCamera().position.clone();
-      var f = d.clone()
-        , E = sceneManager.getDistanceForRectSize(r, 50)
-        , g = e.camControls.getLookVector();
-      f.add(g.negate().multiplyScalar(E)),
-      e.camControls.animate({
-          pos: f,
-          duration: c,
-          callback: function() {}
-      })
-  }
-  ,
-  v.prototype.showBack = function() {
-      $("#nav-back").is(":visible") || $("#nav-back").stop().fadeIn("fast")
-  }
-  ,
-  v.prototype.hideBack = function() {
-      $("#nav-back").is(":visible") || $("#nav-back").stop().fadeIn("fast")
-  }
-  ,
-  v.prototype.clearSearch = function() {
-      $("#tags-dialog").stop().fadeOut("fast", (function() {
-          $(this).remove()
-      }
-      )),
-      this.clearActiveLists(),
-      this.animateContent("clear")
-  }
-  ,
-  v.prototype.clearResultsInfo = function() {
-      $("#tags-dialog").stop().fadeOut("fast", (function() {
-          $(this).remove()
-      }
-      ))
-  }
-  ,
-  v.prototype.onNothingClicked = function() {
-      if (this.uiEnabled && !ui.searchWasRecentlyClosed())
-          if ("item" === u) {
-              var e = vis.getLastVisName();
-              ui.openView(e, {
-                  loadLastTags: !0,
-                  lastView: "search",
-                  center: d.clone()
-              })
-          } else
-              $("#nav-back").trigger("click")
-  }
-  ,
-  v.prototype.onMouseMove = function(e) {
-      "out" == this.state && (this.camControls.dragging && this.ensureHoverOffSphere(),
-      this.camControls.onMouseMove(e))
-  }
-  ,
-  v.prototype.onMouseWheel = function(e, t) {
-      "in" === this.state && this.uiEnabled && this.handleScroll(t)
-  }
-  ,
-  v.prototype.onKeyDown = function(e) {
-      this.uiEnabled && "in" === this.state && (38 === e.keyCode ? this.handleScroll(2.5) : 40 === e.keyCode && this.handleScroll(-2.5))
-  }
-  ,
-  v.prototype.onMouseLeave = function() {
-      this.camControls.onMouseUp()
-  }
-  ,
-  v.prototype.handleScroll = function(e) {
-      if (n) {
-          var t = 20 * -e
-            , i = !1;
-          if (e < 0 ? (this.scrollPos + t > this.scrollHeight && (t = this.scrollHeight - this.scrollPos),
-          i = !0) : (this.scrollPos + t < 0 && (t = -this.scrollPos),
-          i = !0),
-          i) {
-              var r, o = this.scrollPos;
-              this.scrollPos += t,
-              (r = e > 0 ? new THREE.Vector3(0,1,0) : new THREE.Vector3(0,-1,0)).applyQuaternion(sceneManager.getCamera().quaternion),
-              r.multiplyScalar(Math.abs(t)),
-              this.camControls.getTargetPosition().add(r),
-              g && (o < this.showTagThreshold && this.scrollPos >= this.showTagThreshold ? (ui.closeSearchLabel(),
-              this.showTags()) : o >= this.showTagThreshold && this.scrollPos < this.showTagThreshold && this.hideTags((function() {
-                  ui.openSearchLabel()
-              }
-              )))
-          }
-      }
-  }
-  ,
-  v.prototype.positionTags = function(e) {
-      var t = $("#tags-dialog");
-      !0 === e ? t.css({
-          opacity: "1",
-          display: "block"
-      }) : t.css({
-          opacity: "0",
-          display: "block"
-      });
-      var i, r = t.height();
-      i = g && !E ? .5 * window.innerHeight + 20 : .5 * (window.innerHeight - r),
-      t.css("margin-top", i + "px")
-  }
-  ,
-  v.prototype.showTags = function(e) {
-      this.positionTags(),
-      $("#tags-dialog").stop().fadeTo(450, 1, (function() {
-          void 0 !== e && e()
-      }
-      ))
-  }
-  ,
-  v.prototype.hideTags = function(e) {
-      $("#tags-dialog").stop().fadeOut(450, (function() {
-          void 0 !== e && e()
-      }
-      ))
-  }
-  ,
-  v.prototype.onUpdate = function() {
-      for (var e in this.camControls.update(),
-      this.objects.item) {
-          var t = this.objects.item[e];
-          t.viewData.search.destination && (t.position.x = t.viewData.search.particle.position.x = lerp(t.viewData.search.particle.position.x, t.viewData.search.destination.x, .15),
-          t.position.y = t.viewData.search.particle.position.y = lerp(t.viewData.search.particle.position.y, t.viewData.search.destination.y, .15),
-          t.position.z = t.viewData.search.particle.position.z = lerp(t.viewData.search.particle.position.z, t.viewData.search.destination.z, .15))
-      }
-  }
-  ,
-  v.prototype.showObjectResults = function() {
-      $("#tags-dialog").stop().fadeOut("fast"),
-      this.uiEnabled = !1,
-      this.camControls.animate({
-          pos: f,
-          duration: 800,
-          callback: function() {
-              e.uiEnabled = !0,
-              n = !0
-          }
-      })
-  }
-  ,
-  v.prototype.onRelease = function() {
-      this.uiEnabled = !1,
-      ui.keepSearchLabel(!1),
-      ui.closeSearch(),
-      this.hideBack(),
-      $("#nav-back").unbind("click"),
-      h.stop();
-      for (var t = 0; t < o.length; t++) {
-          var i = o[t]
-            , r = e.objects.item[i];
-          physics.removeParticleForces(r.viewData.search.particle),
-          r.viewData.search.repulsions = {}
-      }
-      $("#ui #local").empty()
-  }
-  ,
-  v.prototype.duringRelease = function() {}
-  ,
-  v.prototype.onReleaseEnd = function() {
-      ui.closeSearch()
-  }
-  ,
-  v.prototype.repelItems = function(e, t) {
-      var i = this.objects.item[e]
-        , r = this.objects.item[t]
-        , n = i.viewData.search.repulsions
-        , o = r.viewData.search.repulsions;
-      null == n[t] && null == o[e] && (o[e] = n[t] = physics.makeAttraction(i.viewData.search.particle, r.viewData.search.particle, m, 1))
-  }
-  ,
-  v.prototype.repelItemsToAdd = function() {
-      for (var e = 0; e < o.length; e++)
-          for (var t = e + 1; t < o.length; t++)
-              o[e] != o[t] && this.repelItems(o[e], o[t])
-  }
-  ,
-  v.prototype.removeAllRepulsions = function() {
-      for (var e = 0; e < o.length; e++) {
-          var t = o[e];
-          this.objects.item[t].viewData.search.repulsions = {}
-      }
-      sceneManager.physics.attractions = []
-  }
-  ,
-  v.prototype.moveFromDetailToIn = function() {
-      ui.openSearchLabel(),
-      this.state = "in"
-  }
-  ,
-  v.prototype.itemClickCallback = function(p) {
-      var e = this;
-      if (this.parentVis.uiEnabled && "in" === this.parentVis.state) {
-          function t() {
-              sceneManager.setPaused(!0);
-              var e = [];
-              if ($("#ajax-content .tag-grid .tag a").each((function() {
-                  var t = $(this).attr("href").match(/tag\/(.*?)\//)[1];
-                  e.push(t)
-              }
-              )),
-              0 !== e.length) {
-                  var t = vis.getVisByName("drift");
-                  void 0 !== t && t.addItemTagsToHistory(e)
-              }
-          }
-          function i() {
-              sceneManager.setPaused(!1),
-              e.parentVis.uiEnabled = !0,
-              e.parentVis.bindBackButton(),
-              o.length > 1 ? (e.parentVis.showBack(),
-              e.parentVis.moveFromDetailToIn()) : $("#nav-back").trigger("click")
-          }
-          ui.closeSearchLabel(),
-          ui.addToPath(e.basicInfo, "item"),
-          ui.openItemDetails(e.basicInfo, t, i),
-          this.parentVis.state = "detail"
-      }
-  }
-  ,
-  v.prototype.removeRepulsionsConnectedTo = function(e) {
-      var t = e.viewData.search.repulsions;
-      for (var i in t) {
-          delete e.viewData.search.repulsions[i];
-          var r = e.basicInfo.id;
-          delete this.objects.item[i].viewData.search.repulsions[r],
-          physics.removeParticleAttractions(t[i])
-      }
-  }
-  ,
-  v.prototype.getActiveRectBounds = function() {
-      for (var e = {
-          min: new THREE.Vector3(9999999999,9999999999,9999999999),
-          max: new THREE.Vector3(-9999999999,-9999999999,-9999999999)
-      }, t = 0; t < o.length; t++) {
-          var i = this.objects.item[o[t]].viewData.search.positionActive;
-          i.x < e.min.x && (e.min.x = i.x),
-          i.x > e.max.x && (e.max.x = i.x),
-          i.y < e.min.y && (e.min.y = i.y),
-          i.y > e.max.y && (e.max.y = i.y),
-          i.z < e.min.z && (e.min.z = i.z),
-          i.z > e.max.z && (e.max.z = i.z)
-      }
-      for (t = 0; t < tagNodes.length; t++) {
-          var r = tagNodes[t].position;
-          r.x < e.min.x && (e.min.x = r.x),
-          r.x > e.max.x && (e.max.x = r.x),
-          r.y < e.min.y && (e.min.y = r.y),
-          r.y > e.max.y && (e.max.y = r.y),
-          r.z < e.min.z && (e.min.z = r.z),
-          r.z > e.max.z && (e.max.z = r.z)
-      }
-      return e
-  }
-  ,
-  v.prototype.getCenter = function() {
-      return d
-  }
-  ,
-  v
+, CompassPointer = function() {
+    var e, t = function(t) {
+        THREE.Object3D.call(this),
+        e = void 0 === t ? 200 : t;
+        var i = .1
+          , r = .5
+          , n = .5
+          , o = (new THREE.Color(16711680),
+        new THREE.Geometry);
+        o.vertices.push(new THREE.Vector3(0,i,0)),
+        o.vertices.push(new THREE.Vector3(i,0,0)),
+        o.vertices.push(new THREE.Vector3(0,-i,0)),
+        o.vertices.push(new THREE.Vector3(-i,0,0)),
+        o.vertices.push(new THREE.Vector3(0,0,-n)),
+        o.faces.push(new THREE.Face3(0,1,4)),
+        o.faces.push(new THREE.Face3(1,2,4)),
+        o.faces.push(new THREE.Face3(2,3,4)),
+        o.faces.push(new THREE.Face3(3,0,4)),
+        o.computeFaceNormals();
+        var a = new THREE.Geometry;
+        a.vertices.push(new THREE.Vector3(0,i,0)),
+        a.vertices.push(new THREE.Vector3(i,0,0)),
+        a.vertices.push(new THREE.Vector3(0,-i,0)),
+        a.vertices.push(new THREE.Vector3(-i,0,0)),
+        a.vertices.push(new THREE.Vector3(0,0,r)),
+        a.faces.push(new THREE.Face3(0,1,4)),
+        a.faces.push(new THREE.Face3(1,2,4)),
+        a.faces.push(new THREE.Face3(2,3,4)),
+        a.faces.push(new THREE.Face3(3,0,4)),
+        a.computeFaceNormals();
+        var s = new THREE.MeshLambertMaterial({
+            color: 16711680,
+            side: THREE.DoubleSide,
+            transparent: !0,
+            opacity: 1
+        })
+          , l = new THREE.MeshLambertMaterial({
+            color: 11184810,
+            side: THREE.DoubleSide,
+            transparent: !0,
+            opacity: 1
+        })
+          , h = new THREE.Mesh(o,s)
+          , c = new THREE.Mesh(a,l);
+        this.add(h),
+        this.add(c),
+        this.scale.set(e, e, e)
+    };
+    return t.prototype = Object.create(THREE.Object3D.prototype),
+    t.prototype.getScalar = function() {
+        return e
+    }
+    ,
+    t
 }()
 , DriftCamControls = function() {
   var e, t, i, r, n, o = 0, a = 18, s = 0, l = 0, h = 0, c = 0, u = .25 * -Math.PI;
@@ -33396,7 +32714,6 @@ var Stats = function() {
       this.autoFloat = !0,
       this.animating = !1,
       this.suspended = !1,
-      console.log('this.init()------'),
       this.init()
   };
   return A.prototype = {
@@ -33440,37 +32757,37 @@ var Stats = function() {
           w = sceneManager.getClock().getElapsedTime() + b,
           q = !0
       },
-      onKeyDown: function(e) {
-          switch (e.keyCode) {
-          case 38:
-              g = !0;
-              break;
-          case 40:
-              v = !0;
-              break;
-          case 37:
-              y = !0;
-              break;
-          case 39:
-              T = !0
-          }
-      },
-      onKeyUp: function(e) {
-          switch (ui.previewOpen && ui.closeItemPreview(),
-          e.keyCode) {
-          case 38:
-              g = !1;
-              break;
-          case 40:
-              v = !1;
-              break;
-          case 37:
-              y = !1;
-              break;
-          case 39:
-              T = !1
-          }
-      },
+    //   onKeyDown: function(e) {
+    //       switch (e.keyCode) {
+    //       case 38:
+    //           g = !0;
+    //           break;
+    //       case 40:
+    //           v = !0;
+    //           break;
+    //       case 37:
+    //           y = !0;
+    //           break;
+    //       case 39:
+    //           T = !0
+    //       }
+    //   },
+    //   onKeyUp: function(e) {
+    //       switch (ui.previewOpen && ui.closeItemPreview(),
+    //       e.keyCode) {
+    //       case 38:
+    //           g = !1;
+    //           break;
+    //       case 40:
+    //           v = !1;
+    //           break;
+    //       case 37:
+    //           y = !1;
+    //           break;
+    //       case 39:
+    //           T = !1
+    //       }
+    //   },
       forceStop: function() {
           this.mousedown = !1,
           this.dragging = !1,
@@ -33529,6 +32846,7 @@ var Stats = function() {
           (n = sceneManager.getCamera().position.clone().sub(e)).normalize()
       },
       animate: function(n) {
+        console.log('参数',n)
           p.stop(),
           this.calculateLookVector();
           var a, u = t.position.clone(), d = n.pos.clone(), f = !1;
@@ -33583,6 +32901,7 @@ var Stats = function() {
                   t.position.lerpVectors(w, i, h),
                   H *= .97,
                   w.add(b.clone().multiplyScalar(H))
+
               } else
                   t.position.copy(i);
               if (f) {
@@ -33694,843 +33013,7 @@ var Stats = function() {
       }
   },
   A
-}()
-, TagsCamControls = function() {
-  var e, t, i = 100, r = i, n = new THREE.Quaternion, o = new THREE.Quaternion, a = new THREE.Quaternion, s = new THREE.Vector3, l = !1, h = !0, c = !0, u = 0, p = 8e-4, d = (new THREE.Vector3(0,-1,0),
-  new THREE.Vector3), f = 0, m = 1e6, E = 0, g = 0, v = (a = new THREE.Quaternion,
-  0), y = 0, T = 0, R = 0, x = 0, H = !1, b = function(i) {
-      this,
-      e = i,
-      this.moveSpeed = 200,
-      this.transitionDuration = 3e3,
-      this.drag = .3,
-      t = new TWEEN.Tween,
-      this.mousedown = !1,
-      this.dragging = !1
-  };
-  return b.prototype = {
-      constructor: b,
-      init: function(t) {
-          a.copy(t),
-          n.copy(e.quaternion),
-          i = r;
-          var o = new THREE.Vector3(0,0,-1);
-          o.applyQuaternion(a),
-          o.y = 0,
-          o.normalize(),
-          v = .5 * Math.PI + Math.atan2(o.z, o.x)
-      },
-      setOutPosition: function(e) {
-          outPosition.set(e.x, e.y, e.z)
-      },
-      setInDistance: function(e) {
-          inDistance = e
-      },
-      onMouseDown: function(e) {
-          R = y,
-          x = T,
-          y = e.clientX,
-          T = e.clientY,
-          this.mousedown = !0
-      },
-      onMouseUp: function() {
-          this.mousedown = !1,
-          this.dragging = !1
-      },
-      onMouseLeave: function() {
-          this.mousedown = !1,
-          this.dragging = !1
-      },
-      onMouseMove: function(e) {
-          (R = y,
-          x = T,
-          y = e.clientX,
-          T = e.clientY,
-          this.mousedown && !l) && (this.dragging || (this.dragging = !0),
-          E += .01 * -(y - R),
-          g += .01 * -(T - x),
-          this.updateTargets(),
-          u = 0)
-      },
-      updateTargets: function() {
-          g > Math.PI / 2 ? g = Math.PI / 2 : g < -Math.PI / 2 && (g = -Math.PI / 2);
-          var e = new THREE.Quaternion;
-          e.setFromAxisAngle(new THREE.Vector3(0,1,0), E + v);
-          var t = new THREE.Quaternion;
-          t.setFromAxisAngle(new THREE.Vector3(1,0,0), g),
-          n = a.clone().multiply(e).multiply(t)
-      },
-      onMouseWheel: function(e) {
-          l || H || (i += 25 * -e,
-          i = Math.min(Math.max(i, f), m))
-      },
-      onKeyDown: function() {
-          this.dragging = !0
-      },
-      onKeyUp: function() {
-          ui.previewOpen && ui.closeItemPreview(),
-          this.dragging = !1
-      },
-      update: function() {
-          l || (H ? e.position.lerp(s, this.drag) : (r = lerp(r, i, this.drag),
-          o.slerp(n, this.drag),
-          e.position.set(0, 0, 1),
-          e.position.multiplyScalar(r),
-          e.position.applyQuaternion(o),
-          e.position.add(d)),
-          e.quaternion.slerp(n, this.drag),
-          console.log('this.dragging',this.dragging),
-          this.dragging ? e.lookAt(d) : h && c && (u < p && (u += 1e-5),
-          E += u,
-          this.updateTargets()))
-      },
-      animate: function(a) {
-          t.stop();
-          var h = {
-              cx: e.position.x,
-              cy: e.position.y,
-              cz: e.position.z,
-              t: 0
-          }
-            , c = {
-              cx: a.pos.x,
-              cy: a.pos.y,
-              cz: a.pos.z,
-              t: 1
-          }
-            , p = !1;
-          if (void 0 !== a.look) {
-              var f = e.position.distanceTo(a.look)
-                , m = this.getLookVector().multiplyScalar(f).add(e.position);
-              h.lx = m.x,
-              h.ly = m.y,
-              h.lz = m.z,
-              c.lx = a.look.x,
-              c.ly = a.look.y,
-              c.lz = a.look.z,
-              p = !0
-          }
-          l = !0,
-          t = new TWEEN.Tween(h).to(c, a.duration).onUpdate((function() {
-              e.position.set(this.cx, this.cy, this.cz),
-              p && e.lookAt(new THREE.Vector3(this.lx,this.ly,this.lz))
-          }
-          )).easing(TWEEN.Easing.Quadratic.InOut).onComplete((function() {
-              var t = e.position.clone().sub(d).length();
-              i = t,
-              r = t,
-              s.copy(e.position),
-              p && (n.copy(e.quaternion),
-              o.copy(e.quaternion)),
-              void 0 !== a.callback && a.callback(),
-              l = !1,
-              u = 0
-          }
-          )).start()
-      },
-      animateSlerp: function(a) {
-          t.stop();
-          var h = e.position.clone().sub(d)
-            , c = a.pos.clone().sub(d)
-            , p = h.length()
-            , f = c.length()
-            , m = new THREE.Vector3(1,0,0)
-            , v = this.quaternionBetweenVecs(m, h.normalize())
-            , y = this.quaternionBetweenVecs(m, c.normalize());
-          new THREE.Quaternion;
-          l = !0,
-          t = new TWEEN.Tween({
-              t: 0
-          }).to({
-              t: 1
-          }, a.duration).onUpdate((function() {
-              var t = v.clone().slerp(y, this.t)
-                , i = lerp(p, f, this.t)
-                , r = m.clone().applyQuaternion(t).multiplyScalar(i).add(d);
-              e.position.copy(r),
-              e.lookAt(d)
-          }
-          )).easing(TWEEN.Easing.Quadratic.InOut).onComplete((function() {
-              var t = e.position.clone().sub(d).length();
-              i = t,
-              r = t,
-              n.copy(e.quaternion),
-              o.copy(e.quaternion),
-              s.copy(e.position);
-              var h = e.position.x - d.x
-                , c = e.position.y - d.y
-                , p = e.position.z - d.z
-                , f = e.position.distanceTo(d);
-              E = .5 * Math.PI - Math.atan2(p, h),
-              g = -Math.asin(c / f),
-              void 0 !== a.callback && a.callback(),
-              l = !1,
-              u = 0
-          }
-          )).start()
-      },
-      stopAnimation: function() {
-          t.stop()
-      },
-      getLookVector: function() {
-          var t = new THREE.Vector3(0,0,-1);
-          return t.applyQuaternion(e.quaternion),
-          t.normalize(),
-          t
-      },
-      getTargetScrollPos: function() {
-          return s
-      },
-      isAnimating: function() {
-          return l
-      },
-      setScrollMode: function(e) {
-          H = e
-      },
-      setRotationCenter: function(t) {
-          d = t;
-          var i = e.position.x - d.x
-            , r = e.position.z - d.z;
-          E = .5 * Math.PI - Math.atan2(r, i),
-          g = 0
-      },
-      setZoomLimits: function(e, t) {
-          f = e,
-          m = t,
-          i = Math.max(Math.min(i, m), f)
-      },
-      setAutoRotate: function(e) {
-          h = e
-      },
-      quaternionBetweenVecs: function(e, t) {
-          var i = new THREE.Vector3;
-          i.crossVectors(e, t),
-          i.normalize(),
-          0 == i.x && 0 == i.y && 0 == i.z && (i = t);
-          var r = GeomUtils.angleBetweenVecs(e, t)
-            , n = new THREE.Quaternion;
-          return n.setFromAxisAngle(i, r),
-          n.normalize(),
-          n
-      }
-  },
-  b
-}()
-, SearchCamControls = function() {
-  var e, t, i = new THREE.Vector3, r = new THREE.Quaternion, n = new THREE.Quaternion, o = !1, a = (new THREE.Vector3(0,-1,0),
-  new THREE.Vector3), s = 0, l = 0, h = (n = new THREE.Quaternion,
-  0), c = 0, u = 0, p = 0, d = 0, f = function(i) {
-      this,
-      e = i,
-      this.moveSpeed = 200,
-      this.transitionDuration = 3e3,
-      this.lookDrag = .2,
-      this.moveDrag = .2,
-      t = new TWEEN.Tween,
-      this.mousedown = !1
-  };
-  return f.prototype = {
-      constructor: f,
-      init: function(t) {
-          n.set(t.x, t.y, t.z, t.w),
-          r.set(e.quaternion.x, e.quaternion.y, e.quaternion.z, e.quaternion.w),
-          i.set(e.position.x, e.position.y, e.position.z);
-          var o = new THREE.Vector3(0,0,-1);
-          o.applyQuaternion(n),
-          o.y = 0,
-          o.normalize(),
-          h = .5 * Math.PI + Math.atan2(o.z, o.x)
-      },
-      setOutPosition: function(e) {
-          outPosition.set(e.x, e.y, e.z)
-      },
-      setInDistance: function(e) {
-          inDistance = e
-      },
-      onMouseDown: function(e) {
-          p = c,
-          d = u,
-          c = e.clientX,
-          u = e.clientY,
-          this.mousedown = !0
-      },
-      onMouseUp: function() {
-          this.mousedown = !1
-      },
-      onMouseMove: function(e) {
-          (p = c,
-          d = u,
-          c = e.clientX,
-          u = e.clientY,
-          this.mousedown && !o) && (s += .01 * -(c - p),
-          l += .01 * -(u - d),
-          this.updateTargets())
-      },
-      updateTargets: function() {
-          l > Math.PI / 2 ? l = Math.PI / 2 : l < -Math.PI / 2 && (l = -Math.PI / 2);
-          var e = new THREE.Quaternion;
-          e.setFromAxisAngle(new THREE.Vector3(0,1,0), s + h);
-          var t = new THREE.Quaternion;
-          t.setFromAxisAngle(new THREE.Vector3(1,0,0), l);
-          var o = n.clone().multiply(e).multiply(t)
-            , c = i.clone().sub(a)
-            , u = c.length();
-          i.set(0, 0, 1),
-          i.multiplyScalar(u),
-          i.applyQuaternion(o),
-          i.add(a);
-          c.clone().negate().normalize();
-          r.set(o.x, o.y, o.z, o.w)
-      },
-      onMouseWheel: function() {},
-      onKeyDown: function() {},
-      onKeyUp: function() {},
-      update: function() {
-          o || (e.position.lerp(i, this.moveDrag),
-          e.quaternion.slerp(r, this.lookDrag))
-      },
-      animate: function(n) {
-          t.stop();
-          var a = {
-              cx: e.position.x,
-              cy: e.position.y,
-              cz: e.position.z,
-              t: 0
-          }
-            , s = {
-              cx: n.pos.x,
-              cy: n.pos.y,
-              cz: n.pos.z,
-              t: 1
-          }
-            , l = !1;
-          if (void 0 !== n.look) {
-              var h = e.position.distanceTo(n.look)
-                , c = this.getLookVector().multiplyScalar(h).add(e.position);
-              a.lx = c.x,
-              a.ly = c.y,
-              a.lz = c.z,
-              s.lx = n.look.x,
-              s.ly = n.look.y,
-              s.lz = n.look.z,
-              l = !0
-          }
-          o = !0,
-          t = new TWEEN.Tween(a).to(s, n.duration).onUpdate((function() {
-              e.position.set(this.cx, this.cy, this.cz),
-              l && e.lookAt(new THREE.Vector3(this.lx,this.ly,this.lz))
-          }
-          )).easing(TWEEN.Easing.Quadratic.InOut).onComplete((function() {
-              i.set(e.position.x, e.position.y, e.position.z),
-              l && r.set(e.quaternion.x, e.quaternion.y, e.quaternion.z, e.quaternion.w),
-              void 0 !== n.callback && n.callback(),
-              o = !1,
-              autoRotateSpeed = 0
-          }
-          )).start()
-      },
-      animateSlerp: function(n) {
-          t.stop();
-          var h = e.position.clone().sub(a)
-            , c = n.pos.clone().sub(a)
-            , u = h.length()
-            , p = c.length()
-            , d = new THREE.Vector3(1,0,0)
-            , f = this.quaternionBetweenVecs(d, h.normalize())
-            , m = this.quaternionBetweenVecs(d, c.normalize());
-          new THREE.Quaternion;
-          o = !0,
-          t = new TWEEN.Tween({
-              t: 0
-          }).to({
-              t: 1
-          }, n.duration).onUpdate((function() {
-              var t = f.clone().slerp(m, this.t)
-                , i = lerp(u, p, this.t)
-                , r = d.clone().applyQuaternion(t).multiplyScalar(i).add(a);
-              e.position.set(r.x, r.y, r.z),
-              e.lookAt(a)
-          }
-          )).easing(TWEEN.Easing.Quadratic.InOut).onComplete((function() {
-              i.set(e.position.x, e.position.y, e.position.z),
-              r.set(e.quaternion.x, e.quaternion.y, e.quaternion.z, e.quaternion.w);
-              var t = e.position.x - a.x
-                , h = e.position.y - a.y
-                , c = e.position.z - a.z
-                , u = e.position.distanceTo(a);
-              s = .5 * Math.PI - Math.atan2(c, t),
-              l = -Math.asin(h / u),
-              void 0 !== n.callback && n.callback(),
-              o = !1,
-              autoRotateSpeed = 0
-          }
-          )).start()
-      },
-      stopAnimation: function() {
-          t.stop()
-      },
-      setTargetPosition: function(e) {
-          i.set(e.x, e.y, e.z)
-      },
-      setTargetPositionToCurrent: function() {
-          i.set(e.position.x, e.position.y, e.position.z)
-      },
-      getLookVector: function() {
-          var t = new THREE.Vector3(0,0,-1);
-          return t.applyQuaternion(e.quaternion),
-          t.normalize(),
-          t
-      },
-      isAnimating: function() {
-          return o
-      },
-      getTargetPosition: function() {
-          return i
-      },
-      setRotationCenter: function(t) {
-          a = t;
-          var i = e.position.x - a.x
-            , r = e.position.z - a.z;
-          s = .5 * Math.PI - Math.atan2(r, i),
-          l = 0
-      },
-      setZoomLimits: function(e, t) {
-          e,
-          t
-      },
-      setAutoRotate: function(e) {
-          autoRotateEnabled = e
-      },
-      quaternionBetweenVecs: function(e, t) {
-          var i = new THREE.Vector3;
-          i.crossVectors(e, t),
-          i.normalize(),
-          0 == i.x && 0 == i.y && 0 == i.z && (i = t);
-          var r = GeomUtils.angleBetweenVecs(e, t)
-            , n = new THREE.Quaternion;
-          return n.setFromAxisAngle(i, r),
-          n.normalize(),
-          n
-      }
-  },
-  f
-}()
-, InfoWidget = function() {
-  var e, t, i, r, n, o = !0, a = !1, s = 450, l = function() {
-      n = this;
-      var o = "info-widget-box"
-        , a = "help-link"
-        , s = "about-link"
-        , l = "bg-widget-curtain";
-      (e = $("#" + "footer-nav")).prepend('<a id="' + s + '" href="#">About</a> '),
-      e.prepend('<a id="' + a + '" href="#">Navigation</a> '),
-      $("#ui #global").append('<div id="' + o + '" tabindex="-1"></div>'),
-      (t = $("#" + o)).hide(),
-      t.before('<div id="' + l + '"></div>'),
-      (r = $("#" + l)).click((function() {
-          n.close()
-      }
-      )),
-      (i = $("#" + a)).hide(),
-      i.click((function(e) {
-          e.preventDefault(),
-          $(this).hasClass("inactive") || ($(this).hasClass("active") ? n.close() : n.openHelp())
-      }
-      )),
-      aboutLink = $("#" + s),
-      aboutLink.hide(),
-      aboutLink.click((function(e) {
-          e.preventDefault(),
-          $(this).hasClass("inactive") || ($(this).hasClass("active") ? n.close() : n.openAbout())
-      }
-      )),
-      t.click((function() {
-          n.close()
-      }
-      )),
-      t.keyup((function() {
-          n.close()
-      }
-      ))
-  };
-  return l.prototype = {
-      constructor: l,
-      setContent: function(e) {
-          switch (e) {
-          case "drift":
-              t.html('<div id="info-widget-box-inner"><p>Click and drag your mouse, or press the &#9668; &#9658; keys, to look around<br /><br />Scroll up/down or press the &#9650; &#9660; keys to move forwards and backwards.</p></div>');
-              break;
-          case "tags":
-              t.html('<div id="info-widget-box-inner"><p>Click on a &nbsp;<img src="/assets/images/compass_mid.png" />&nbsp; to add a new tag<br /><br />Click on a sphere to view its content<br /><br >Click and drag your mouse to rotate your perspective<br /><br >Scroll or press the &#9650; &#9660; keys to zoom</p></div>');
-              break;
-          case "search":
-              t.html('<div id="info-widget-box-inner"><p>Search the archive by title or tag name</p></div>');
-              break;
-          case "about":
-              t.html('<div id="info-widget-box-inner"><h1>Your uncertain archive</h1><p><br />Artworks, exhibitions, works in public space, pavilions, models, books, talks, and research by Olafur Eliasson and his studio.<br /><br />Drift through the cloud of archival objects or use the connections mode to highlight associations.</p></div>')
-          }
-      },
-      openHelp: function() {
-        vis.getCurrentVis().onInfoOpen();
-        aboutLink.hasClass("active") && aboutLink.removeClass("active");
-        console.log('i.hasClass("active")', i);
-          if (!i.hasClass("active")) {
-              if ("none" === t.css("display")) {
-                // var e = vis.getCurrentVis().name;
-                // n.setContent(e),
-                // $("body").css("cursor", "default"),
-                // vis.getCurrentVis().uiEnabled = !1,
-                // t.stop().fadeIn(s),
-                // n.onResize(),
-                i.addClass("active");
-                //   t.focus(),
-                // a = true;
-              } else
-                //   t.find("#info-widget-box-inner").stop().fadeOut(s, (function() {
-                //     var e = vis.getCurrentVis().name;
-                //     n.setContent(e),
-                //     $("body").css("cursor", "default"),
-                //     vis.getCurrentVis().uiEnabled = !1,
-                //     //   t.find("#info-widget-box-inner").stop().fadeIn(s),
-                //     n.onResize(),
-                //     i.addClass("active"),
-                //     //   t.focus(),
-                //       a = true;
-                //   }
-                //   ));
-                i.addClass("active");
-            //   o && setTimeout((function() {
-            //       o && n.close()
-            //   }
-            //   ), 7000)
-          }
-      },
-      openAbout: function() {
-          vis.getCurrentVis().onInfoOpen();
-          console.log('i.hasClass("active")', i.hasClass("active"));
-          i.hasClass("active") && i.removeClass("active"),
-          console.log('openAbout n', n),
-          aboutLink.hasClass("active") || (n.setContent("about"),
-          $("body").css("cursor", "default"),
-          vis.getCurrentVis().uiEnabled = false,
-          t.stop().fadeIn(s),
-          n.onResize(),
-          aboutLink.addClass("active"),
-          t.focus(),
-          a = !0,
-          console.log('openAbout o', 0),
-          o && n.openHelp());
-        //   o && setTimeout((function() {
-        //       o && n.openHelp()
-        //   }
-        //   ), 10000))
-      },
-      showAboutLink: function() {
-          aboutLink.stop().fadeIn("fast")
-      },
-      hideAboutLink: function() {
-          aboutLink.stop().fadeOut("fast")
-      },
-      showHelpLink: function() {
-          i.stop().fadeIn("fast")
-      },
-      hideHelpLink: function() {
-          i.stop().fadeOut("fast")
-      },
-      disableHelpLink: function() {
-          i.hasClass("active") && i.removeClass("active"),
-          i.hasClass("inactive") || i.addClass("inactive")
-      },
-      enableHelpLink: function() {
-          i.hasClass("inactive") && i.removeClass("inactive")
-      },
-      onResize: function() {},
-      close: function(e) {
-          if (vis.getCurrentVis().onInfoClose(),
-          t.blur(),
-          i.hasClass("active"))
-              "none" === $("#header").css("display") && setTimeout((function() {
-                  r.remove(),
-                  o = !1,
-                  $("#header, #ui #global #view-nav, #footer-nav").stop().fadeIn("fast")
-              }
-              ), 1e3),
-              $("body").css("cursor", "default"),
-              vis.getCurrentVis().uiEnabled = !0,
-              t.stop().fadeOut(s),
-              aboutLink.removeClass("active"),
-              i.removeClass("active");
-          else if (aboutLink.hasClass("active"))
-              if ($("body").css("cursor", "default"),
-              vis.getCurrentVis().uiEnabled = !0,
-              aboutLink.removeClass("active"),
-              o) {
-                  function l(e) {
-                      e ? o && (r.remove(),
-                      o = !1) : o && (r.remove(),
-                      o = !1,
-                      setTimeout((function() {
-                          n.openHelp()
-                      }
-                      ), 100))
-                  }
-                  t.find("#info-widget-box-inner").stop().fadeOut(s, l(e))
-              } else
-                  t.stop().fadeOut(s);
-          a = !1
-      },
-      disableFirstTime: function() {
-          o = !1
-      },
-      ensureClosed: function() {
-          a && this.close()
-      }
-  },
-  l
-}()
-, ItemPanel = function() {
-  var e, t, i, r, n, o, a = "wrapper", s = [], l = 0, h = !1, c = function() {
-      r = this,
-      e = $("#" + a)
-  };
-  function setTo(e, t, i) {
-    console.log(n);
-  }
-  return c.prototype = {
-      constructor: c,
-      open: function(e, t, i) {
-          // return vis.setTo(e, t);
-          return setTo(e, t, i);
-          var a;
-          ($(".page, #wrapper .inner-wrap").css("height", "auto"),
-          openedCallback = t,
-          closeCallback = i,
-          s = [],
-          l = 0,
-          null != e) && (n = e.id,
-          a = void 0 !== e.object_display_type ? "item" : "tag",
-          s.push({
-              id: e.id,
-              type: a
-          }));
-          if (null != closeCallback && (o = closeCallback),
-          "item" === a) {
-              $("#header").after('<div id="curtain"></div>'),
-              $("#curtain").hide().fadeIn(500),
-              ui.startLoader();
-              var c = "/api/mock/archive"
-                , u = PATHS.API.replace("/api", c);
-              $.ajax({
-                  url: u,
-                  contentType: "application/json",
-                  dataType: "html",
-                  success: function(e) {
-                      ui.stopLoader(),
-                      $("#nav-back").stop().fadeIn("fast"),
-                      $("#curtain").after(e),
-                      $("#content").css("opacity", "0"),
-                      $("#content").append('<div id="nav-close" style="display:none"></div>'),
-                      $("#detail-continue").remove(),
-                      Waypoint.destroyAll(),
-                      $("#tag-slideshow").cycle(),
-                      window.initPage(),
-                      $("#tag-slideshow").removeClass("unstuck"),
-                      window.scrollToSlideshow(),
-                      r.onContentLoad(),
-                      $("#nav-close").stop().fadeIn("fast").click((function() {
-                          r.isOpen() && ("tags" === vis.getCurrentVis().name ? r.close(!0) : r.close());
-                          void 0 !== o && o()
-                      }
-                      )),
-                      $("body").css("overflow", "auto"),
-                      $("#content").css("opacity", "1")
-                  },
-                  error: function(e) {
-                      console.log(e)
-                  }
-              })
-          }
-          h = !0
-      },
-      goTo: function(t, i) {
-          e.find("#inner-content").fadeOut("fast", (function() {
-              var n = SITE_ROOT + "ajax.php?" + i + "&id=" + t;
-              e.find("#inner-content").empty().load(n, (function() {
-                  r.onContentLoad()
-              }
-              ))
-          }
-          ))
-      },
-      goForward: function() {
-          l < s.length - 1 && (l++,
-          this.goTo(s[l].id, s[l].type))
-      },
-      goBack: function() {
-          l > 0 && (l--,
-          this.goTo(s[l].id, s[l].type))
-      },
-      onContentLoad: function() {
-          $(".headline-tag a, .tag a").click((function(e) {
-              e.preventDefault();
-              var t = $(this).attr("href")
-                , i = t.indexOf("TEL")
-                , n = t.substr(i, 7)
-                , o = vis.getCurrentVis().name;
-              r.close(!1, (function() {
-                  sceneManager.setPaused(!1),
-                  ui.closeItemPreview(),
-                  "tags" === o ? vis.getCurrentVis().setTagsFromWithin([n]) : ui.openView("tags", {
-                      tagIds: [n]
-                  })
-              }
-              ))
-          }
-          )),
-          $(".reference-item a").click((function(e) {
-              e.preventDefault();
-              var t = $(this).attr("href").split("/")
-                , i = t[t.length - 2];
-              r.close(!1, (function() {
-                  ui.keepSearchLabel(!1);
-                  var e = vis.getCurrentVis();
-                  "drift" === e.name ? e.onReferenceClick(n, i) : (ui.closeSearchLabel(),
-                  ui.openView("drift", {
-                      refData: {
-                          srcId: n,
-                          refId: i
-                      }
-                  }))
-              }
-              ))
-          }
-          )),
-          null != openedCallback && openedCallback()
-      },
-      show: function() {
-          i.stop().fadeIn("fast"),
-          t.stop().fadeIn("fast")
-      },
-      hide: function() {
-          i.stop().fadeOut("fast"),
-          t.stop().fadeOut("fast")
-      },
-      close: function(e, t) {
-          void 0 !== t && (o = t),
-          $(".page, #wrapper .inner-wrap").css("height", "100%"),
-          !0 !== e && $("#nav-back").stop().fadeOut("fast"),
-          $("#ajax-content").stop().fadeOut("fast", (function() {
-              $("#tag-slideshow").cycle("destroy"),
-              "search" === vis.getCurrentVis().name && $("#icon-search-x").stop().fadeIn("fast"),
-              $(this).remove(),
-              $("body").css("overflow", "hidden"),
-              sceneManager.setPaused(!1)
-          }
-          )),
-          $("#curtain").stop().fadeOut(500, (function() {
-              $(this).remove()
-          }
-          )),
-          void 0 !== o && o(),
-          n = void 0,
-          h = !1
-      },
-      isOpen: function() {
-          return !!h
-      },
-      onResize: function() {
-          $(".inner-wrap").css("height", "auto")
-      }
-  },
-  c
-}()
-, NewPath = function() {
-  var e, t, i, r = [], n = [], o = function(r) {
-      this,
-      r,
-      $(r).append('<div id="path-hover-box"></div><div id="path-wrapper"><div id="path-nodes-container"></div></div>'),
-      e = $(r).find("#path-wrapper"),
-      t = $(r).find("#path-nodes-container"),
-      i = $(r).find("#path-hover-box"),
-      this.close()
-  };
-  return o.prototype.open = function() {
-      e.slideDown("fast")
-  }
-  ,
-  o.prototype.close = function() {
-      e.slideUp("fast")
-  }
-  ,
-  o.prototype.add = function(n, o) {
-      if (void 0 !== n.tagdata && (n.id = n["@attributes"].tagid),
-      0 == r.length || r[r.length - 1].id != n.id) {
-          e.is(":visible") || this.open(),
-          n.pathNodeType = o,
-          r.push(n);
-          var a = $('<div class="' + n.id + ' path-node" data-id="' + n.id + '" ></div>');
-          a.css({
-              "background-color": "#ffffff"
-          }),
-          a.click((function() {
-              var e = a.data("id");
-              0 !== e.indexOf("T") ? vis.getCurrentVis().items[e].focusMe() : vis.getCurrentVis().tags[e].focusMe()
-          }
-          )),
-          a.mouseenter((function() {
-              if (i.empty(),
-              i.hide(),
-              void 0 !== n.image) {
-                  var t = getImageUrl(n.image.imageid, 64);
-                  i.html('<table><tr><td><img src="' + t + '" /></td><td><div class="label">' + n.title + '</div></td></tr></table><div id="path-hover-arrow"></div>')
-              } else
-                  i.html('<table><tr><td><div class="label">' + n.tagdata.tagvalue + '</div></td></tr></table><div id="path-hover-arrow"></div>');
-              var r = $(this).offset().top
-                , o = $(this).offset().left;
-              if (o <= e.width() / 2)
-                  i.css({
-                      top: r - 60 + "px",
-                      left: o + "px"
-                  }),
-                  $("#path-hover-arrow").css("float", "left");
-              else {
-                  var a = i.width()
-                    , s = $(this).width();
-                  i.css({
-                      top: r - 60 + "px",
-                      left: o - a + s + "px"
-                  }),
-                  $("#path-hover-arrow").css("float", "right")
-              }
-              i.show()
-          }
-          )).mouseleave((function() {
-              i.hide(),
-              i.empty()
-          }
-          )),
-          $(t).append(a),
-          a.hide(),
-          a.fadeIn("fast"),
-          r.length - 1
-      }
-  }
-  ,
-  o.prototype.favorite = function(e) {
-      console.log("add " + e + " to favorites"),
-      n.push(e),
-      $(t).find("." + e).addClass("faved")
-  }
-  ,
-  o.prototype.unfavorite = function(e) {
-      var i = n.indexOf(e);
-      -1 !== i && (console.log("unfavorite " + e),
-      $(t).find("." + e).removeClass("faved"),
-      n.splice(i, 1))
-  }
-  ,
-  o
-}()
+}();
 _typeface_js && _typeface_js.loadFace && _typeface_js.loadFace({
   glyphs: {
       S: {
@@ -35934,23 +34417,6 @@ _typeface_js && _typeface_js.loadFace && _typeface_js.loadFace({
       xMax: 1511.234375
   },
   resolution: 1e3,
-  original_font_information: {
-      postscript_name: "Circular-Book",
-      version_string: "Version 1.001",
-      vendor_url: "http://www.lineto.com",
-      full_font_name: "Circular Book",
-      font_family_name: "Circular Book",
-      copyright: "",
-      description: "",
-      trademark: "Circular is a trademark of Lineto",
-      designer: "Laurenz Brunner",
-      designer_url: "http://www.lineto.com/The+Designers",
-      unique_font_identifier: "Lineto: Circular-Book",
-      license_url: "http://www.lineto.com/Lineto.com/Font+Licensing",
-      license_description: "",
-      manufacturer_name: "Lineto",
-      font_sub_family_name: "Regular"
-  },
   descender: -373,
   familyName: "Circular",
   lineHeight: 1757,
@@ -35962,85 +34428,57 @@ function(e) {
   }
   function i(e, t) {
       var i = t;
-      console.log('api.itemListArray', api.itemListArray);
-      console.log('e', e);
-      console.log('i', i);
-      itemField = new ItemField(api.itemListArray,e,i,(function() {
-          r()
-      }
-      ))
-      console.log('itemField', itemField);
+      itemField = new ItemField(api.itemListArray,e,i,r);
   }
   function r() {
-    console.log('api', api);
     vis = new VisManager(sceneManager,api,itemField),
-    // e("#wrapper .inner-wrap").append('<div id="ui"></div>'),
-    // ui = new UIManager(e("#ui")),
-    console.log(api, itemField);
     vis.add(new DriftVis(sceneManager,api,itemField)),
-    // vis.add(new TagsVis(sceneManager,api,itemField)),
-    // vis.add(new SearchVis(sceneManager,api,itemField));
-    console.log('e("#uncertain-preload")', e("#uncertain-preload").length);
-      if (0 === e("#uncertain-preload").length)
-          vis.setTo("drift", {
-              isIntro: !0
-          });
-      else {
-          var t = e("#uncertain-preload").data("preload");
-          t.isIntro = !0,
-          vis.setTo("tags", t)
+    vis.add(new TagsVis(sceneManager,api,itemField)),
+    vis.setTo("drift", {
+      isIntro: !0
+    });
+    vis.getCurrentVis().disableItemInteraction(),
+    e("body").css("overflow", "hidden");
+      var t = 5000
+        , i = sceneManager.SKYDOME_VIEW_COLORS[vis.getCurrentVis().name];
+      i.easing = TWEEN.Easing.Quadratic.Out,
+      sceneManager.tweenSkyDomeState(i, t, null),
+      sceneManager.setUpdateFunc((function() {
+          vis.update()
       }
-      // ui.selectViewNav(vis.getCurrentVis().name),
-      vis.getCurrentVis().disableItemInteraction(),
-      // ui.stopLoader(),
-      setTimeout(function() {
-        // iconWrap.cleanUp(),
-        // delete iconWrap,
-        // e(window).scrollTop(0),
-        // e(".page").css({
-        //     height: "100%"
-        // }),
-        // e("#content").remove(),
-        e("body").css("overflow", "hidden");
-        var t = 5000
-          , i = sceneManager.SKYDOME_VIEW_COLORS[vis.getCurrentVis().name];
-        i.easing = TWEEN.Easing.Quadratic.Out,
-        sceneManager.tweenSkyDomeState(i, t, null),
-        sceneManager.setUpdateFunc((function() {
-            vis.update()
-        }
-        )),
-        vis.getCurrentVis().initCamPos(t, (function() {
-            // ui.openAbout()
-            // ui.openHelp()
-            e("#help-link").addClass("active");
-        }
-        ))
-    }, 1500);
+      )),
+      vis.getCurrentVis().initCamPos(t, (function() {}));
   }
 
   window.img3d = {
     init: function() {
       $("body").css("overflow", "hidden"),
-      // $("#content").css({ position: "relative", top: "0", left: "0" }),
-      // $("#uncertain").remove(),
-      // $("#wrapper .inner-wrap").prepend('<div id="uncertain"></div>'),
-      $("#img").css({
-        position: "fixed",
-        top: "0",
-        left: "0",
-        width: "100%",
-        height: "100%",
-      });
-
-    //   var n = document.createElement("script");
-    //   n.setAttribute("src", "/assets/app-ua.js"), document.head.appendChild(n);
-      setTimeout(function() {
-        window.modelReady = true;
-      }, 1000);
-
+    //   $("#img").css({
+    //     position: "fixed",
+    //     top: "0",
+    //     left: "0",
+    //     width: "100%",
+    //     height: "100%",
+    //   }).show();
       sceneManager = new SceneManager(e("#img"));
       t();
-    }
+    },
+    setTo: function (id) {
+        $("#img").css({
+            position: "fixed",
+            top: "0",
+            left: "0",
+            width: "100%",
+            height: "100%",
+          }).show();
+        vis.setTo("tags", {
+            tagIds: [api.itemList[id + "_1"].tags[0].tag_goya_id],
+            // center: sceneManager.getCamera().position.clone(),
+            lastView: "drift"
+        })
+        // back.add(function () {
+        //     vis.setTo("drift");
+        // });
+    },
   }
 }(window.jQuery);
