@@ -19,6 +19,7 @@ body {
   transform-style: preserve-3d;
   perspective: 600px;
   overflow: hidden;
+  font-family: ariblk;
 }
 
 :root {
@@ -234,6 +235,7 @@ body {
   font-weight: bold;
   padding: 5px 3px;
   font-size: 18px;
+  font-family: ariblk;
 }
 
 /* 光碟样式 2 */
@@ -245,6 +247,7 @@ body {
   border-radius: 50%;
   margin: 0 auto;
   cursor: pointer;
+  font-family: ariblk;
 }
 
 .card-lg {
@@ -587,15 +590,4 @@ body {
   transform: rotateY(180deg);
   border: 2px solid var(--color);
   border-radius: 6px;
-}
-
-.cd-back:before {
-  content: 'BLURRY';
-  position: absolute;
-  color: var(--color);
-  left: 50%;
-  top: -25px;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: bold;
 }

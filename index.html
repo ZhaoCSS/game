@@ -10,6 +10,15 @@
   <link rel="stylesheet" href="./css/magic.min.css" />
   <link rel="stylesheet" href="./css/main.css" />
   <link rel="stylesheet" href="./css/action.css" />
+  <style>
+    @font-face {
+      font-family: "ariblk";
+      src: url("./css/fonts/ariblk.woff") format("woff"),url("./css/fonts/ariblk.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap
+    }
+  </style>
 </head>
 
 <body>
@@ -115,7 +124,7 @@
     return !1;
   }
   function getImageUrl(id) {
-    return '../image/' + id + '.jpg';
+    return './image/' + id + '.jpg';
   }
 </script>
 <script src="./script/js/ua.js"></script>

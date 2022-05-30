@@ -20,6 +20,7 @@
   touch-action: manipulation;
   font-size: 18px;
   font-weight: 800;
+  font-family: ariblk;
   border-radius: 2px;
   color: var(--color);
   text-transform: uppercase;
