@@ -31538,8 +31538,8 @@ var Stats = function () {
       w = function (e) {
         r = this;
         // var i = 6072307
-        var i = 15352741,
-          v = 15524824;
+        var i = 15524824,
+          v = 15352741;
         (this.SKYDOME_VIEW_COLORS = {
           intro: {
             topColor: new THREE.Color(16777215),
