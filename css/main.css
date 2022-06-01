@@ -590,4 +590,6 @@ body {
   transform: rotateY(180deg);
   border: 2px solid var(--color);
   border-radius: 6px;
+  position: relative;
+  z-index: 5;
 }
