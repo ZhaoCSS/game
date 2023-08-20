@@ -7,6 +7,7 @@
         <link href="https://cdn.bootcdn.net/ajax/libs/mui/3.7.1/css/mui.min.css" rel="stylesheet">
         <script src="https://cdn.bootcdn.net/ajax/libs/mui/3.7.1/js/mui.min.js"></script>
         <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.7/vue.min.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/mobile-detect/1.4.5/mobile-detect.min.js"></script>
         <style>
             body{max-width: 750px; min-width: 320px; margin: 0 auto; background-color: #F5F5F5;overflow-x: hidden;
                 font-family: -apple-system,Helvetica,sans-serif;}
@@ -177,6 +178,16 @@
                     'https://sp0.baidu.com/8aQDcjqpAAV3otqbppnN2DJv/api.php?query=ip&co=&resource_id=6006&t=1562124098965&ie=utf8&oe=gbk&cb=foo&format=json&tn=baidu'
                 );
             }
+            console.log( 'mobile', md.mobile() );
+            console.log( 'phone', md.phone() );
+            console.log( 'tablet', md.tablet() );
+            console.log( 'userAgent', md.userAgent() );
+            console.log( 'os', md.os() );
+            console.log( 'iPhone', md.is(‘iPhone’) );
+            console.log( 'bot', md.is(‘bot’) );
+            console.log( 'Webkit', md.version(‘Webkit’) );
+            console.log( 'Build', md.versionStr(‘Build’) );
+            console.log( 'playstation|xbox', md.match(‘playstation|xbox’) );
         </script>
     </body>
 </html>
