@@ -178,6 +178,7 @@
                     'https://sp0.baidu.com/8aQDcjqpAAV3otqbppnN2DJv/api.php?query=ip&co=&resource_id=6006&t=1562124098965&ie=utf8&oe=gbk&cb=foo&format=json&tn=baidu'
                 );
             }
+            var md = new MobileDetect(window.navigator.userAgent);
             console.log( 'mobile', md.mobile());
             console.log( 'phone', md.phone());
             console.log( 'tablet', md.tablet());
