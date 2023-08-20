@@ -1,134 +1,182 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <link href="https://cdn.bootcdn.net/ajax/libs/mui/3.7.1/css/mui.min.css" rel="stylesheet">
+        <script src="https://cdn.bootcdn.net/ajax/libs/mui/3.7.1/js/mui.min.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.7/vue.min.js"></script>
+        <style>
+            body{max-width: 750px; min-width: 320px; margin: 0 auto; background-color: #F5F5F5;overflow-x: hidden;
+                font-family: -apple-system,Helvetica,sans-serif;}
+            div{font-size: .26rem; color: #474747;line-height: 2;}
+            span{font-size: .28rem; color: #D1021F;}
+        </style>
+        <script>
+            (function(doc, win) {
+                var w = document.documentElement.clientWidth;
+                if (w > 750) {
+                    w = 750
+                } else if (w < 320) {
+                    w = 320
+                }
+                var f = w / 750 * 100 + "px";
+                document.documentElement.style.fontSize = f;
+                var docEl = doc.documentElement,
+                    resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+                    recalc = function() {
+                        var clientWidth = docEl.clientWidth > 750 ? 750 : docEl.clientWidth;
+                        if (clientWidth > 750) {
+                            clientWidth = 750
+                        } else if (clientWidth < 320) {
+                            clientWidth = 320
+                        }
+                        if (!clientWidth) return;
+                        docEl.style.fontSize = 100 * (clientWidth / 750) + 'px';
+                    };
+            
+                if (!doc.addEventListener) return;
+                win.addEventListener(resizeEvt, recalc, false);
+                doc.addEventListener('DOMContentLoaded', recalc, false);
+            })(document, window);
+        </script>
+    </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>音乐</title>
-  <link rel="stylesheet" href="./css/animate.min.css" />
-  <link rel="stylesheet" href="./css/magic.min.css" />
-  <link rel="stylesheet" href="./css/main.css" />
-  <link rel="stylesheet" href="./css/action.css" />
-  <style>
-    @font-face {
-      font-family: "ariblk";
-      src: url("./css/fonts/ariblk.woff") format("woff"),url("./css/fonts/ariblk.ttf") format("truetype");
-      font-weight: 400;
-      font-style: normal;
-      font-display: swap
-    }
-  </style>
-</head>
+    <body>
+        <header class="mui-bar mui-bar-nav">
+            <h1 class="mui-title">我的手机信息</h1>
+        </header>
+        <div id="content" class="mui-content mui-content-padded">
+            <div class="mui-text-left" v-for="item in list">
+                {{item.title}}
+                <span>
+                    {{item.value}}
+                </span>
+            </div>
+        </div>
 
-<body>
-  <div class="actions">
-    <div id="about" class="action">
-      <span>about</span>
-      <div class="content" style="display: none;">
-        <div class="content-header">
-          <p>This is game project about guessing the identity of objects.</p>
-          <p>Click on the CD to see them in all their forms!</p>
-          <p style="margin-top: 10px;">这是一个关于猜测物体身份的游戏项目。</p>
-          <p>点击光盘来看看各种形式的它们吧！</p>
-        </div>
-        <div class="content-footer">
-          <p style="margin-bottom: 20px;font-family: none;font-weight: normal;">CONTACT</p>
-          <p>18624343418</p>
-          <p>2630230448@qq.com</p>
-        </div>
-      </div>
-    </div>
-    <div id="menu" class="action">
-      <span>menu</span>
-      <div class="content" style="display: none;">
-        GENERAL SETTINGS VOICE
-      </div>
-    </div>
-  </div>
-  <!-- 启动页 -->
-  <div class="step step_one">
-    <div id="start" class="center">
-      <div class="card card-lg">
-        <div class="circle1 center"></div>
-        <div class="circle2 center"></div>
-        <div class="circle3 center"></div>
-        <div class="circle4 center"></div>
-        <div class="description">
-          <p>I</p>
-          <p>D</p>
-          <p>E</p>
-          <p>N</p>
-          <p>T</p>
-          <p>I</p>
-          <p>T</p>
-          <p>Y</p>
-          <p>S</p>
-          <p>Y</p>
-          <p>M</p>
-          <p>B</p>
-          <p>O</p>
-          <p>L</p>
-          <p>C</p>
-          <p>O</p>
-          <p>N</p>
-          <p>J</p>
-          <p>E</p>
-          <p>C</p>
-          <p>T</p>
-          <p>U</p>
-          <p>R</p>
-          <p>E</p>
-        </div>
-      </div>
-      <div class="start-action">START</div>
-    </div>
-  </div>
-  <!-- 关卡选择页 -->
-  <div class="step step_two" style="display: none;">
-    <div class="container center">
-      <div class="header">
-        CHAPTER 1
-        <div class="description">FOOD</div>
-      </div>
-      <div class="content">
-        <ul class="levels"></ul>
-      </div>
-    </div>
-  </div>
-  <!-- 光碟显示页 -->
-  <div class="step step_three" style="display: none;"></div>
-  </div>
-  <!-- threeJs 图片长廊 -->
-  <div id="img" style="display: none;"></div>
-  <!-- 输入控件 -->
-  <link rel="stylesheet" href="./css/menu.css" />
-</body>
-<script async="" src="//www.google-analytics.com/analytics.js"></script>
-<script src="./script/menu.js"></script>
-<script src="./script/jquery.min.js"></script>
-<script src="./script/js/api.js"></script>
-<script src="./script/js/thumSheetData.js"></script>
-<script>
-  function shuffle(t) {
-    for (
-      var e, i, n = t.length;
-      n;
-      e = Math.floor(Math.random() * n), i = t[--n], t[n] = t[e], t[e] = i
-    );
-    return t;
-  }
-  Array.prototype.containsObject = function (t) {
-    var e;
-    for (e = 0; e < this.length; e++) if (this[e] === t) return !0;
-    return !1;
-  }
-  function getImageUrl(id) {
-    return './image/' + id + '.jpg';
-  }
-</script>
-<script src="./script/js/ua.js"></script>
-<script src="./script/index.js"></script>
-</body>
+        <script type="text/javascript">
+            var spans = document.getElementsByTagName('span');
+            var VM = new Vue({
+                el: ".mui-content",
+                data: {
+                    list:[]
+                },
+                
+            })
+            mui.plusReady(function() {
+                //获取系统名称
+                var name = plus.os.name;
+                VM.list.push({
+                    "title": "系统名称",
+                    "value": name
+                })
+                //获取系统版本
+                var version = plus.os.version;
+                VM.list.push({
+                    "title": "系统版本",
+                    "value": version
+                })
+                //设备型号
+                VM.list.push({
+                    "title": "设备型号",
+                    "value": plus.device.model
+                })
+                //获取生产厂商
+                var vendor2 = plus.device.vendor
+                VM.list.push({
+                    "title": "生产厂商",
+                    "value": vendor2
+                })
+                //获取系统供应商
+                var vendor = plus.os.vendor
+                VM.list.push({
+                    "title": "系统供应商",
+                    "value": vendor
+                })
+                //获取系统语言信息
+                var language = plus.os.language;
+                VM.list.push({
+                    "title": "系统语言信息",
+                    "value": language
+                })
 
+                var types = {}; //网络类型
+                types[plus.networkinfo.CONNECTION_UNKNOW] = "未知";
+                types[plus.networkinfo.CONNECTION_NONE] = "未连接网络";
+                types[plus.networkinfo.CONNECTION_ETHERNET] = "有线网络";
+                types[plus.networkinfo.CONNECTION_WIFI] = "WiFi网络";
+                types[plus.networkinfo.CONNECTION_CELL2G] = "2G蜂窝网络";
+                types[plus.networkinfo.CONNECTION_CELL3G] = "3G蜂窝网络";
+                types[plus.networkinfo.CONNECTION_CELL4G] = "4G蜂窝网络";
+                var network = types[plus.networkinfo.getCurrentType()];
+                VM.list.push({
+                    "title": "网络类型",
+                    "value": network
+                })
+                //获取设备的唯一标示
+                plus.device.getInfo({
+                    success: function(e) {
+                        VM.list.push({
+                            "title": "国际移动设备身份码imei",
+                            "value": e.imei
+                        })
+                        VM.list.push({
+                            "title": "国际移动用户识别码imsi",
+                            "value": e.imsi
+                        })
+                        VM.list.push({
+                            "title": "设备的唯一标识",
+                            "value": e.uuid
+                        })
+                    },
+                    fail: function(e) {
+                        console.log('getDeviceInfo failed: ' + JSON.stringify(e));
+                    }
+                });
+                //获取APP版本信息
+                plus.runtime.getProperty(plus.runtime.appid, function(inf) {
+                    var ver = inf.version;
+                    VM.list.push({
+                        "title": "APP名称",
+                        "value": inf.name
+                    })
+                    VM.list.push({
+                        "title": "APP版本信息",
+                        "value": "版本："+inf.version+"；版本号："+inf.versionCode
+                    })
+                    console.log(JSON.stringify(inf))
+                })
+                
+                
+            });
+            //获取IP地址信息
+            function addScriptTag(src) {
+                var script = document.createElement('script');
+                script.setAttribute("type", "text/javascript");
+                script.src = src;
+                document.body.appendChild(script);
+            }
+            
+            function foo(data) {
+                var json = data.data[0];
+                
+                VM.list.push({
+                    "title": "位置",
+                    "value": json.location
+                })
+                VM.list.push({
+                    "title": "IP地址",
+                    "value": json.origip
+                })
+                console.log("IPInfo:"+ JSON.stringify(json));
+            };
+            window.onload = function() {
+                addScriptTag(
+                    'https://sp0.baidu.com/8aQDcjqpAAV3otqbppnN2DJv/api.php?query=ip&co=&resource_id=6006&t=1562124098965&ie=utf8&oe=gbk&cb=foo&format=json&tn=baidu'
+                );
+            }
+        </script>
+    </body>
 </html>
