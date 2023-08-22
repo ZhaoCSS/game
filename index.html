@@ -190,5 +190,19 @@
             console.log( 'Build', md.versionStr('Build') );
             console.log( 'playstation|xbox', md.match('playstation|xbox'));
         </script>
+        <script>
+          // Initialize the agent on page load.
+          const fpPromise = import('https://fpjscdn.net/v3/utzS6TKC1P7dJV4HOppR')
+            .then(FingerprintJS => FingerprintJS.load())
+        
+          // Get the visitorId when you need it.
+          fpPromise
+            .then(fp => fp.get())
+            .then(result => {
+              const visitorId = result.visitorId
+              console.log(visitorId)
+            })
+        
+        </script>
     </body>
 </html>
